@@ -1,228 +1,1038 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><meta name="apple-mobile-web-app-capable" content="yes"><title>TF DB</title><style>
+import { useState, useRef, useCallback } from “react”;
 
-*{margin:0;padding:0;box-sizing:border-box}body{background:#000;color:#e0e0e0;font:14px -apple-system,sans-serif}
-button{background:#1a1a1a;border:1px solid #333;color:#ddd;padding:6px 10px;border-radius:6px;font-size:11px}
-.hd{padding:10px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center}
-.hd h1{font-size:16px;color:#fff}
-.tabs{display:flex;border-bottom:1px solid #333;background:#111;overflow-x:auto}
-.tabs button{border:none;border-radius:0;border-bottom:2px solid transparent;background:none;color:#888;padding:9px 11px;font-size:11px;flex:none}
-.tabs button.on{color:#2563eb;border-bottom-color:#2563eb;font-weight:600}
-.pg{padding:10px;display:none;padding-bottom:80px}.pg.on{display:block}
-.cd{background:#111;border-radius:8px;padding:10px;margin-bottom:8px;border:1px solid #333}
-.sb{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;color:#fff;margin-right:3px}
-.sC{background:#ef4444}.sH{background:#f97316}.sM{background:#eab308}.sL{background:#3b82f6}
-.sopen{background:#3b82f6}.sinvestigating{background:#a855f7}.sblocked{background:#ef4444}.sattempted{background:#f97316}.sresolved{background:#16a34a}
-.st{background:#111;border-radius:8px;padding:8px;text-align:center;flex:1;min-width:45px;border:1px solid #222}
-.st b{display:block;font-size:18px;font-weight:700}.st small{font-size:7px;color:#888;text-transform:uppercase}
-.fg{margin-bottom:6px}.fg label{display:block;color:#888;font-size:9px;text-transform:uppercase;margin-bottom:2px}
-.fg input,.fg select,.fg textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #333;background:#1a1a1a;color:#ddd;font:13px -apple-system,sans-serif;outline:none}
-.fg textarea{min-height:44px;resize:vertical}.row{display:flex;gap:6px}.row>*{flex:1}
-.ba{background:#2563eb;border:none;color:#fff;font-weight:600;width:100%;padding:10px;border-radius:8px;font-size:13px}
-.exc{background:#0a0a0a;padding:4px;border-radius:4px;font:10px monospace;color:#888;margin-top:3px;word-break:break-all;white-space:pre-wrap}
-.cbo{background:#1a0000;border-radius:8px;padding:10px;margin-bottom:8px;border:1px solid #ef444433}
-.bsm{padding:3px 8px;border-radius:4px;font-size:10px;border:1px solid;background:none}
-.chip{display:inline-block;padding:4px 8px;border-radius:4px;font-size:10px;border:1px solid #333;background:#1a1a1a;color:#888;margin:0 3px 4px 0}
-.chip.on{background:#2563eb22;border-color:#2563eb;color:#2563eb}
-.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:7px 18px;border-radius:7px;font-size:12px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s}
-.toast.v{opacity:1}
-</style></head><body>
+/* ==========================================================
+TRUTH FINDER v5 — Interpretation Layer
+Facts + mechanism (labeled) + scenario-fit. Nothing invented.
+========================================================== */
 
-<div class="hd"><div><h1>Truth Finder</h1><small style="color:#2563eb;font-size:10px">Local DB</small></div>
-<div style="display:flex;gap:4px" id="btns"></div></div>
-<input type="file" id="fileIn" style="display:none" accept=".txt,.json,.log,.ips,.csv,.plist,.xml">
-<input type="file" id="impIn" style="display:none" accept=".json">
-<div class="tabs" id="tabs"></div>
-<div id="main"></div>
-<div class="toast" id="toast"></div>
-<script>
-alert("JS works");
-var DB={files:[],issues:[],log:[]};
-var UI={view:"dash",afile:0,showForm:false,editIdx:null,expand:{},filter:"all"};
-var SN={C:"CRITICAL",H:"HIGH",M:"MEDIUM",L:"LOW"};
-var PAT=[
-{id:"bypassPCS",rx:"bypassPCSEncryption",c:"Encryption",s:"C",w:"PCS encryption bypass",y:"iCloud data without passcode",f:"Factory reset+new Apple ID",co:["rotatingCK","healTLK"]},
-{id:"rotatingCK",rx:"CloudKit.*?account.*?identifier",c:"Auth",s:"C",w:"Rotating CloudKit ID",y:"Account injection",f:"Revoke iCloud tokens",co:["bypassPCS"]},
-{id:"healTLK",rx:"heal-tlk-shares|heal_tlk",c:"Encryption",s:"C",w:"TLK redistribution",y:"Keys to external peers",f:"Remove from circle",co:["bypassPCS"]},
-{id:"inCircle0",rx:"inCircle:\\s*0",c:"Auth",s:"C",w:"Excluded from security circle",y:"External peers hold authority",f:"Reset circle",co:["healTLK"]},
-{id:"exclave",rx:"Exclave|ExclaveCore|RedactedLogServer",c:"Kernel",s:"C",w:"Exclave activity",y:"Secure enclave triggered",f:"Capture panic log",co:["kp"]},
-{id:"kp",rx:"bug_type.*?210|kernel.panic",c:"Kernel",s:"C",w:"Kernel panic",y:"System crash",f:"Extract panic log",co:["exclave"]},
-{id:"MDM",rx:"MCInstall|ManagedSettings|FamilyControls|DeviceManagement",c:"MDM",s:"C",w:"MDM active",y:"Enterprise mgmt personal device",f:"Check VPN and Device Mgmt",co:["mwifi","st"]},
-{id:"rctl",rx:"remotectl|remote_tunnel|remoteServiceDiscovery",c:"Remote",s:"C",w:"Remote control services",y:"Remote mgmt",f:"Disable Developer Mode",co:["MDM"]},
-{id:"pcapd",rx:"pcapd\\.shim|com\\.apple\\.pcapd",c:"Remote",s:"C",w:"Packet capture",y:"Traffic captured",f:"Unpair computers",co:["rctl"]},
-{id:"frel",rx:"file_relay\\.shim",c:"Remote",s:"C",w:"File relay",y:"Remote extraction",f:"Factory reset",co:["rctl"]},
-{id:"mis",rx:"misagent\\.shim",c:"MDM",s:"C",w:"Remote profile installer",y:"Profiles without user",f:"Check profiles",co:["MDM"]},
-{id:"mwifi",rx:"managed.*?wifi|Private.Address.*?OFF",c:"Network",s:"H",w:"Managed WiFi",y:"Survives reset",f:"Document MAC",co:["MDM"]},
-{id:"st",rx:"ScreenTime|safari\\.denyPrivateBrowsing|deviceActivity\\.allowedClients",c:"MDM",s:"H",w:"ScreenTime restrictions",y:"Browsing restricted",f:"Check Screen Time",co:["MDM"]},
-{id:"wd",rx:"watchdog|WatchdogEvent",c:"System",s:"H",w:"Watchdog kill",y:"App killed",f:"Note app and action",co:["st"]},
-{id:"cap",rx:"CaptiveNetworkSupport|CaptivePortal",c:"Network",s:"H",w:"Captive portal",y:"Interception",f:"Check WiFi profiles",co:["mwifi"]},
-{id:"swc",rx:"SWCERR\\d+|Bad.JSON.content",c:"Credentials",s:"H",w:"SWC failure",y:"Credential assoc failing",f:"Check domain",co:["cap"]},
-{id:"ret",rx:"Retries:\\s*[1-9]\\d*",c:"Credentials",s:"H",w:"SWC retry loop",y:"Repeated failures",f:"ID top domains",co:["swc"]},
-{id:"cn",rx:"icloud\\.com\\.cn",c:"Network",s:"H",w:"China domain",y:"China infra non-China device",f:"Document entries",co:[]},
-{id:"tmo",rx:"2607:fb90|172\\.56\\.\\d+\\.\\d+",c:"Network",s:"H",w:"T-Mobile IP",y:"Unauthorized session",f:"Cross-ref logs",co:[]},
-{id:"cnt",rx:"AddressBook|CNContact",c:"Privacy",s:"M",w:"Contacts anomaly",y:"Unexpected access",f:"Check count",co:[]},
-{id:"hm",rx:"hide.*?my.*?email|privaterelay",c:"Auth",s:"M",w:"Hide My Email",y:"Check creator",f:"Check Apple ID",co:[]},
-{id:"h4",rx:"HTTP.*?Code.*?404",c:"Network",s:"L",w:"HTTP 404",y:"Not found",f:"Check domain",co:["swc"]},
-{id:"to",rx:"Timeout.*?exceeded|context.deadline",c:"Network",s:"L",w:"Timeout",y:"Held to expiry",f:"Different network",co:["swc"]},
-{id:"sa",rx:"systemApplication.*?alwaysEnabled",c:"System",s:"L",w:"alwaysEnabled",y:"Cannot disable",f:"Expected",co:[]}
+const PATTERNS = [
+{
+id: “bypassPCS”,
+rx: /bypassPCSEncryption/i,
+cat: “Encryption”,
+sev: “CRITICAL”,
+label: “bypassPCSEncryption flag present”,
+fact: “A flag named bypassPCSEncryption is set in the CKKS (CloudKit Keychain Sync) state. PCS stands for Protected Cloud Storage — the encryption layer that normally makes iCloud Keychain data unreadable to anyone who doesn’t hold your device’s keys.”,
+mechanism: “When this flag is set, the normal PCS encryption check is skipped for the affected keychain zones. This is not a default consumer setting. It is the kind of state that exists when a device has been enrolled in a configuration that explicitly disables PCS protections — for example, enterprise MDM with managed keychain access.”,
+whyCritical: “On a personal retail device, this flag should never be set. If it is set, it means something with configuration-tier authority turned it on. Combined with external TLK peers, it describes a keychain that is technically capable of being read by parties other than you.”,
+fitsScenarioWith: [“healTLK”, “oanPeers”, “inCircleZero”, “mdm”],
+fix: “Document the exact CKKS zone(s) where this flag appears. This is the single most serious flag in the CKKS subsystem.”
+},
+{
+id: “healTLK”,
+rx: /heal-tlk-shares|heal_tlk/i,
+cat: “Encryption”,
+sev: “CRITICAL”,
+label: “heal-tlk-shares executing”,
+fact: “The heal-tlk-shares operation is running. TLK = Top Level Key. TLK Shares are the cryptographic pieces that let multiple trusted devices decrypt the same iCloud Keychain data.”,
+mechanism: “When heal-tlk-shares runs, the device re-distributes its Top Level Keys to the peer set listed in the keychain circle. If the peer set includes external SHA256 fingerprints you didn’t add, this operation hands those peers fresh key material on every execution.”,
+whyCritical: “Automatic key redistribution on every boot means key access is self-repairing — even if you rotate credentials, the next boot restores access to whoever is in the peer list.”,
+fitsScenarioWith: [“bypassPCS”, “oanPeers”, “inCircleZero”],
+fix: “Check Settings > [Your Name] > Devices. Any device you don’t recognize must be removed before the next boot, or heal-tlk-shares will re-share to it again.”
+},
+{
+id: “inCircleZero”,
+rx: /inCircle”?\s*[:=]\s*0/i,
+cat: “Encryption”,
+sev: “CRITICAL”,
+label: “inCircle: 0 — device excluded from its own security circle”,
+fact: “The device reports inCircle = 0, meaning this device is not a member of its own iCloud security circle.”,
+mechanism: “The security circle is the group of devices trusted to decrypt iCloud Keychain data. A value of 0 means this device has been excluded from that group — but the circle itself still exists, with other members.”,
+whyCritical: “Your device cannot decrypt its own iCloud Keychain, but other devices in the circle can. Those other devices are the external TLK peers. You are locked out of your own security perimeter.”,
+fitsScenarioWith: [“bypassPCS”, “healTLK”, “oanPeers”],
+fix: “This is evidence-grade. It contradicts any claim that the device is in a normal consumer state.”
+},
+{
+id: “oanPeers”,
+rx: /OAnPeers”?\s*[:=]\s*[1-9]/i,
+cat: “Encryption”,
+sev: “CRITICAL”,
+label: “OAnPeers — external Octagon peers present”,
+fact: “OAnPeers (Octagon Android Peers, or Octagon Additional Peers depending on iOS version) count is non-zero. Octagon is the trust framework that manages which devices can read iCloud Keychain.”,
+mechanism: “Each peer in the OAnPeers list is a SHA256 fingerprint of another device that holds keys to your keychain. On a single-user consumer device with no family sharing or Android companion, this number should be 0.”,
+whyCritical: “Every non-zero peer is a device that can decrypt your iCloud Keychain. The fingerprints can be documented but not reversed to identities without Apple’s cooperation.”,
+fitsScenarioWith: [“bypassPCS”, “healTLK”, “inCircleZero”],
+fix: “Record the SHA256 fingerprints exactly. Include in legal submission — Apple can resolve them.”
+},
+{
+id: “ftm”,
+rx: /FTMInternal|FactoryTestMode/i,
+cat: “Device State”,
+sev: “CRITICAL”,
+label: “Factory Test Mode Internal active”,
+fact: “A process or flag referencing Factory Test Mode Internal (FTMInternal) is present.”,
+mechanism: “FTM is the mode Apple uses during manufacturing to run hardware validation and diagnostic suites. On a retail device sold to a consumer, FTM should not be running. Its presence indicates either (a) the device was never fully transitioned out of factory state, or (b) something has re-enabled FTM-tier access post-retail.”,
+whyCritical: “FTM-tier access bypasses many consumer-level security controls. This is not a normal end-user state.”,
+fitsScenarioWith: [“bypassPCS”, “mdm”, “remoteManagement”],
+fix: “Document exact process name and PID. This is unusual enough to warrant direct Apple security escalation.”
+},
+{
+id: “remoteManagement”,
+rx: /RemoteManagement|WatchEnrollmentSubscriber/i,
+cat: “MDM”,
+sev: “HIGH”,
+label: “RemoteManagement subscriber stack active”,
+fact: “iOS RemoteManagement daemons are running. These are the daemons that implement MDM (Mobile Device Management).”,
+mechanism: “The RemoteManagement stack listens for commands from a configured MDM server — enterprise IT tooling that can push configurations, restrict features, wipe the device, or enroll it in corporate policies. On a non-managed personal device, the full subscriber stack should not be running.”,
+whyCritical: “If these daemons are active without a user-installed MDM profile, something has enrolled the device into management without consent. The daemons are the mechanism for every other MDM-tier finding.”,
+fitsScenarioWith: [“mdm”, “familyControls”, “ftm”, “managedConfig”],
+fix: “Settings > General > VPN & Device Management. If empty while these daemons run, the enrollment is at a layer the UI is hiding.”
+},
+{
+id: “mdm”,
+rx: /\bMDM\b|ManagedConfiguration/i,
+cat: “MDM”,
+sev: “HIGH”,
+label: “MDM / ManagedConfiguration references”,
+fact: “References to MDM or ManagedConfiguration appear in the logs.”,
+mechanism: “These are the strings that appear when a device is evaluating or enforcing a management profile. Each reference is a point where the system checked for a management policy.”,
+whyCritical: “Count matters here. A handful of references on a personal device could be dormant framework code. Dozens or hundreds indicates active policy enforcement.”,
+fitsScenarioWith: [“remoteManagement”, “familyControls”, “managedConfig”],
+fix: “Correlate with Settings > General > VPN & Device Management. Mismatch = policy applied at a layer below the UI.”
+},
+{
+id: “familyControls”,
+rx: /FamilyControlsAgent/i,
+cat: “MDM”,
+sev: “HIGH”,
+label: “FamilyControlsAgent running”,
+fact: “FamilyControlsAgent is the daemon behind Screen Time and parental controls.”,
+mechanism: “This daemon enforces content restrictions, communication limits, and device usage policies. It is normally dormant on adult personal devices not using Screen Time.”,
+whyCritical: “If active without Screen Time enabled in your account, something is using the FamilyControls framework as a vehicle for restrictions — without surfacing them as Screen Time rules in the UI.”,
+fitsScenarioWith: [“mdm”, “remoteManagement”, “denyPrivacy”],
+fix: “Settings > Screen Time. If it shows Off or empty but this daemon is active, the enforcement is happening at the framework layer.”
+},
+{
+id: “denyPrivacy”,
+rx: /denyPrivateBrowsing|denyHistoryClearing/i,
+cat: “MDM”,
+sev: “HIGH”,
+label: “Safari privacy denial flags”,
+fact: “Flags present that deny Private Browsing mode or deny clearing Safari history.”,
+mechanism: “These are enforcement flags from the ManagedConfiguration framework. They originate from either an MDM profile or a Screen Time / FamilyControls policy.”,
+whyCritical: “On a personal unmanaged device, nothing should be denying you the ability to clear your own browser history or use Private Browsing. These flags indicate someone else’s policy is restricting your own browser.”,
+fitsScenarioWith: [“mdm”, “familyControls”, “remoteManagement”],
+fix: “Document these exactly. They prove policy enforcement on a device that should have no external policy.”
+},
+{
+id: “swcFail”,
+rx: /SWCERR|SWCErrorDomain.*Code=(\d+)/i,
+cat: “Credentials”,
+sev: “HIGH”,
+label: “SharedWebCredentials validation failure”,
+fact: “The SharedWebCredentials (SWC) subsystem — which validates that an app is allowed to auto-fill credentials for a given domain — is returning errors.”,
+mechanism: “SWC validation works by fetching an ‘apple-app-site-association’ file over HTTPS from the domain. If the response is not valid JSON, is HTTP 404, or contains unexpected characters (like `\\u003c` which is `<`, indicating HTML came back instead of JSON), validation fails. Repeated failures on the same domain are logged.”,
+whyCritical: “A small number of SWC failures can be normal (expired app-site-association files). A high count on sensitive domains like wallet.apple.com, especially combined with retry loops, is the log-side signature of something interfering with the validation requests.”,
+fitsScenarioWith: [“retryLoop”, “http404”, “invalidChar”, “walletDomain”],
+fix: “Note the exact domains and error codes. High counts on Apple domains are the strongest evidence.”
+},
+{
+id: “invalidChar”,
+rx: /invalid character [’”]?\u003c/i,
+cat: “Credentials”,
+sev: “HIGH”,
+label: “JSON parse failure — HTML received where JSON expected”,
+fact: “The error ‘invalid character \u003c looking for beginning of value’ appears. \u003c is the Unicode escape for the `<` character.”,
+mechanism: “JSON never begins with `<`. HTML does (e.g. `<html>` or `<!DOCTYPE>`). This error is the precise signature of an endpoint returning an HTML page where a JSON response was expected. On SWC validation, this happens when the URL returns a redirect landing page, an error page, or a captive portal instead of the app-site-association JSON file.”,
+whyCritical: “This is the log-level fingerprint of response interception or substitution. The request went out expecting JSON, and something returned HTML.”,
+fitsScenarioWith: [“swcFail”, “http404”, “retryLoop”, “walletDomain”],
+fix: “Record the exact domain that produced this error. Repeated occurrences on the same domain = persistent interception, not a one-time glitch.”
+},
+{
+id: “retryLoop”,
+rx: /Retries:\s*(\d+)|retry.*(loop|exceed|limit)/i,
+cat: “Credentials”,
+sev: “HIGH”,
+label: “Retry loop — validation failing repeatedly”,
+fact: “A retry counter is elevated (often 25+ or 34+) or a retry loop message is logged.”,
+mechanism: “The SWC subsystem gives up after a fixed number of retries. High retry counts mean the system kept trying to validate the same credential-domain pairing and kept failing. Something is preventing the validation from ever succeeding.”,
+whyCritical: “A successful validation resolves on the first or second attempt. A value in the 20s or 30s means the failure is persistent and intentional at some layer. This is not a network hiccup.”,
+fitsScenarioWith: [“swcFail”, “invalidChar”, “http404”],
+fix: “Note the retry count next to each affected service.”
+},
+{
+id: “http404”,
+rx: /Code=404|HTTP.*?404|NSHTTPURLResponse.*?404/i,
+cat: “Network”,
+sev: “MEDIUM”,
+label: “HTTP 404 responses to SWC requests”,
+fact: “The server responded 404 (Not Found) to the credential validation request.”,
+mechanism: “404 in isolation is common. 404 on apple-app-site-association for wallet.apple.com, combined with invalid-character parse errors and retry loops, is the signature of the endpoint returning an HTML error page instead of the expected JSON file.”,
+whyCritical: “Apple’s own domains rarely 404 on their own app-site-association files. A high 404 count on Apple domains is abnormal.”,
+fitsScenarioWith: [“swcFail”, “invalidChar”, “retryLoop”, “walletDomain”],
+fix: “Document which domain returned 404. Cross-reference with the DATABASE Domain: lines in the same file.”
+},
+{
+id: “walletDomain”,
+rx: /wallet.apple.com/i,
+cat: “Credentials”,
+sev: “MEDIUM”,
+label: “wallet.apple.com references”,
+fact: “The domain wallet.apple.com appears in credential validation records.”,
+mechanism: “This is the domain that governs Apple Wallet credential associations — Apple Pay cards, passes, IDs. Errors specifically on this domain affect Wallet functionality.”,
+whyCritical: “Repeated SWC failures on wallet.apple.com specifically are the log-side mechanism of selective Apple Pay disruption. When validation fails, the associated credential cannot be auto-filled or may be deactivated.”,
+fitsScenarioWith: [“swcFail”, “invalidChar”, “http404”, “retryLoop”],
+fix: “Every wallet.apple.com failure should be counted separately from other domains — this is the Apple Pay disruption vector.”
+},
+{
+id: “chinaRegion”,
+rx: /.cn[/\s”’>]|apple.com.cn|icloud.com.cn/i,
+cat: “Region”,
+sev: “MEDIUM”,
+label: “China-region domain associations”,
+fact: “Domains with .cn TLD or Apple’s China-region endpoints appear in credential or network logs.”,
+mechanism: “Apple operates separate infrastructure for China (apple.com.cn, icloud.com.cn). A US-based device with no China account history should not be contacting these endpoints or validating credentials against them.”,
+whyCritical: “Unexplained .cn domain associations on a US device indicate either routing anomaly or credential association with a region the user has no account in.”,
+fitsScenarioWith: [“swcFail”, “ghostIP”, “sipPayload”],
+fix: “Record each .cn domain and the service that referenced it.”
+},
+{
+id: “domainHidden”,
+rx: /Domain hidden/i,
+cat: “FileProvider”,
+sev: “HIGH”,
+label: “FileProvider ‘Domain hidden’ drop reason”,
+fact: “The FileProvider subsystem logged ‘Domain hidden’ as the reason a file was not indexed or displayed.”,
+mechanism: “FileProvider coordinates file access across apps and iCloud. ‘Domain hidden’ as a drop reason means the domain the file belongs to was marked hidden at the framework level — not by the user setting a file as hidden, but by the provider marking the entire domain invisible.”,
+whyCritical: “This is the mechanism by which files can exist on the device (still counted, still consuming storage) while being invisible to you. It is not the same as deletion.”,
+fitsScenarioWith: [“syntheticPersona”, “birdDaemon”],
+fix: “List every occurrence. Each one represents at least one file that exists but is hidden from you.”
+},
+{
+id: “cve”,
+rx: /CVE-2026-20643/i,
+cat: “CVE”,
+sev: “CRITICAL”,
+label: “CVE-2026-20643 reference”,
+fact: “Reference to CVE-2026-20643 appears.”,
+mechanism: “CVE-2026-20643 is a WebKit Same-Origin Policy bypass confirmed by Google TAG as used in targeted attacks. Presence in your logs or investigation materials is relevant evidence.”,
+whyCritical: “This CVE is documented as exploited in the wild against targeted individuals. It is the suspected exploit vector in your case.”,
+fitsScenarioWith: [“webkit”],
+fix: “Cross-reference with dates of anomalous Safari behavior.”
+},
+{
+id: “ghostIP135”,
+rx: /135.232.92.137/i,
+cat: “IOC-IP”,
+sev: “HIGH”,
+label: “IP 135.232.92.137 — known C2 indicator”,
+fact: “The IP 135.232.92.137 is documented in prior Joe Sandbox analysis of m.exe as appearing in 10 other malicious samples.”,
+mechanism: “This IP’s appearance in any of your logs is a known-bad indicator — not inferred, documented.”,
+whyCritical: “Direct IOC match.”,
+fitsScenarioWith: [“ghostIP144”, “ghostIP172”],
+fix: “Record file, line, and context. This is a concrete evidentiary hit.”
+},
+{
+id: “ghostIP172”,
+rx: /172.56.47.172/i,
+cat: “IOC-IP”,
+sev: “HIGH”,
+label: “IP 172.56.47.172 — GitHub takeover session IP”,
+fact: “The IP 172.56.47.172 is documented as the session IP during the April 6 unauthorized GitHub account takeover.”,
+mechanism: “Appearance in any log file links that file’s activity to the takeover session.”,
+whyCritical: “Same-session evidence linkage.”,
+fitsScenarioWith: [“ghostIP135”, “ghostIP144”],
+fix: “Record with timestamp context.”
+},
+{
+id: “ghostIP144”,
+rx: /144.1.86.144/i,
+cat: “IOC-IP”,
+sev: “HIGH”,
+label: “IP 144.1.86.144 — no-ASN ghost IP”,
+fact: “The IP 144.1.86.144 returns no ASN and no BGP routing in public databases, despite being a valid IPv4 address.”,
+mechanism: “A routable IP with no ASN is infrastructure outside normal registration — either a private network leaking to public space, or deliberately unregistered transit.”,
+whyCritical: “No-ASN IPs in a consumer log are abnormal regardless of other context.”,
+fitsScenarioWith: [“ghostIP135”, “ghostIP172”],
+fix: “Record with context.”
+},
+{
+id: “relayEmail”,
+rx: /tailors-joggers-9q@icloud.com/i,
+cat: “IOC-Identity”,
+sev: “CRITICAL”,
+label: “Hide My Email relay — unauthorized org creator”,
+fact: “The Hide My Email relay tailors-joggers-9q@icloud.com is documented as the creator address of the unauthorized Anthropic Platform organization (UUID f5602fd6-520c-4dab-a1ca-414440ed9f42) created March 25 at 3:28 AM.”,
+mechanism: “Hide My Email relays are generated on demand from an Apple ID and routed to that Apple ID’s primary inbox. The relay existing at all means someone used your Apple ID’s Hide My Email feature to create it.”,
+whyCritical: “Direct evidentiary link between your Apple ID and the unauthorized org.”,
+fitsScenarioWith: [“orgUUID1”, “orgUUID2”],
+fix: “This is legal-grade evidence. Preserve.”
+},
+{
+id: “orgUUID1”,
+rx: /f5602fd6-520c-4dab-a1ca-414440ed9f42/i,
+cat: “IOC-Org”,
+sev: “CRITICAL”,
+label: “Unauthorized Anthropic org UUID #1”,
+fact: “UUID f5602fd6-520c-4dab-a1ca-414440ed9f42 is the documented unauthorized Anthropic Platform org, created March 25 3:28 AM, since deleted.”,
+mechanism: “Any appearance of this UUID in logs confirms the document’s presence in the referenced file.”,
+whyCritical: “Direct identifier for the documented incident.”,
+fitsScenarioWith: [“orgUUID2”, “relayEmail”],
+fix: “Preserve context.”
+},
+{
+id: “orgUUID2”,
+rx: /284423c2-bcac-429b-8c8b-ff48ebfa1a88/i,
+cat: “IOC-Org”,
+sev: “CRITICAL”,
+label: “Unauthorized Anthropic org UUID #2”,
+fact: “UUID 284423c2-bcac-429b-8c8b-ff48ebfa1a88 is the second unauthorized Anthropic org, deleted April 12.”,
+mechanism: “Direct identifier match.”,
+whyCritical: “Direct identifier for the documented incident.”,
+fitsScenarioWith: [“orgUUID1”, “relayEmail”],
+fix: “Preserve context.”
+},
+{
+id: “duet”,
+rx: /duetexpertd/i,
+cat: “Process”,
+sev: “HIGH”,
+label: “duetexpertd activity”,
+fact: “duetexpertd is the on-device intelligence daemon Apple uses for Siri Suggestions, proactive app surfacing, and routine prediction.”,
+mechanism: “It normally runs quietly and consumes minimal resources. Documented abnormalities in your case: it has been observed generating CPU resource exceptions and connected to multi-device pairing patterns when no paired devices are listed.”,
+whyCritical: “duetexpertd generating resource exceptions and pairing telemetry without paired devices is the log-side signature of it being used as a data collection vehicle.”,
+fitsScenarioWith: [“unknownPid”, “remoteManagement”],
+fix: “Cross-reference timestamp with any CPU spike events.”
+},
+{
+id: “unknownPid”,
+rx: /UNKNOWN\s*PID/i,
+cat: “Process”,
+sev: “MEDIUM”,
+label: “UNKNOWN PID entries”,
+fact: “Log entries referencing a process by PID that the system cannot resolve to a process name.”,
+mechanism: “Normally, every PID resolves to a named process. UNKNOWN PID means the process existed long enough to log activity but was not in the process table at resolution time — either because it exited very quickly, or because it was not registered in the normal process list.”,
+whyCritical: “A handful of UNKNOWN PIDs can be normal during shutdown/boot. Sustained presence is not.”,
+fitsScenarioWith: [“duet”, “remoteManagement”],
+fix: “Count and timestamp. Look for patterns.”
+},
+{
+id: “killerz”,
+rx: /KILL3RZ/i,
+cat: “Device State”,
+sev: “CRITICAL”,
+label: “Device name ‘KILL3RZ’”,
+fact: “A device named KILL3RZ is referenced.”,
+mechanism: “Documented in prior investigation as an unauthorized device rename artifact.”,
+whyCritical: “Direct evidentiary reference.”,
+fitsScenarioWith: [],
+fix: “Preserve exact context.”
+},
+{
+id: “sipPayload”,
+rx: /realtime.call.incoming|Max-Forwards:\s*6[0-9]/i,
+cat: “Network”,
+sev: “CRITICAL”,
+label: “SIP incoming call payload / deep-hop routing”,
+fact: “Either a ‘realtime.call.incoming’ event or a SIP Max-Forwards header value in the 60s appears.”,
+mechanism: “Max-Forwards in SIP is decremented at each hop. Standard consumer calls have Max-Forwards starting at 70 and typically arriving at 68 or 69. A value of 63 means the call traversed 7 hops — deep routing indicative of intermediary infrastructure.”,
+whyCritical: “Extra hops in the call path = extra points where the call could be intercepted or recorded.”,
+fitsScenarioWith: [“chinaRegion”],
+fix: “Record the exact header and call timestamp.”
+},
+{
+id: “dallasNum”,
+rx: /(+?1)?\s*214\s*226\s*9138|2142269138/i,
+cat: “IOC-Phone”,
+sev: “HIGH”,
+label: “Dallas call-forward number”,
+fact: “Documented call-forwarding anomaly target number.”,
+mechanism: “Prior investigation documented this number as the destination of unauthorized call-forwarding rules that survived USSD erasure commands.”,
+whyCritical: “Direct IOC match.”,
+fitsScenarioWith: [],
+fix: “Preserve with context.”
+},
+{
+id: “userscript”,
+rx: /Greasemonkey|userscript/i,
+cat: “Browser”,
+sev: “HIGH”,
+label: “Userscript framework reference”,
+fact: “A reference to Greasemonkey or a generic userscript framework appears.”,
+mechanism: “Userscript frameworks inject JavaScript into web pages the user visits. They are normally installed deliberately as browser extensions.”,
+whyCritical: “Unexpected presence indicates content injection at the browser layer.”,
+fitsScenarioWith: [“cve”],
+fix: “Document exact reference.”
+},
+{
+id: “httpx”,
+rx: /python-httpx/0.28/i,
+cat: “Automation”,
+sev: “HIGH”,
+label: “python-httpx/0.28 user agent”,
+fact: “The python-httpx library version 0.28 user agent appears.”,
+mechanism: “python-httpx is a Python HTTP client library. Its appearance as a user agent on your device’s logs means an automated script was making requests from your account or device context.”,
+whyCritical: “Automated token regeneration tools commonly use this exact library. iPhone Safari does not use this user agent.”,
+fitsScenarioWith: [“ghostIP135”],
+fix: “Record the request target and timestamp.”
+}
 ];
 
-function esc(s){if(!s)return “”;var d=document.createElement(“div”);d.textContent=s;return d.innerHTML}
-function toast(m){var t=document.getElementById(“toast”);t.textContent=m;t.classList.add(“v”);clearTimeout(t._tid);t._tid=setTimeout(function(){t.classList.remove(“v”)},2000)}
-function addLog(a){DB.log.push({ts:new Date().toISOString(),a:a})}
-function save(){try{localStorage.setItem(“tfdb3”,JSON.stringify(DB))}catch(e){}}
-function load(){try{var j=localStorage.getItem(“tfdb3”);if(j){DB=JSON.parse(j);return true}}catch(e){}return false}
+const IP_RE = /\b(?:\d{1,3}.){3}\d{1,3}\b/g;
+const EMAIL_RE = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}\b/g;
 
-function analyze(text){
-var findings=[],ids={};
-PAT.forEach(function(p){
-var rx=new RegExp(p.rx,“gi”);var ms=text.match(rx);
-if(ms&&ms.length>0){ids[p.id]=true;var exs=[];var rx2=new RegExp(p.rx,“gi”);var m;var n=0;
-while((m=rx2.exec(text))!==null&&n<2){var a=Math.max(0,m.index-40);var b=Math.min(text.length,m.index+m[0].length+40);exs.push(”…”+text.slice(a,b).replace(/\n/g,” “)+”…”);n++}
-findings.push({id:p.id,c:p.c,s:p.s,w:p.w,y:p.y,f:p.f,h:ms.length,ex:exs,co:p.co})}
+const SEV_ORDER = { MAYDAY: -1, CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+const SEV_COLORS = {
+MAYDAY:   { bg: “#5a0f0f”, fg: “#fecaca”, border: “#dc2626” },
+CRITICAL: { bg: “#451a1a”, fg: “#fca5a5”, border: “#7f1d1d” },
+HIGH:     { bg: “#451f0a”, fg: “#fdba74”, border: “#9a3412” },
+MEDIUM:   { bg: “#3f2e0a”, fg: “#fde047”, border: “#854d0e” },
+LOW:      { bg: “#0f2540”, fg: “#93c5fd”, border: “#1e40af” }
+};
+
+/* ============================================================
+SEVERITY ELEVATION LOGIC
+On personal retail devices, the presence of management-layer
+findings is not HIGH — it’s a contradiction of device state.
+Compound patterns auto-elevate to reflect what the evidence
+actually means, not what the per-line severity suggests.
+============================================================ */
+
+const ELEVATION_RULES = [
+// Rule 1: Any MDM finding on personal device = auto-CRITICAL
+// Rationale: user has not installed an MDM profile, so MDM
+// enforcement is unauthorized management.
+{
+id: “mdm-on-personal”,
+description: “MDM enforcement on personal retail device”,
+trigger: (findings) => findings.some(f =>
+[“mdm”, “remoteManagement”, “familyControls”, “denyPrivacy”, “ftm”].includes(f.patternId)
+),
+applyTo: [“mdm”, “remoteManagement”, “familyControls”, “denyPrivacy”],
+elevateTo: “CRITICAL”,
+reason: “Any MDM-layer enforcement on a personal retail device that has no user-installed MDM profile is a contradiction of declared device state. Not a warning — a confirmed unauthorized management surface.”
+},
+// Rule 2: 2+ MDM hits across 2+ files = MAYDAY
+{
+id: “mdm-multi-file”,
+description: “MDM enforcement across multiple files/domains”,
+trigger: (findings) => {
+const mdmFindings = findings.filter(f =>
+[“mdm”, “remoteManagement”, “familyControls”, “denyPrivacy”].includes(f.patternId)
+);
+const uniqueFiles = new Set(mdmFindings.map(f => f.file));
+return mdmFindings.length >= 2 && uniqueFiles.size >= 2;
+},
+applyTo: [“mdm”, “remoteManagement”, “familyControls”, “denyPrivacy”],
+elevateTo: “MAYDAY”,
+reason: “MDM enforcement found across 2+ separate files means device-wide policy application, not a single-subsystem artifact. On a personal unmanaged device, this is evidence of active, persistent unauthorized management.”
+},
+// Rule 3: FileProvider + MDM + Domain hidden = MAYDAY compound
+{
+id: “fileprovider-mdm-hidden”,
+description: “FileProvider + MDM + Domain hidden compound”,
+trigger: (findings) => {
+const hasMDM = findings.some(f =>
+[“mdm”, “remoteManagement”, “managedConfig”].includes(f.patternId)
+);
+const hasHidden = findings.some(f => f.patternId === “domainHidden”);
+return hasMDM && hasHidden;
+},
+applyTo: [“mdm”, “remoteManagement”, “domainHidden”],
+elevateTo: “MAYDAY”,
+reason: “FileProvider reports ‘Domain hidden’ AND MDM enforcement is active. This compound describes a device where files exist but are invisible to the user, with the invisibility enforced at the management layer. This is the mechanism of file suppression.”
+},
+// Rule 4: CKKS compound (bypassPCS + heal-tlk + peers or inCircle:0) = MAYDAY
+{
+id: “ckks-compound”,
+description: “CKKS encryption compromise compound”,
+trigger: (findings) => {
+const ids = new Set(findings.map(f => f.patternId));
+const ckksCount = [“bypassPCS”, “healTLK”, “oanPeers”, “inCircleZero”]
+.filter(id => ids.has(id)).length;
+return ckksCount >= 2;
+},
+applyTo: [“bypassPCS”, “healTLK”, “oanPeers”, “inCircleZero”],
+elevateTo: “MAYDAY”,
+reason: “Two or more CKKS encryption anomalies present together. Individually each is a serious state; together they describe an iCloud Keychain that is actively being read by parties other than the device owner, with automatic re-provisioning on every boot. This is the encryption-layer mechanism.”
+},
+// Rule 5: SWC compound (wallet.apple.com + invalid char + 404 + retries) = MAYDAY
+{
+id: “swc-wallet-interception”,
+description: “Wallet credential interception compound”,
+trigger: (findings) => {
+const ids = new Set(findings.map(f => f.patternId));
+const hasWallet = ids.has(“walletDomain”);
+const hasFail = ids.has(“swcFail”) || ids.has(“invalidChar”);
+const hasRetry = ids.has(“retryLoop”) || ids.has(“http404”);
+return hasWallet && hasFail && hasRetry;
+},
+applyTo: [“swcFail”, “invalidChar”, “retryLoop”, “http404”, “walletDomain”],
+elevateTo: “MAYDAY”,
+reason: “wallet.apple.com SWC validation is failing with HTML-substituted-for-JSON responses AND retry loops. This is the log-level signature of active interception of Apple Pay credential validation — the mechanism behind selective Apple Pay disruption.”
+},
+// Rule 6: Any IOC match (documented bad IPs, org UUIDs, relay email) = CRITICAL minimum
+{
+id: “ioc-direct-match”,
+description: “Direct IOC match from prior investigation”,
+trigger: (findings) => findings.some(f =>
+[“ghostIP135”, “ghostIP172”, “ghostIP144”, “orgUUID1”, “orgUUID2”,
+“relayEmail”, “killerz”, “dallasNum”].includes(f.patternId)
+),
+applyTo: [“ghostIP135”, “ghostIP172”, “ghostIP144”, “orgUUID1”, “orgUUID2”,
+“relayEmail”, “killerz”, “dallasNum”],
+elevateTo: “CRITICAL”,
+reason: “Direct match to a previously documented indicator of compromise. Not inferred — confirmed by prior investigation record.”
+}
+];
+
+function applyElevation(findings) {
+// Clone findings with original severity preserved
+const elevated = findings.map(f => ({
+…f,
+originalSev: f.sev,
+elevatedBy: []
+}));
+
+for (const rule of ELEVATION_RULES) {
+if (rule.trigger(elevated)) {
+for (const finding of elevated) {
+if (rule.applyTo.includes(finding.patternId)) {
+// Only elevate — never downgrade
+if (SEV_ORDER[rule.elevateTo] < SEV_ORDER[finding.sev]) {
+finding.sev = rule.elevateTo;
+}
+finding.elevatedBy.push({
+rule: rule.id,
+description: rule.description,
+reason: rule.reason,
+elevatedTo: rule.elevateTo
 });
-var combos=[];
-PAT.forEach(function(p){if(!ids[p.id]||!p.co||!p.co.length)return;var mt=p.co.filter(function(c){return ids[c]});if(mt.length>0)combos.push({r:p.id+” + “+mt.join(”,”)+” = CRITICAL compound”})});
-findings.sort(function(a,b){var o={C:0,H:1,M:2,L:3};return(o[a.s]||9)-(o[b.s]||9)});
-var who=[];var rx3=/(?:App ID|bundleID|procName):\s*(\S+)/gi;var ar;while((ar=rx3.exec(text))!==null&&who.length<20){if(who.indexOf(ar[1])===-1)who.push(ar[1])}
-return {findings:findings,combos:combos,meta:{lines:text.split(”\n”).length,who:who}}
+}
+}
+}
 }
 
-document.getElementById(“fileIn”).addEventListener(“change”,function(){
-var file=this.files[0];if(!file)return;var reader=new FileReader();
-reader.onload=function(e){var a=analyze(e.target.result);DB.files.push({n:file.name,sz:file.size,t:new Date().toISOString(),a:a});UI.afile=DB.files.length-1;addLog(“Load:”+file.name);save();render();toast(“Loaded: “+file.name)};
-reader.readAsText(file);this.value=””});
+return elevated;
+}
 
-document.getElementById(“impIn”).addEventListener(“change”,function(){
-var file=this.files[0];if(!file)return;var reader=new FileReader();
-reader.onload=function(e){try{var d=JSON.parse(e.target.result);if(d.files)DB.files=DB.files.concat(d.files);if(d.issues)DB.issues=DB.issues.concat(d.issues);if(d.log)DB.log=DB.log.concat(d.log);save();render();toast(“Loaded “+(d.files?d.files.length:0)+” files, “+(d.issues?d.issues.length:0)+” issues”)}catch(x){toast(“Import failed”)}};
-reader.readAsText(file);this.value=””});
+function getActiveElevationRules(findings) {
+return ELEVATION_RULES.filter(rule => rule.trigger(findings));
+}
 
-function exportDB(){var j=JSON.stringify(DB,null,2);var b=new Blob([j],{type:“application/json”});var u=URL.createObjectURL(b);var a=document.createElement(“a”);a.href=u;a.download=“tf-”+new Date().toISOString().slice(0,10)+”.json”;a.click();URL.revokeObjectURL(u);toast(“Saved to Downloads”)}
+export default function TruthFinderV5() {
+const [files, setFiles] = useState([]);
+const [findings, setFindings] = useState([]);
+const [ips, setIps] = useState({});
+const [emails, setEmails] = useState({});
+const [tab, setTab] = useState(“dashboard”);
+const [expanded, setExpanded] = useState({});
+const [search, setSearch] = useState(””);
+const [sevFilter, setSevFilter] = useState(””);
+const [busy, setBusy] = useState(false);
+const [progress, setProgress] = useState(null);
+const inputRef = useRef(null);
+const loadRef = useRef(null);
 
-document.getElementById(“btns”).innerHTML=’<button id="bFile">+File</button><button id="bIssue">+Issue</button><button id="bSave">Save</button><button id="bLoad">Load</button>’;
-document.getElementById(“bFile”).addEventListener(“click”,function(){document.getElementById(“fileIn”).click()});
-document.getElementById(“bIssue”).addEventListener(“click”,function(){UI.editIdx=null;UI.showForm=true;UI.view=“iss”;render()});
-document.getElementById(“bSave”).addEventListener(“click”,function(){exportDB()});
-document.getElementById(“bLoad”).addEventListener(“click”,function(){document.getElementById(“impIn”).click()});
+const log = useCallback((msg) => {
+setProgress((p) => ({ …(p || {}), msg }));
+}, []);
 
-function saveIssue(){
-var g=function(id){return document.getElementById(id).value};var t=g(“ft”);if(!t.trim())return;
-var o={t:t,w:g(“fw”),y:g(“fy”),s:g(“fs”),st:g(“fst”),c:g(“fc”),at:g(“fa”),bl:g(“fb”),sl:g(“fsl”),no:g(“fn”),cr:UI.editIdx!==null?DB.issues[UI.editIdx].cr:new Date().toISOString(),up:new Date().toISOString()};
-if(UI.editIdx!==null){DB.issues[UI.editIdx]=o;addLog(“Edit:”+t)}else{DB.issues.unshift(o);addLog(“New:”+t)}
-UI.showForm=false;UI.editIdx=null;save();render();toast(“Saved”)}
+const ingestFile = useCallback(async (file) => {
+setBusy(true);
+setProgress({ name: file.name, pct: 0, msg: `Opening ${file.name}` });
 
-function render(){
-var h=””;var aF=[];var aC=[];
-DB.files.forEach(function(f,fi){(f.a&&f.a.findings||[]).forEach(function(fd,fdi){aF.push({fd:fd,fi:fi,fdi:fdi,fn:f.n})});(f.a&&f.a.combos||[]).forEach(function(c){aC.push({c:c,fn:f.n})})});
-var nC=aF.filter(function(x){return x.fd.s===“C”}).length;var nH=aF.filter(function(x){return x.fd.s===“H”}).length;
-var nO=DB.issues.filter(function(x){return x.st===“open”}).length;var nB=DB.issues.filter(function(x){return x.st===“blocked”}).length;
-var nA=DB.issues.filter(function(x){return x.st===“attempted”}).length;var nR=DB.issues.filter(function(x){return x.st===“resolved”}).length;
+```
+const fileRec = {
+  id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+  name: file.name,
+  size: file.size,
+  added: new Date().toISOString(),
+  lineCount: 0,
+  findingCount: 0
+};
 
-var tabs=[[“dash”,“Dashboard”],[“find”,“Findings”],[“iss”,“Issues(”+DB.issues.length+”)”],[“fil”,“Files(”+DB.files.length+”)”],[“cmb”,“Combos”],[“lg”,“Log(”+DB.log.length+”)”]];
-var th=””;tabs.forEach(function(t){th+=’<button class=”’+(UI.view===t[0]?“on”:””)+’” data-v=”’+t[0]+’”>’+t[1]+’</button>’});
-document.getElementById(“tabs”).innerHTML=th;
-document.querySelectorAll(”.tabs button”).forEach(function(b){b.addEventListener(“click”,function(){UI.view=this.getAttribute(“data-v”);render()})});
+const reader = file.stream().getReader();
+const decoder = new TextDecoder("utf-8", { fatal: false });
+let buf = "";
+let bytes = 0;
+let lineNum = 0;
+const fileFindings = new Map();
+const fileIPs = new Set();
+const fileEmails = new Set();
 
-if(UI.view===“dash”){
-h+=’<div class="pg on"><div class="row" style="gap:4px;margin-bottom:8px">’;
-[[nC,“CRIT”,”#ef4444”],[nH,“HIGH”,”#f97316”],[nO,“OPEN”,”#3b82f6”],[nB,“BLKD”,”#ef4444”],[nA,“TRIED”,”#f97316”],[nR,“DONE”,”#16a34a”]].forEach(function(s){h+=’<div class="st"><b style="color:'+s[2]+'">’+s[0]+’</b><small>’+s[1]+’</small></div>’});
-h+=’</div>’;
-if(nB>0){h+=’<div class="cd" style="border-color:#ef444444"><div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:4px">BLOCKED</div>’;DB.issues.forEach(function(i,x){if(i.st===“blocked”)h+=’<div style="font-size:11px;padding:2px 0" data-edit="'+x+'">’+esc(i.t)+’</div>’});h+=’</div>’}
-if(aC.length>0){h+=’<div class="cbo"><div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:4px">COMPOUNDS: ‘+aC.length+’</div>’;aC.slice(0,5).forEach(function(c){h+=’<div style="font-size:10px;color:#fca5a5">’+esc(c.c.r)+’</div>’});h+=’</div>’}
-if(DB.files.length>0){h+=’<div class="cd"><div style="font-size:11px;color:#888;margin-bottom:3px">FILES: ‘+DB.files.length+’</div>’;DB.files.forEach(function(f){h+=’<div style="font-size:10px;color:#aaa">’+esc(f.n)+” - “+(f.a?f.a.findings.length:0)+” findings</div>”});h+=’</div>’}
-if(!DB.files.length&&!DB.issues.length)h+=’<div style="text-align:center;padding:30px"><p style="color:#888;margin-bottom:12px">Load a file or create an issue</p><button class="ba" id="bLoad2">+Load File</button></div>’;
-h+=’</div>’}
+try {
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    bytes += value.byteLength;
+    buf += decoder.decode(value, { stream: true });
+    let nl;
+    while ((nl = buf.indexOf("\n")) !== -1) {
+      const line = buf.slice(0, nl);
+      buf = buf.slice(nl + 1);
+      lineNum++;
+      scanLine(line, lineNum, file.name, fileFindings, fileIPs, fileEmails);
+    }
+    const pct = file.size > 0 ? (bytes / file.size) * 100 : 0;
+    setProgress({ name: file.name, pct, msg: `Streaming… ${(bytes / 1048576).toFixed(1)}MB` });
+    await new Promise((r) => setTimeout(r, 0));
+  }
+  if (buf.length) {
+    lineNum++;
+    scanLine(buf, lineNum, file.name, fileFindings, fileIPs, fileEmails);
+  }
 
-if(UI.view===“find”){
-h+=’<div class="pg on">’;
-if(!aF.length)h+=’<p style="color:#888;text-align:center;padding:20px">Load a file first</p>’;
-aF.forEach(function(x,i){var k=x.fi+”-”+x.fd.id;var exp=UI.expand[k];
-h+=’<div class="cd"><div style="display:flex;gap:5px" data-exp="'+k+'">’;
-h+=’<span class="sb s'+x.fd.s+'">’+SN[x.fd.s]+’</span><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#fff">’+esc(x.fd.w)+’</div>’;
-h+=’<div style="font-size:9px;color:#888">’+esc(x.fd.c)+’ | ‘+x.fd.h+‘x | ‘+esc(x.fn)+’</div></div>’;
-h+=’<span style="color:#555">’+(exp?“▲”:“▼”)+’</span></div>’;
-if(exp){h+=’<div style="margin-top:6px">’;
-h+=’<div style="margin-bottom:3px"><span style="font-size:9px;color:#ef4444;font-weight:700">WHY:</span> <span style="font-size:11px">’+esc(x.fd.y)+’</span></div>’;
-h+=’<div style="margin-bottom:3px"><span style="font-size:9px;color:#16a34a;font-weight:700">FIX:</span> <span style="font-size:11px">’+esc(x.fd.f)+’</span></div>’;
-if(x.fd.co&&x.fd.co.length)h+=’<div style="margin-bottom:3px"><span style="font-size:9px;color:#eab308;font-weight:700">ELEVATES:</span> <span style="font-size:11px;color:#eab308">’+x.fd.co.join(”, “)+’</span></div>’;
-(x.fd.ex||[]).forEach(function(e){h+=’<div class="exc">’+esc(e)+’</div>’});
-h+=’<button class=“bsm” style=“border-color:#2563eb;color:#2563eb;margin-top:6px” data-promote=”’+x.fi+”-”+x.fdi+’”>+Issue</button></div>’}
-h+=’</div>’});
-h+=’</div>’}
+  const arr = Array.from(fileFindings.values());
+  fileRec.lineCount = lineNum;
+  fileRec.findingCount = arr.length;
 
-if(UI.view===“iss”){
-h+=’<div class="pg on">’;
-if(UI.showForm){var ei=UI.editIdx!==null?DB.issues[UI.editIdx]:null;
-h+=’<div class="cd"><div style="font-size:12px;font-weight:600;color:#fff;margin-bottom:8px">’+(ei?“Edit”:“New”)+’ Issue</div>’;
-h+=’<div class="fg"><label>Title</label><input id=“ft” value=”’+(ei?esc(ei.t):””)+’”></div>’;
-h+=’<div class="row"><div class="fg"><label>Severity</label><select id="fs">’;[“C”,“H”,“M”,“L”].forEach(function(v){h+=’<option value=”’+v+’”’+(ei&&ei.s===v?” selected”:””)+’>’+SN[v]+’</option>’});
-h+=’</select></div><div class="fg"><label>Status</label><select id="fst">’;[“open”,“investigating”,“blocked”,“attempted”,“resolved”].forEach(function(v){h+=’<option value=”’+v+’”’+(ei&&ei.st===v?” selected”:””)+’>’+v+’</option>’});
-h+=’</select></div></div>’;
-h+=’<div class="fg"><label>Category</label><select id="fc">’;[“General”,“Encryption”,“Auth”,“Kernel”,“MDM”,“Remote”,“Network”,“Hardware”,“System”,“Credentials”,“Privacy”,“Email”,“Account”,“Legal”].forEach(function(v){h+=’<option value=”’+v+’”’+(ei&&ei.c===v?” selected”:””)+’>’+v+’</option>’});h+=’</select></div>’;
-h+=’<div class="fg"><label>What</label><textarea id="fw">’+(ei?esc(ei.w):””)+’</textarea></div>’;
-h+=’<div class="fg"><label>Why</label><textarea id="fy">’+(ei?esc(ei.y):””)+’</textarea></div>’;
-h+=’<div class="fg"><label>What I tried</label><textarea id="fa">’+(ei?esc(ei.at):””)+’</textarea></div>’;
-h+=’<div class="fg"><label>Blocked by</label><textarea id="fb">’+(ei?esc(ei.bl):””)+’</textarea></div>’;
-h+=’<div class="fg"><label>Solution</label><textarea id="fsl">’+(ei?esc(ei.sl):””)+’</textarea></div>’;
-h+=’<div class="fg"><label>Notes</label><textarea id="fn">’+(ei?esc(ei.no):””)+’</textarea></div>’;
-h+=’<div class="row" style="margin-top:6px"><button class="ba" id="bSaveIssue">Save</button><button id="bCancel">Cancel</button></div></div>’;
-}else{
-h+=’<div style="display:flex;flex-wrap:wrap;margin-bottom:6px">’;[“all”,“open”,“investigating”,“blocked”,“attempted”,“resolved”].forEach(function(f){var cnt=f===“all”?DB.issues.length:DB.issues.filter(function(i){return i.st===f}).length;h+=’<span class=“chip’+(UI.filter===f?” on”:””)+’” data-filter=”’+f+’”>’+f+’(’+cnt+’)</span>’});h+=’</div>’;
-var fi=DB.issues.filter(function(i){return UI.filter===“all”||i.st===UI.filter});
-if(!fi.length)h+=’<p style="color:#555;text-align:center;padding:20px">No issues yet</p>’;
-fi.forEach(function(i){var x=DB.issues.indexOf(i);
-h+=’<div class=“cd” style=“border-color:’+(i.st===“blocked”?”#ef444444”:i.st===“resolved”?”#16a34a44”:”#333”)+’”>’;
-h+=’<div style="margin-bottom:3px"><span class="sb s'+i.s+'">’+SN[i.s]+’</span><span class="sb s'+i.st+'">’+i.st+’</span><span style="font-size:9px;color:#555"> ‘+esc(i.c||””)+’</span></div>’;
-h+=’<div style="font-size:12px;font-weight:600;color:#fff">’+esc(i.t)+’</div>’;
-if(i.w)h+=’<div style="font-size:10px;color:#aaa;margin-top:2px">’+esc(i.w.slice(0,100))+’</div>’;
-if(i.at)h+=’<div style="font-size:10px;color:#f97316;margin-top:2px">Tried: ‘+esc(i.at.slice(0,80))+’</div>’;
-if(i.bl)h+=’<div style="font-size:10px;color:#ef4444;margin-top:2px">Blocked: ‘+esc(i.bl.slice(0,80))+’</div>’;
-if(i.sl)h+=’<div style="font-size:10px;color:#16a34a;margin-top:2px">Fix: ‘+esc(i.sl.slice(0,80))+’</div>’;
-h+=’<div style="display:flex;gap:4px;margin-top:6px">’;
-h+=’<button class="bsm" style="border-color:#2563eb;color:#2563eb" data-edit="'+x+'">Edit</button>’;
-h+=’<button class="bsm" style="border-color:#ef4444;color:#ef4444" data-del="'+x+'">Del</button>’;
-if(i.st!==“resolved”)h+=’<button class="bsm" style="border-color:#16a34a;color:#16a34a" data-status="'+x+'-resolved">Resolve</button>’;
-if(i.st===“open”)h+=’<button class="bsm" style="border-color:#a855f7;color:#a855f7" data-status="'+x+'-investigating">Investigate</button>’;
-h+=’</div></div>’});
-}h+=’</div>’}
+  setFiles((prev) => [...prev, fileRec]);
+  setFindings((prev) => [...prev, ...arr]);
+  setIps((prev) => {
+    const next = { ...prev };
+    for (const ip of fileIPs) {
+      if (!next[ip]) next[ip] = { count: 0, files: new Set() };
+      next[ip] = { count: next[ip].count + 1, files: new Set([...next[ip].files, file.name]) };
+    }
+    return next;
+  });
+  setEmails((prev) => {
+    const next = { ...prev };
+    for (const em of fileEmails) {
+      if (!next[em]) next[em] = { count: 0, files: new Set() };
+      next[em] = { count: next[em].count + 1, files: new Set([...next[em].files, file.name]) };
+    }
+    return next;
+  });
+  setProgress({ name: file.name, pct: 100, msg: `✓ ${lineNum.toLocaleString()} lines · ${arr.length} findings` });
+  setTimeout(() => setProgress(null), 2000);
+} catch (err) {
+  setProgress({ name: file.name, pct: 0, msg: `✗ ${err.message}` });
+} finally {
+  setBusy(false);
+}
+```
 
-if(UI.view===“fil”){
-h+=’<div class="pg on">’;
-if(!DB.files.length)h+=’<div style="text-align:center;padding:30px"><button class="ba" id="bLoad3">+Load File</button></div>’;
-else{h+=’<div style="display:flex;flex-wrap:wrap;margin-bottom:8px">’;DB.files.forEach(function(f,i){h+=’<span class=“chip’+(UI.afile===i?” on”:””)+’” data-afile=”’+i+’”>’+esc(f.n)+’</span>’});h+=’</div>’;
-var af=DB.files[UI.afile];if(af){h+=’<div class="cd"><div style="font-size:12px;font-weight:600;color:#fff">’+esc(af.n)+’</div><div style="font-size:10px;color:#888;margin-top:2px">’+Math.round(af.sz/1024)+‘KB | ‘+(af.a?af.a.meta.lines:0)+’ lines | ‘+(af.a?af.a.findings.length:0)+’ findings</div></div>’;
-if(af.a)(af.a.findings||[]).forEach(function(f){h+=’<div style="padding:4px 0;border-bottom:1px solid #1a1a1a;font-size:11px"><span class="sb s'+f.s+'">’+SN[f.s]+’</span>’+esc(f.w)+’ <span style="color:#555">’+f.h+‘x</span></div>’})}}
-h+=’</div>’}
+}, []);
 
-if(UI.view===“cmb”){
-h+=’<div class="pg on">’;
-if(!aC.length)h+=’<div class="cd"><p style="color:#555;text-align:center">No compounds yet</p></div>’;
-aC.forEach(function(c){h+=’<div class="cbo"><div style="font-size:11px;font-weight:600;color:#ef4444">ELEVATED: CRITICAL</div><div style="font-size:10px;color:#fca5a5;margin-top:2px">’+esc(c.c.r)+’</div><div style="font-size:9px;color:#666;margin-top:2px">’+esc(c.fn)+’</div></div>’});
-h+=’</div>’}
+function scanLine(line, lineNum, fileName, fileFindings, fileIPs, fileEmails) {
+if (!line || line.length < 3) return;
 
-if(UI.view===“lg”){
-h+=’<div class="pg on">’;
-if(!DB.log.length)h+=’<p style="color:#555;text-align:center;padding:20px">No activity</p>’;
-DB.log.slice().reverse().forEach(function(l){h+=’<div style="padding:3px 0;font-size:10px;border-bottom:1px solid #111"><span style="color:#555">’+l.ts.slice(0,19).replace(“T”,” “)+’</span> ‘+esc(l.a)+’</div>’});
-h+=’</div>’}
+```
+for (const pat of PATTERNS) {
+  if (pat.rx.test(line)) {
+    const key = `${fileName}::${pat.id}`;
+    if (fileFindings.has(key)) {
+      const f = fileFindings.get(key);
+      f.count++;
+      if (f.examples.length < 3) f.examples.push({ line: lineNum, text: line.slice(0, 220) });
+    } else {
+      fileFindings.set(key, {
+        id: `${key}-${Date.now()}`,
+        patternId: pat.id,
+        file: fileName,
+        label: pat.label,
+        cat: pat.cat,
+        sev: pat.sev,
+        fact: pat.fact,
+        mechanism: pat.mechanism,
+        whyCritical: pat.whyCritical,
+        fitsScenarioWith: pat.fitsScenarioWith,
+        fix: pat.fix,
+        count: 1,
+        examples: [{ line: lineNum, text: line.slice(0, 220) }]
+      });
+    }
+  }
+}
 
-document.getElementById(“main”).innerHTML=h;
+// IPs
+const ipMatches = line.match(IP_RE);
+if (ipMatches) {
+  for (const ip of ipMatches) {
+    const parts = ip.split(".").map(Number);
+    if (parts.every((p) => p >= 0 && p <= 255) && ip !== "0.0.0.0") {
+      fileIPs.add(ip);
+    }
+  }
+}
+// Emails
+const emailMatches = line.match(EMAIL_RE);
+if (emailMatches) {
+  for (const em of emailMatches) fileEmails.add(em.toLowerCase());
+}
+```
 
-// Event delegation
-document.getElementById(“main”).addEventListener(“click”,function(e){
-var t=e.target;while(t&&t!==this){
-if(t.getAttribute(“data-exp”)){var k=t.getAttribute(“data-exp”);UI.expand[k]=!UI.expand[k];render();return}
-if(t.getAttribute(“data-promote”)){var p=t.getAttribute(“data-promote”).split(”-”);var fi=parseInt(p[0]);var fdi=parseInt(p[1]);var f=DB.files[fi].a.findings[fdi];UI.editIdx=null;UI.showForm=true;UI.view=“iss”;render();document.getElementById(“ft”).value=f.w;document.getElementById(“fw”).value=f.w;document.getElementById(“fy”).value=f.y;document.getElementById(“fs”).value=f.s;document.getElementById(“fst”).value=“investigating”;document.getElementById(“fc”).value=f.c;document.getElementById(“fsl”).value=f.f;document.getElementById(“fn”).value=“Auto:”+f.h+“x in “+DB.files[fi].n;return}
-if(t.getAttribute(“data-edit”)){var idx=parseInt(t.getAttribute(“data-edit”));UI.editIdx=idx;UI.showForm=true;UI.view=“iss”;render();return}
-if(t.getAttribute(“data-del”)){var idx2=parseInt(t.getAttribute(“data-del”));if(confirm(“Delete?”)){addLog(“Del:”+DB.issues[idx2].t);DB.issues.splice(idx2,1);save();render()}return}
-if(t.getAttribute(“data-status”)){var parts=t.getAttribute(“data-status”).split(”-”);var idx3=parseInt(parts[0]);var st=parts[1];DB.issues[idx3].st=st;DB.issues[idx3].up=new Date().toISOString();addLog(st+”:”+DB.issues[idx3].t);save();render();return}
-if(t.getAttribute(“data-filter”)){UI.filter=t.getAttribute(“data-filter”);render();return}
-if(t.getAttribute(“data-afile”)){UI.afile=parseInt(t.getAttribute(“data-afile”));render();return}
-if(t.id===“bSaveIssue”){saveIssue();return}
-if(t.id===“bCancel”){UI.showForm=false;UI.editIdx=null;render();return}
-if(t.id===“bLoad2”||t.id===“bLoad3”){document.getElementById(“fileIn”).click();return}
-t=t.parentNode}
+}
+
+const handleFiles = async (fl) => {
+for (const f of fl) await ingestFile(f);
+};
+
+const clearAll = () => {
+if (!confirm(“Clear all findings and files? This cannot be undone in this session.”)) return;
+setFiles([]);
+setFindings([]);
+setIps({});
+setEmails({});
+setExpanded({});
+};
+
+const saveSnapshot = () => {
+const snap = {
+version: 5,
+savedAt: new Date().toISOString(),
+files,
+findings,
+ips: Object.fromEntries(Object.entries(ips).map(([k, v]) => [k, { count: v.count, files: Array.from(v.files) }])),
+emails: Object.fromEntries(Object.entries(emails).map(([k, v]) => [k, { count: v.count, files: Array.from(v.files) }]))
+};
+const blob = new Blob([JSON.stringify(snap, null, 2)], { type: “application/json” });
+const url = URL.createObjectURL(blob);
+const a = document.createElement(“a”);
+a.href = url;
+a.download = `truthfinder-v5-${new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)}.json`;
+a.click();
+URL.revokeObjectURL(url);
+};
+
+const restoreSnapshot = async (file) => {
+try {
+const snap = JSON.parse(await file.text());
+setFiles(snap.files || []);
+setFindings(snap.findings || []);
+setIps(Object.fromEntries(Object.entries(snap.ips || {}).map(([k, v]) => [k, { count: v.count, files: new Set(v.files) }])));
+setEmails(Object.fromEntries(Object.entries(snap.emails || {}).map(([k, v]) => [k, { count: v.count, files: new Set(v.files) }])));
+} catch (err) {
+alert(`Restore failed: ${err.message}`);
+}
+};
+
+// Counts — computed from ELEVATED findings
+const elevatedFindings = applyElevation(findings);
+const activeRules = getActiveElevationRules(elevatedFindings);
+const sevCounts = elevatedFindings.reduce((acc, f) => { acc[f.sev] = (acc[f.sev] || 0) + 1; return acc; }, {});
+
+// Scenario-fit matching: for each finding, find other findings in DB with pattern IDs in fitsScenarioWith
+const getScenarioMatches = (finding) => {
+if (!finding.fitsScenarioWith || finding.fitsScenarioWith.length === 0) return [];
+return elevatedFindings.filter((f) => finding.fitsScenarioWith.includes(f.patternId) && f.id !== finding.id);
+};
+
+// Filtered findings (use elevated)
+const filteredFindings = elevatedFindings
+.filter((f) => !sevFilter || f.sev === sevFilter)
+.filter((f) => {
+if (!search) return true;
+const s = search.toLowerCase();
+return f.label.toLowerCase().includes(s) || f.file.toLowerCase().includes(s) || f.cat.toLowerCase().includes(s) || f.fact.toLowerCase().includes(s);
 })
+.sort((a, b) => SEV_ORDER[a.sev] - SEV_ORDER[b.sev] || b.count - a.count);
+
+// Styles
+const S = {
+page: { minHeight: “100vh”, background: “#0a0a0a”, color: “#e5e5e5”, fontFamily: “-apple-system, system-ui, sans-serif”, fontSize: 14, paddingBottom: 40 },
+header: { padding: “12px 16px”, borderBottom: “1px solid #222”, display: “flex”, justifyContent: “space-between”, alignItems: “center”, flexWrap: “wrap”, gap: 8, position: “sticky”, top: 0, background: “#0a0a0a”, zIndex: 10 },
+title: { fontSize: 16, fontWeight: 600 },
+sub: { color: “#4a9eff”, fontSize: 10, letterSpacing: 1, textTransform: “uppercase” },
+btns: { display: “flex”, gap: 6, flexWrap: “wrap” },
+btn: { background: “#1a1a1a”, color: “#e5e5e5”, border: “1px solid #2a2a2a”, padding: “6px 12px”, borderRadius: 4, fontSize: 12, cursor: “pointer” },
+btnDanger: { background: “#1a1a1a”, color: “#fca5a5”, border: “1px solid #7f1d1d”, padding: “6px 12px”, borderRadius: 4, fontSize: 12, cursor: “pointer” },
+tabs: { display: “flex”, borderBottom: “1px solid #222”, overflowX: “auto” },
+tab: (active) => ({ background: “transparent”, color: active ? “#4a9eff” : “#aaa”, border: “none”, borderBottom: active ? “2px solid #4a9eff” : “2px solid transparent”, padding: “10px 16px”, fontSize: 13, cursor: “pointer”, whiteSpace: “nowrap” }),
+body: { padding: 16 },
+kpis: { display: “grid”, gridTemplateColumns: “repeat(auto-fit,minmax(90px,1fr))”, gap: 8, marginBottom: 16 },
+kpi: { background: “#111”, border: “1px solid #222”, borderRadius: 6, padding: “12px 8px”, textAlign: “center” },
+kpiN: (c) => ({ fontSize: 22, fontWeight: 700, color: c }),
+kpiL: { fontSize: 10, color: “#888”, textTransform: “uppercase”, letterSpacing: 0.5, marginTop: 2 },
+card: (sev) => ({ background: “#111”, border: `1px solid ${SEV_COLORS[sev]?.border || "#222"}`, borderLeft: `3px solid ${SEV_COLORS[sev]?.fg || "#888"}`, borderRadius: 6, padding: 12, marginBottom: 8 }),
+cardHead: { display: “flex”, justifyContent: “space-between”, alignItems: “flex-start”, gap: 8, cursor: “pointer” },
+cardTitle: { fontWeight: 600, fontSize: 13 },
+pill: (sev) => ({ display: “inline-block”, padding: “2px 7px”, borderRadius: 3, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, background: SEV_COLORS[sev]?.bg, color: SEV_COLORS[sev]?.fg, whiteSpace: “nowrap” }),
+meta: { color: “#888”, fontSize: 11, marginTop: 4 },
+section: { marginTop: 10 },
+sectionLabel: { fontSize: 10, color: “#888”, letterSpacing: 0.5, textTransform: “uppercase”, fontWeight: 600, marginBottom: 4 },
+sectionText: { fontSize: 12.5, color: “#d5d5d5”, lineHeight: 1.55 },
+mechLabel: { color: “#fdba74” },
+whyLabel: { color: “#fca5a5” },
+fitLabel: { color: “#93c5fd” },
+fixLabel: { color: “#86efac” },
+ctxBox: { marginTop: 8, background: “#0a0a0a”, border: “1px solid #222”, borderRadius: 4, padding: 8, fontFamily: “SF Mono, Menlo, monospace”, fontSize: 10.5, color: “#aaa”, wordBreak: “break-all”, whiteSpace: “pre-wrap” },
+input: { background: “#111”, border: “1px solid #222”, color: “#e5e5e5”, padding: “7px 10px”, borderRadius: 4, fontSize: 12, fontFamily: “inherit” },
+dropZone: { border: “2px dashed #2a2a2a”, borderRadius: 10, padding: 30, textAlign: “center”, marginBottom: 16, background: “#0c0c0c” },
+progress: { background: “#111”, border: “1px solid #222”, borderRadius: 6, padding: 10, marginBottom: 16 },
+progressBar: { height: 4, background: “#222”, borderRadius: 2, overflow: “hidden”, marginTop: 6 },
+progressFill: (pct) => ({ height: “100%”, background: “#4a9eff”, width: `${pct}%`, transition: “width .2s” }),
+chip: { display: “inline-block”, background: “#1a1a1a”, border: “1px solid #2a2a2a”, padding: “2px 8px”, borderRadius: 10, fontSize: 10.5, marginRight: 4, marginBottom: 4, color: “#bbb” },
+empty: { textAlign: “center”, color: “#666”, padding: 40, background: “#0d0d0d”, border: “1px dashed #222”, borderRadius: 6 }
+};
+
+return (
+<div style={S.page}>
+<div style={S.header}>
+<div>
+<div style={S.title}>Truth Finder</div>
+<div style={S.sub}>Forensic Analyzer v5 · Interpretation Layer</div>
+</div>
+<div style={S.btns}>
+<button style={S.btn} onClick={() => inputRef.current?.click()} disabled={busy}>+ File</button>
+<button style={S.btn} onClick={saveSnapshot} disabled={findings.length === 0}>Save</button>
+<button style={S.btn} onClick={() => loadRef.current?.click()}>Load</button>
+<button style={S.btnDanger} onClick={clearAll} disabled={findings.length === 0 && files.length === 0}>Clear</button>
+</div>
+</div>
+
+```
+  <div style={S.tabs}>
+    {["dashboard", "findings", "files", "iocs"].map((t) => (
+      <button key={t} style={S.tab(tab === t)} onClick={() => setTab(t)}>
+        {t === "dashboard" ? "Dashboard" : t === "findings" ? `Findings (${findings.length})` : t === "files" ? `Files (${files.length})` : `IOCs (${Object.keys(ips).length + Object.keys(emails).length})`}
+      </button>
+    ))}
+  </div>
+
+  <div style={S.body}>
+    {progress && (
+      <div style={S.progress}>
+        <div style={{ fontSize: 12, color: "#aaa", display: "flex", justifyContent: "space-between" }}>
+          <span>{progress.name}</span>
+          <span>{progress.pct.toFixed(1)}%</span>
+        </div>
+        <div style={S.progressBar}><div style={S.progressFill(progress.pct)} /></div>
+        <div style={{ fontSize: 11, color: "#888", marginTop: 4 }}>{progress.msg}</div>
+      </div>
+    )}
+
+    {tab === "dashboard" && (
+      <>
+        {sevCounts.MAYDAY > 0 && (
+          <div style={{
+            background: "linear-gradient(135deg, #5a0f0f, #7f1d1d)",
+            border: "2px solid #dc2626",
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 16,
+            animation: "pulse 2s infinite"
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#fecaca", marginBottom: 6 }}>⚠ MAYDAY · COMPOUND THREAT DETECTED</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#fff", marginBottom: 8 }}>
+              {sevCounts.MAYDAY} finding{sevCounts.MAYDAY > 1 ? "s" : ""} elevated to MAYDAY by compound evidence
+            </div>
+            <div style={{ fontSize: 12, color: "#fecaca", lineHeight: 1.5 }}>
+              Individual findings have been auto-elevated because they appear together in patterns that describe active, persistent unauthorized state — not isolated anomalies. See each elevated finding for the specific rule that triggered.
+            </div>
+            {activeRules.filter(r => r.elevateTo === "MAYDAY").map(r => (
+              <div key={r.id} style={{
+                marginTop: 10, padding: 8,
+                background: "rgba(0,0,0,0.3)", borderRadius: 4,
+                fontSize: 11.5, color: "#fecaca", lineHeight: 1.5
+              }}>
+                <strong style={{ color: "#fff" }}>{r.description}:</strong> {r.reason}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div style={S.kpis}>
+          {sevCounts.MAYDAY > 0 && (
+            <div style={{ ...S.kpi, border: "2px solid #dc2626", background: "#3a0a0a" }}>
+              <div style={S.kpiN("#fecaca")}>{sevCounts.MAYDAY}</div>
+              <div style={{ ...S.kpiL, color: "#fecaca", fontWeight: 700 }}>MAYDAY</div>
+            </div>
+          )}
+          <div style={S.kpi}><div style={S.kpiN("#ef4444")}>{sevCounts.CRITICAL || 0}</div><div style={S.kpiL}>Critical</div></div>
+          <div style={S.kpi}><div style={S.kpiN("#f97316")}>{sevCounts.HIGH || 0}</div><div style={S.kpiL}>High</div></div>
+          <div style={S.kpi}><div style={S.kpiN("#eab308")}>{sevCounts.MEDIUM || 0}</div><div style={S.kpiL}>Medium</div></div>
+          <div style={S.kpi}><div style={S.kpiN("#4a9eff")}>{sevCounts.LOW || 0}</div><div style={S.kpiL}>Low</div></div>
+          <div style={S.kpi}><div style={S.kpiN("#e5e5e5")}>{files.length}</div><div style={S.kpiL}>Files</div></div>
+          <div style={S.kpi}><div style={S.kpiN("#e5e5e5")}>{Object.keys(ips).length}</div><div style={S.kpiL}>Unique IPs</div></div>
+        </div>
+
+        {findings.length === 0 && (
+          <div style={S.dropZone}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+            <div style={{ color: "#888", marginBottom: 12 }}>Load a sysdiagnose file, log, CSV, or any text evidence</div>
+            <button style={{ ...S.btn, background: "#1d4ed8", border: "1px solid #1d4ed8", color: "white", padding: "10px 20px" }} onClick={() => inputRef.current?.click()}>+ Load File</button>
+          </div>
+        )}
+
+        {elevatedFindings.filter((f) => f.sev === "MAYDAY").slice(0, 5).map((f) => (
+          <FindingCard key={f.id} f={f} S={S} expanded={expanded} setExpanded={setExpanded} getScenarioMatches={getScenarioMatches} />
+        ))}
+        {elevatedFindings.filter((f) => f.sev === "CRITICAL").slice(0, 5).map((f) => (
+          <FindingCard key={f.id} f={f} S={S} expanded={expanded} setExpanded={setExpanded} getScenarioMatches={getScenarioMatches} />
+        ))}
+        {(elevatedFindings.filter((f) => f.sev === "MAYDAY" || f.sev === "CRITICAL").length > 10) && (
+          <div style={{ textAlign: "center", color: "#888", fontSize: 12, marginTop: 8 }}>
+            See Findings tab for all {elevatedFindings.filter((f) => f.sev === "MAYDAY" || f.sev === "CRITICAL").length} top-severity findings
+          </div>
+        )}
+      </>
+    )}
+
+    {tab === "findings" && (
+      <>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+          <input style={{ ...S.input, flex: 1, minWidth: 140 }} placeholder="Search findings…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <select style={S.input} value={sevFilter} onChange={(e) => setSevFilter(e.target.value)}>
+            <option value="">All severities</option>
+            <option value="MAYDAY">MAYDAY</option>
+            <option value="CRITICAL">Critical</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+        </div>
+        {filteredFindings.length === 0 ? (
+          <div style={S.empty}>No findings match.</div>
+        ) : (
+          filteredFindings.map((f) => (
+            <FindingCard key={f.id} f={f} S={S} expanded={expanded} setExpanded={setExpanded} getScenarioMatches={getScenarioMatches} />
+          ))
+        )}
+      </>
+    )}
+
+    {tab === "files" && (
+      <>
+        {files.length === 0 ? (
+          <div style={S.empty}>No files loaded.</div>
+        ) : (
+          files.map((f) => (
+            <div key={f.id} style={{ ...S.card("LOW"), borderLeft: "3px solid #4a9eff" }}>
+              <div style={{ fontWeight: 600 }}>{f.name}</div>
+              <div style={S.meta}>
+                {(f.size / 1048576).toFixed(2)} MB · {f.lineCount.toLocaleString()} lines · {f.findingCount} findings · {f.added.slice(0, 19).replace("T", " ")}
+              </div>
+            </div>
+          ))
+        )}
+      </>
+    )}
+
+    {tab === "iocs" && (
+      <>
+        <div style={{ ...S.sectionLabel, marginBottom: 8 }}>IP Addresses ({Object.keys(ips).length})</div>
+        {Object.keys(ips).length === 0 ? (
+          <div style={S.empty}>No IPs extracted yet.</div>
+        ) : (
+          Object.entries(ips)
+            .sort((a, b) => b[1].count - a[1].count)
+            .slice(0, 50)
+            .map(([ip, v]) => (
+              <div key={ip} style={{ ...S.card("LOW"), borderLeft: "3px solid #4a9eff" }}>
+                <div style={{ fontFamily: "SF Mono, Menlo, monospace", fontWeight: 600 }}>{ip}</div>
+                <div style={S.meta}>seen in: {Array.from(v.files).join(", ")}</div>
+              </div>
+            ))
+        )}
+        <div style={{ ...S.sectionLabel, marginTop: 20, marginBottom: 8 }}>Emails ({Object.keys(emails).length})</div>
+        {Object.keys(emails).length === 0 ? (
+          <div style={S.empty}>No emails extracted yet.</div>
+        ) : (
+          Object.entries(emails)
+            .slice(0, 50)
+            .map(([em, v]) => (
+              <div key={em} style={{ ...S.card("LOW"), borderLeft: "3px solid #4a9eff" }}>
+                <div style={{ fontFamily: "SF Mono, Menlo, monospace", fontWeight: 600, wordBreak: "break-all" }}>{em}</div>
+                <div style={S.meta}>seen in: {Array.from(v.files).join(", ")}</div>
+              </div>
+            ))
+        )}
+      </>
+    )}
+  </div>
+
+  <input ref={inputRef} type="file" multiple style={{ display: "none" }} onChange={(e) => handleFiles(Array.from(e.target.files))} />
+  <input ref={loadRef} type="file" accept=".json" style={{ display: "none" }} onChange={(e) => e.target.files[0] && restoreSnapshot(e.target.files[0])} />
+</div>
+```
+
+);
 }
-load();render();
-</script></body></html>
+
+function FindingCard({ f, S, expanded, setExpanded, getScenarioMatches }) {
+const open = expanded[f.id];
+const matches = open ? getScenarioMatches(f) : [];
+const wasElevated = f.originalSev && f.originalSev !== f.sev;
+return (
+<div style={S.card(f.sev)}>
+<div style={S.cardHead} onClick={() => setExpanded((p) => ({ …p, [f.id]: !p[f.id] }))}>
+<div style={{ flex: 1 }}>
+<div style={S.cardTitle}>{f.label}</div>
+<div style={S.meta}>
+{f.cat} · {f.count}× · {f.file}
+{wasElevated && (
+<span style={{ marginLeft: 6, color: “#fca5a5”, fontWeight: 600 }}>
+⬆ elevated from {f.originalSev}
+</span>
+)}
+</div>
+</div>
+<div style={{ display: “flex”, alignItems: “center”, gap: 6 }}>
+<span style={S.pill(f.sev)}>{f.sev}</span>
+<span style={{ color: “#888”, fontSize: 14 }}>{open ? “▴” : “▾”}</span>
+</div>
+</div>
+
+```
+  {open && (
+    <>
+      {wasElevated && f.elevatedBy && f.elevatedBy.length > 0 && (
+        <div style={{
+          marginTop: 10,
+          padding: 10,
+          background: f.sev === "MAYDAY" ? "rgba(220,38,38,0.15)" : "rgba(239,68,68,0.1)",
+          border: `1px solid ${f.sev === "MAYDAY" ? "#dc2626" : "#7f1d1d"}`,
+          borderRadius: 4
+        }}>
+          <div style={{ fontSize: 10, letterSpacing: 0.5, textTransform: "uppercase", fontWeight: 700, color: f.sev === "MAYDAY" ? "#fecaca" : "#fca5a5", marginBottom: 6 }}>
+            Why this was elevated from {f.originalSev} to {f.sev}
+          </div>
+          {f.elevatedBy.map((e, i) => (
+            <div key={i} style={{ fontSize: 12, color: "#e5e5e5", lineHeight: 1.5, marginBottom: i < f.elevatedBy.length - 1 ? 6 : 0 }}>
+              <strong>{e.description}:</strong> {e.reason}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={S.section}>
+        <div style={S.sectionLabel}>Fact</div>
+        <div style={S.sectionText}>{f.fact}</div>
+      </div>
+      <div style={S.section}>
+        <div style={{ ...S.sectionLabel, ...S.mechLabel }}>Mechanism (how it works)</div>
+        <div style={S.sectionText}>{f.mechanism}</div>
+      </div>
+      <div style={S.section}>
+        <div style={{ ...S.sectionLabel, ...S.whyLabel }}>Why it matters on a personal device</div>
+        <div style={S.sectionText}>{f.whyCritical}</div>
+      </div>
+
+      {matches.length > 0 && (
+        <div style={S.section}>
+          <div style={{ ...S.sectionLabel, ...S.fitLabel }}>Other findings in this DB that fit the same scenario</div>
+          <div style={{ marginTop: 4 }}>
+            {matches.map((m) => (
+              <span key={m.id} style={S.chip}>
+                <span style={S.pill(m.sev)}>{m.sev}</span> {m.label} <span style={{ color: "#666" }}>({m.file})</span>
+              </span>
+            ))}
+          </div>
+          <div style={{ ...S.sectionText, marginTop: 6, color: "#aaa", fontSize: 12, fontStyle: "italic" }}>
+            When these appear together, they describe the same underlying mechanism — not separate issues.
+          </div>
+        </div>
+      )}
+
+      <div style={S.section}>
+        <div style={{ ...S.sectionLabel, ...S.fixLabel }}>What to do / document</div>
+        <div style={S.sectionText}>{f.fix}</div>
+      </div>
+
+      {f.examples.length > 0 && (
+        <div style={S.ctxBox}>
+          {f.examples.map((ex, i) => (
+            <div key={i}>line {ex.line}: {ex.text}</div>
+          ))}
+        </div>
+      )}
+    </>
+  )}
+</div>
+```
+
+);
+}
