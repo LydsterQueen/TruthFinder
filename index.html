@@ -2,705 +2,939 @@
 
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Truth Finder V5</title>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Truth Finder Access DB v4</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  html, body { margin: 0; padding: 0; background: #0a0a0a; color: #e5e5e5; font-family: -apple-system, system-ui, sans-serif; }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a; --panel: #111; --panel2: #161616;
+    --border: #222; --border2: #2a2a2a;
+    --text: #e5e5e5; --dim: #888; --dim2: #555;
+    --accent: #4a9eff; --accent2: #1d4ed8;
+    --crit: #ef4444; --high: #f97316; --med: #eab308; --low: #4a9eff; --ok: #22c55e;
+  }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 13px; line-height: 1.5;
+    min-height: 100vh; overflow-x: hidden;
+  }
+  .ribbon {
+    background: #0d0d0d; border-bottom: 1px solid var(--border);
+    padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 50; gap: 8px;
+  }
+  .ribbon .brand { display: flex; align-items: center; gap: 10px; }
+  .ribbon .brand .logo {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: linear-gradient(135deg, #1d4ed8, #4a9eff);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: white;
+  }
+  .ribbon .brand .title { font-size: 14px; font-weight: 600; }
+  .ribbon .brand .sub { font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+  .ribbon .tools { display: flex; gap: 6px; flex-wrap: wrap; }
+
+button {
+background: var(–panel); color: var(–text); border: 1px solid var(–border2);
+padding: 6px 12px; border-radius: 4px; cursor: pointer;
+font-family: inherit; font-size: 12px; white-space: nowrap;
+}
+button:hover { background: var(–panel2); border-color: #3a3a3a; }
+button.primary { background: var(–accent2); border-color: var(–accent2); color: white; }
+button.primary:hover { background: var(–accent); }
+button.pdf { background: #14532d; border-color: #166534; color: #bbf7d0; }
+button.pdf:hover { background: #166534; }
+button.sm { padding: 4px 8px; font-size: 11px; }
+
+.workspace { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 46px); }
+.nav-pane { background: #0d0d0d; border-right: 1px solid var(–border); padding: 8px 0; overflow-y: auto; }
+.nav-group { margin-bottom: 4px; }
+.nav-header {
+padding: 6px 12px; font-size: 10px; text-transform: uppercase;
+letter-spacing: 1px; color: var(–dim2); font-weight: 600;
+background: #080808; border-top: 1px solid var(–border);
+border-bottom: 1px solid var(–border);
+display: flex; justify-content: space-between; align-items: center;
+}
+.nav-item {
+padding: 7px 12px 7px 24px; cursor: pointer; font-size: 12px;
+display: flex; justify-content: space-between; align-items: center;
+border-left: 2px solid transparent;
+}
+.nav-item:hover { background: #141414; }
+.nav-item.active { background: #141f33; border-left-color: var(–accent); color: var(–accent); }
+.nav-item .count { color: var(–dim); font-size: 10px; }
+.nav-item .icon { margin-right: 6px; font-size: 11px; opacity: 0.7; }
+
+.main-panel { overflow-x: auto; }
+.view-header {
+padding: 12px 16px; border-bottom: 1px solid var(–border);
+background: var(–panel);
+display: flex; justify-content: space-between; align-items: center; gap: 12px;
+flex-wrap: wrap;
+}
+.view-title { font-size: 15px; font-weight: 600; }
+.view-title .type { font-size: 10px; color: var(–dim); text-transform: uppercase; letter-spacing: 1px; margin-left: 8px; }
+.view-body { padding: 16px; padding-bottom: 50px; }
+
+table.datasheet { width: 100%; border-collapse: collapse; font-size: 12px; background: var(–panel); }
+table.datasheet th {
+background: #1a1a1a; padding: 8px 10px; text-align: left;
+border-right: 1px solid var(–border2); border-bottom: 1px solid var(–border2);
+font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+color: var(–dim); position: sticky; top: 0; z-index: 1;
+}
+table.datasheet td {
+padding: 6px 10px; border-right: 1px solid var(–border);
+border-bottom: 1px solid var(–border); vertical-align: top;
+max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+table.datasheet tr:hover td { background: #141414; }
+table.datasheet td.ctx { font-family: “SF Mono”, Menlo, monospace; font-size: 11px; color: var(–dim); }
+.sev-pill { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.sev-pill.crit { background: #451a1a; color: #fca5a5; }
+.sev-pill.high { background: #451f0a; color: #fdba74; }
+.sev-pill.med  { background: #3f2e0a; color: #fde047; }
+.sev-pill.low  { background: #0f2540; color: #93c5fd; }
+
+.form-card { background: var(–panel); border: 1px solid var(–border); border-radius: 6px; padding: 16px; max-width: 600px; }
+.form-row { display: flex; gap: 12px; margin-bottom: 12px; }
+.form-field { flex: 1; }
+.form-field label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(–dim); margin-bottom: 4px; }
+.form-field input, .form-field select, .form-field textarea {
+width: 100%; background: var(–bg); border: 1px solid var(–border2);
+color: var(–text); padding: 7px 10px; border-radius: 4px;
+font-family: inherit; font-size: 13px;
+}
+.form-field textarea { min-height: 70px; resize: vertical; }
+
+.report { background: var(–panel); border: 1px solid var(–border); border-radius: 6px; padding: 20px; margin-bottom: 16px; }
+.report h2 { font-size: 16px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(–border2); color: var(–accent); }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 16px; }
+.kpi { background: var(–bg); border: 1px solid var(–border); border-radius: 6px; padding: 12px; text-align: center; }
+.kpi .n { font-size: 22px; font-weight: 700; }
+.kpi .l { font-size: 10px; color: var(–dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+.chart-wrap { background: var(–panel); border: 1px solid var(–border); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+.chart-title { font-size: 12px; color: var(–dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; justify-content: space-between; }
+canvas.trend { width: 100%; height: 200px; display: block; }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; font-size: 11px; }
+.legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+
+.query-grid { background: var(–panel); border: 1px solid var(–border); border-radius: 6px; overflow: hidden; }
+.query-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; border-bottom: 1px solid var(–border); }
+.query-row:last-child { border-bottom: none; }
+.query-row.header { background: #1a1a1a; font-size: 10px; text-transform: uppercase; color: var(–dim); letter-spacing: 0.5px; }
+.query-cell { padding: 8px 10px; border-right: 1px solid var(–border); }
+.query-cell:last-child { border-right: none; }
+.query-cell select, .query-cell input {
+width: 100%; background: var(–bg); border: 1px solid var(–border2);
+color: var(–text); padding: 4px 6px; border-radius: 3px; font-size: 11px;
+}
+
+.drop-zone { border: 2px dashed var(–border2); border-radius: 10px; padding: 30px 20px; text-align: center; margin-bottom: 16px; background: #0c0c0c; transition: all 0.2s; }
+.drop-zone.drag { border-color: var(–accent); background: #0f1a2e; }
+
+.progress { display: none; margin-bottom: 16px; padding: 12px; background: var(–panel); border: 1px solid var(–border); border-radius: 6px; }
+.progress.active { display: block; }
+.progress-bar { height: 6px; background: #222; border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.progress-fill { height: 100%; background: var(–accent); width: 0%; transition: width 0.2s; }
+.progress-text { font-size: 11px; color: var(–dim); display: flex; justify-content: space-between; }
+
+.status-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0a; border-top: 1px solid var(–border); padding: 6px 16px; font-size: 11px; color: var(–dim); display: flex; justify-content: space-between; align-items: center; z-index: 40; }
+input[type=“file”] { display: none; }
+.empty { text-align: center; color: var(–dim); padding: 40px 20px; background: var(–panel); border: 1px dashed var(–border2); border-radius: 6px; }
+
+@media (max-width: 768px) {
+.workspace { grid-template-columns: 1fr; }
+.nav-pane { position: fixed; top: 46px; left: -260px; width: 240px; height: calc(100vh - 46px); z-index: 45; transition: left 0.2s; border-right: 1px solid var(–border); }
+.nav-pane.open { left: 0; }
+.nav-toggle { display: inline-block !important; }
+.ribbon .brand .title { font-size: 12px; }
+.ribbon .brand .sub { display: none; }
+}
+.nav-toggle { display: none; }
+
+/* ==== PDF RENDER STYLES ==== */
+.pdf-root { background: #000; color: #fff; padding: 40px; font-family: system-ui, -apple-system, sans-serif; width: 760px; }
+.pdf-root h1 { color: #4a9eff; font-size: 24px; margin-bottom: 6px; }
+.pdf-root h2 { color: #4a9eff; font-size: 16px; margin: 20px 0 10px; }
+.pdf-root h3 { color: #93c5fd; font-size: 13px; margin-top: 12px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pdf-root .meta { color: #888; font-size: 11px; margin-bottom: 4px; }
+.pdf-root hr { border: 0; border-top: 1px solid #333; margin: 20px 0; }
+.pdf-card { page-break-inside: avoid; margin-bottom: 18px; padding: 16px; border: 1px solid #333; border-radius: 8px; }
+.pdf-sev { font-weight: 700; font-size: 11px; letter-spacing: 1px; display: inline-block; padding: 2px 8px; border-radius: 3px; }
+.pdf-sev.crit { background: #451a1a; color: #fca5a5; }
+.pdf-sev.high { background: #451f0a; color: #fdba74; }
+.pdf-sev.med  { background: #3f2e0a; color: #fde047; }
+.pdf-sev.low  { background: #0f2540; color: #93c5fd; }
+.pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+.pdf-table th, .pdf-table td { padding: 6px 8px; border: 1px solid #333; text-align: left; vertical-align: top; word-wrap: break-word; }
+.pdf-table th { background: #1a1a1a; color: #aaa; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+.pdf-kpi-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.pdf-kpi { flex: 1 1 110px; padding: 12px; border: 1px solid #333; border-radius: 6px; text-align: center; min-width: 110px; }
+.pdf-kpi .n { font-size: 22px; font-weight: 700; }
+.pdf-kpi .l { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+.pdf-explain { background: #0f1a2e; border-left: 3px solid #4a9eff; padding: 10px 12px; margin: 10px 0; font-size: 12px; }
+.pdf-explain .label { color: #93c5fd; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
 </style>
+
 </head>
 <body>
-<div id="root"></div>
 
-<script type="text/babel" data-presets="react">
-const { useState, useRef, useCallback } = React;
+<div class="ribbon">
+  <div class="brand">
+    <button class="nav-toggle sm" id="btn-nav-toggle">☰</button>
+    <div class="logo">TF</div>
+    <div>
+      <div class="title">Truth Finder</div>
+      <div class="sub">Access DB v4 · Time-Series</div>
+    </div>
+  </div>
+  <div class="tools">
+    <button id="btn-load">+ Load File</button>
+    <button id="btn-save">Save DB</button>
+    <button id="btn-restore">Restore</button>
+    <button id="btn-pdf" class="pdf">Print PDF</button>
+  </div>
+</div>
+
+<div class="workspace">
+  <aside class="nav-pane" id="nav-pane">
+    <div class="nav-group">
+      <div class="nav-header">Tables <span class="count" id="nc-tables">6</span></div>
+      <div class="nav-item active" data-view="table-findings"><span><span class="icon">▦</span>Findings</span><span class="count" id="nc-findings">0</span></div>
+      <div class="nav-item" data-view="table-sources"><span><span class="icon">▦</span>Sources</span><span class="count" id="nc-sources">0</span></div>
+      <div class="nav-item" data-view="table-timeline"><span><span class="icon">▦</span>Timeline</span><span class="count" id="nc-timeline">0</span></div>
+      <div class="nav-item" data-view="table-actors"><span><span class="icon">▦</span>Actors</span><span class="count" id="nc-actors">0</span></div>
+      <div class="nav-item" data-view="table-iocs"><span><span class="icon">▦</span>IOCs</span><span class="count" id="nc-iocs">0</span></div>
+      <div class="nav-item" data-view="table-files"><span><span class="icon">▦</span>Files</span><span class="count" id="nc-files">0</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-header">Queries</div>
+      <div class="nav-item" data-view="query-builder"><span><span class="icon">⌕</span>Query Builder</span></div>
+      <div class="nav-item" data-view="query-crit"><span><span class="icon">⌕</span>Critical Only</span></div>
+      <div class="nav-item" data-view="query-cross"><span><span class="icon">⌕</span>Cross-File Patterns</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-header">Forms</div>
+      <div class="nav-item" data-view="form-finding"><span><span class="icon">▢</span>New Finding</span></div>
+      <div class="nav-item" data-view="form-actor"><span><span class="icon">▢</span>New Actor</span></div>
+      <div class="nav-item" data-view="form-ioc"><span><span class="icon">▢</span>New IOC</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-header">Reports</div>
+      <div class="nav-item" data-view="report-dashboard"><span><span class="icon">▤</span>Dashboard</span></div>
+      <div class="nav-item" data-view="report-timeseries"><span><span class="icon">▤</span>Time-Series Trends</span></div>
+      <div class="nav-item" data-view="report-severity"><span><span class="icon">▤</span>Severity Report</span></div>
+      <div class="nav-item" data-view="report-combo"><span><span class="icon">▤</span>Cross-File Combos</span></div>
+    </div>
+  </aside>
+
+  <main class="main-panel" id="main-panel">
+    <div id="view-container"></div>
+  </main>
+</div>
+
+<div class="status-bar">
+  <span id="status-msg">Ready · Measure twice · Cut once</span>
+  <span id="status-right">0 records</span>
+</div>
+
+<input type="file" id="file-input" multiple accept="*/*">
+<input type="file" id="load-input" accept=".json">
+
+<script>
+const DB = { findings: [], sources: [], timeline: [], actors: [], iocs: [], files: [] };
 
 const PATTERNS = [
-  { id: "bypassPCS", rx: /bypassPCSEncryption/i, cat: "Encryption", sev: "CRITICAL",
-    label: "bypassPCSEncryption flag present",
-    fact: "A flag named bypassPCSEncryption is set in the CKKS state. PCS is the encryption layer that normally makes iCloud Keychain data unreadable without device keys.",
-    mechanism: "When set, normal PCS encryption is skipped for affected keychain zones. Not a default consumer setting.",
-    whyCritical: "On a personal retail device this flag should never be set. Combined with external TLK peers it describes a keychain technically readable by parties other than you.",
-    fitsScenarioWith: ["healTLK", "oanPeers", "inCircleZero", "mdm"],
-    fix: "Document the exact CKKS zone(s) where this flag appears." },
-  { id: "healTLK", rx: /heal-tlk-shares|heal_tlk/i, cat: "Encryption", sev: "CRITICAL",
-    label: "heal-tlk-shares executing",
-    fact: "heal-tlk-shares is running. TLK Shares let multiple trusted devices decrypt the same iCloud Keychain data.",
-    mechanism: "The device re-distributes Top Level Keys to the peer set on the keychain circle. If peers include external SHA256 fingerprints you did not add, those peers receive fresh key material on every execution.",
-    whyCritical: "Automatic key redistribution on every boot means key access is self-repairing.",
-    fitsScenarioWith: ["bypassPCS", "oanPeers", "inCircleZero"],
-    fix: "Settings > [Your Name] > Devices. Remove unrecognized devices before next boot." },
-  { id: "inCircleZero", rx: /inCircle"?\s*[:=]\s*0/i, cat: "Encryption", sev: "CRITICAL",
-    label: "inCircle: 0 — device excluded from own security circle",
-    fact: "Device reports inCircle = 0, meaning it is not a member of its own iCloud security circle.",
-    mechanism: "The circle is the group of devices trusted to decrypt iCloud Keychain. A value of 0 means this device has been excluded, while the circle itself still exists with other members.",
-    whyCritical: "Your device cannot decrypt its own keychain but other devices in the circle can. You are locked out of your own perimeter.",
-    fitsScenarioWith: ["bypassPCS", "healTLK", "oanPeers"],
-    fix: "Evidence-grade. Contradicts any claim of normal consumer state." },
-  { id: "oanPeers", rx: /OAnPeers"?\s*[:=]\s*[1-9]/i, cat: "Encryption", sev: "CRITICAL",
-    label: "OAnPeers — external Octagon peers present",
-    fact: "OAnPeers count is non-zero. Octagon manages which devices can read iCloud Keychain.",
-    mechanism: "Each peer is a SHA256 fingerprint of another device holding keys to your keychain. On a single-user device with no family or Android companion this should be 0.",
-    whyCritical: "Every non-zero peer is a device that can decrypt your iCloud Keychain.",
-    fitsScenarioWith: ["bypassPCS", "healTLK", "inCircleZero"],
-    fix: "Record SHA256 fingerprints exactly. Include in legal submission." },
-  { id: "ftm", rx: /FTMInternal|FactoryTestMode/i, cat: "Device State", sev: "CRITICAL",
-    label: "Factory Test Mode Internal active",
-    fact: "A process or flag referencing Factory Test Mode Internal is present.",
-    mechanism: "FTM is used during manufacturing for hardware validation. On a retail consumer device it should not be running.",
-    whyCritical: "FTM-tier access bypasses many consumer-level security controls.",
-    fitsScenarioWith: ["bypassPCS", "mdm", "remoteManagement"],
-    fix: "Document exact process name and PID. Warrants direct Apple security escalation." },
-  { id: "remoteManagement", rx: /RemoteManagement|WatchEnrollmentSubscriber/i, cat: "MDM", sev: "HIGH",
-    label: "RemoteManagement subscriber stack active",
-    fact: "iOS RemoteManagement daemons (MDM implementation) are running.",
-    mechanism: "The stack listens for commands from a configured MDM server. On a non-managed personal device the full subscriber stack should not be running.",
-    whyCritical: "Active without a user-installed MDM profile = enrollment without consent.",
-    fitsScenarioWith: ["mdm", "familyControls", "ftm"],
-    fix: "Settings > General > VPN & Device Management. If empty while these daemons run, enrollment is below the UI layer." },
-  { id: "mdm", rx: /\bMDM\b|ManagedConfiguration/i, cat: "MDM", sev: "HIGH",
-    label: "MDM / ManagedConfiguration references",
-    fact: "References to MDM or ManagedConfiguration appear in logs.",
-    mechanism: "These strings appear when the system evaluates or enforces a management profile.",
-    whyCritical: "Dozens or hundreds of references indicates active policy enforcement.",
-    fitsScenarioWith: ["remoteManagement", "familyControls"],
-    fix: "Correlate with Settings > General > VPN & Device Management." },
-  { id: "familyControls", rx: /FamilyControlsAgent/i, cat: "MDM", sev: "HIGH",
-    label: "FamilyControlsAgent running",
-    fact: "FamilyControlsAgent is the daemon behind Screen Time and parental controls.",
-    mechanism: "Enforces content restrictions, comm limits, device usage policies. Normally dormant on adult personal devices.",
-    whyCritical: "Active without Screen Time enabled = FamilyControls used as restriction vehicle without surfacing in UI.",
-    fitsScenarioWith: ["mdm", "remoteManagement", "denyPrivacy"],
-    fix: "Settings > Screen Time. If Off but daemon active, enforcement is at framework layer." },
-  { id: "denyPrivacy", rx: /denyPrivateBrowsing|denyHistoryClearing/i, cat: "MDM", sev: "HIGH",
-    label: "Safari privacy denial flags",
-    fact: "Flags denying Private Browsing or denying clearing Safari history.",
-    mechanism: "Enforcement flags from ManagedConfiguration. Originate from MDM or Screen Time / FamilyControls policy.",
-    whyCritical: "On a personal unmanaged device nothing should be denying these controls.",
-    fitsScenarioWith: ["mdm", "familyControls", "remoteManagement"],
-    fix: "Document exactly. Proves policy enforcement on device with no declared policy." },
-  { id: "swcFail", rx: /SWCERR|SWCErrorDomain.*Code=(\d+)/i, cat: "Credentials", sev: "HIGH",
-    label: "SharedWebCredentials validation failure",
-    fact: "SWC subsystem is returning errors during credential auto-fill validation.",
-    mechanism: "SWC validates apps by fetching apple-app-site-association files. Failures log when JSON is invalid, 404 is returned, or unexpected characters appear.",
-    whyCritical: "High counts on sensitive domains like wallet.apple.com indicate interference with validation requests.",
-    fitsScenarioWith: ["retryLoop", "http404", "invalidChar", "walletDomain"],
-    fix: "Note exact domains and error codes. High counts on Apple domains are strongest evidence." },
-  { id: "invalidChar", rx: /invalid character ['"]?\u003c/i, cat: "Credentials", sev: "HIGH",
-    label: "JSON parse failure — HTML received where JSON expected",
-    fact: "Error 'invalid character < looking for beginning of value' appears.",
-    mechanism: "JSON never begins with <. HTML does. This error signifies an endpoint returning an HTML page instead of the expected JSON.",
-    whyCritical: "Log-level fingerprint of response interception or substitution.",
-    fitsScenarioWith: ["swcFail", "http404", "retryLoop", "walletDomain"],
-    fix: "Record exact domain. Repeated occurrences = persistent interception." },
-  { id: "retryLoop", rx: /Retries:\s*(\d+)|retry.*(loop|exceed|limit)/i, cat: "Credentials", sev: "HIGH",
-    label: "Retry loop — validation failing repeatedly",
-    fact: "Retry counter elevated (often 25+ or 34+) or retry loop logged.",
-    mechanism: "SWC gives up after fixed retries. High counts mean persistent failure, not network hiccup.",
-    whyCritical: "Successful validation resolves on first or second attempt.",
-    fitsScenarioWith: ["swcFail", "invalidChar", "http404"],
-    fix: "Note retry count next to affected service." },
-  { id: "http404", rx: /Code=404|HTTP.*?404|NSHTTPURLResponse.*?404/i, cat: "Network", sev: "MEDIUM",
-    label: "HTTP 404 responses to SWC requests",
-    fact: "Server responded 404 to credential validation request.",
-    mechanism: "404 on apple-app-site-association for wallet.apple.com combined with invalid-char errors and retry loops = endpoint returning HTML error page instead of JSON.",
-    whyCritical: "Apple domains rarely 404 on their own app-site-association files.",
-    fitsScenarioWith: ["swcFail", "invalidChar", "retryLoop", "walletDomain"],
-    fix: "Document which domain returned 404." },
-  { id: "walletDomain", rx: /wallet\.apple\.com/i, cat: "Credentials", sev: "MEDIUM",
-    label: "wallet.apple.com references",
-    fact: "wallet.apple.com appears in credential validation records.",
-    mechanism: "This domain governs Apple Wallet credentials. Errors here affect Wallet functionality.",
-    whyCritical: "SWC failures on this domain are the log-side mechanism of Apple Pay disruption.",
-    fitsScenarioWith: ["swcFail", "invalidChar", "http404", "retryLoop"],
-    fix: "Count separately from other domains." },
-  { id: "chinaRegion", rx: /\.cn[\/\s"'>]|apple\.com\.cn|icloud\.com\.cn/i, cat: "Region", sev: "MEDIUM",
-    label: "China-region domain associations",
-    fact: "Domains with .cn TLD or Apple's China-region endpoints appear in logs.",
-    mechanism: "Apple operates separate China infrastructure. A US device with no China account should not be contacting these endpoints.",
-    whyCritical: "Unexplained .cn associations indicate routing anomaly or cross-region credential association.",
-    fitsScenarioWith: ["swcFail"],
-    fix: "Record each .cn domain and service." },
-  { id: "domainHidden", rx: /Domain hidden/i, cat: "FileProvider", sev: "HIGH",
-    label: "FileProvider 'Domain hidden' drop reason",
-    fact: "FileProvider logged 'Domain hidden' as reason a file was not indexed.",
-    mechanism: "The entire file domain was marked invisible at the framework level, not by user action.",
-    whyCritical: "Mechanism by which files exist on device while being invisible. Not the same as deletion.",
-    fitsScenarioWith: ["mdm"],
-    fix: "List every occurrence. Each one represents at least one hidden file." },
-  { id: "cve", rx: /CVE-2026-20643/i, cat: "CVE", sev: "CRITICAL",
-    label: "CVE-2026-20643 reference",
-    fact: "Reference to CVE-2026-20643 appears.",
-    mechanism: "WebKit Same-Origin Policy bypass confirmed by Google TAG as exploited in targeted attacks.",
-    whyCritical: "Documented as exploited in the wild against targeted individuals.",
-    fitsScenarioWith: [],
-    fix: "Cross-reference with dates of anomalous Safari behavior." },
-  { id: "ghostIP135", rx: /135\.232\.92\.137/i, cat: "IOC-IP", sev: "HIGH",
-    label: "IP 135.232.92.137 — known C2 indicator",
-    fact: "Documented in Joe Sandbox analysis of m.exe across 10 malicious samples.",
-    mechanism: "Appearance in any log is a known-bad indicator — documented, not inferred.",
-    whyCritical: "Direct IOC match.",
-    fitsScenarioWith: ["ghostIP172", "ghostIP144"],
-    fix: "Record file, line, context." },
-  { id: "ghostIP172", rx: /172\.56\.47\.172/i, cat: "IOC-IP", sev: "HIGH",
-    label: "IP 172.56.47.172 — GitHub takeover session IP",
-    fact: "Documented session IP during April 6 unauthorized GitHub account takeover.",
-    mechanism: "Appearance in any log links that activity to the takeover session.",
-    whyCritical: "Same-session evidence linkage.",
-    fitsScenarioWith: ["ghostIP135", "ghostIP144"],
-    fix: "Record with timestamp context." },
-  { id: "ghostIP144", rx: /144\.1\.86\.144/i, cat: "IOC-IP", sev: "HIGH",
-    label: "IP 144.1.86.144 — no-ASN ghost IP",
-    fact: "Returns no ASN and no BGP routing in public databases despite being valid IPv4.",
-    mechanism: "A routable IP with no ASN is infrastructure outside normal registration.",
-    whyCritical: "No-ASN IPs in consumer logs are abnormal regardless of context.",
-    fitsScenarioWith: ["ghostIP135", "ghostIP172"],
-    fix: "Record with context." },
-  { id: "relayEmail", rx: /tailors-joggers-9q@icloud\.com/i, cat: "IOC-Identity", sev: "CRITICAL",
-    label: "Hide My Email relay — unauthorized org creator",
-    fact: "Relay documented as creator address of unauthorized Anthropic Platform org created March 25 at 3:28 AM.",
-    mechanism: "Hide My Email relays route to the originating Apple ID's primary inbox. The relay existing means someone used your Apple ID.",
-    whyCritical: "Direct evidentiary link between your Apple ID and the unauthorized org.",
-    fitsScenarioWith: ["orgUUID1", "orgUUID2"],
-    fix: "Legal-grade evidence. Preserve." },
-  { id: "orgUUID1", rx: /f5602fd6-520c-4dab-a1ca-414440ed9f42/i, cat: "IOC-Org", sev: "CRITICAL",
-    label: "Unauthorized Anthropic org UUID #1",
-    fact: "UUID is the unauthorized Anthropic Platform org created March 25 3:28 AM, since deleted.",
-    mechanism: "Any appearance of this UUID confirms the document's relevance.",
-    whyCritical: "Direct identifier for the documented incident.",
-    fitsScenarioWith: ["orgUUID2", "relayEmail"],
-    fix: "Preserve context." },
-  { id: "orgUUID2", rx: /284423c2-bcac-429b-8c8b-ff48ebfa1a88/i, cat: "IOC-Org", sev: "CRITICAL",
-    label: "Unauthorized Anthropic org UUID #2",
-    fact: "UUID is second unauthorized Anthropic org, deleted April 12.",
-    mechanism: "Direct identifier match.",
-    whyCritical: "Direct identifier for documented incident.",
-    fitsScenarioWith: ["orgUUID1", "relayEmail"],
-    fix: "Preserve context." },
-  { id: "duet", rx: /duetexpertd/i, cat: "Process", sev: "HIGH",
-    label: "duetexpertd activity",
-    fact: "duetexpertd is the on-device intelligence daemon for Siri Suggestions and proactive app surfacing.",
-    mechanism: "Normally quiet, minimal resource use. Documented generating CPU exceptions and pairing telemetry without paired devices.",
-    whyCritical: "Resource exceptions plus pairing telemetry without paired devices = log signature of data collection vehicle.",
-    fitsScenarioWith: ["unknownPid", "remoteManagement"],
-    fix: "Cross-reference timestamps with CPU spike events." },
-  { id: "unknownPid", rx: /UNKNOWN\s*PID/i, cat: "Process", sev: "MEDIUM",
-    label: "UNKNOWN PID entries",
-    fact: "Log entries reference PIDs the system cannot resolve to a process name.",
-    mechanism: "Normally every PID resolves. UNKNOWN PID means the process existed long enough to log but not to be in the process table.",
-    whyCritical: "Sustained presence is not normal.",
-    fitsScenarioWith: ["duet", "remoteManagement"],
-    fix: "Count and timestamp. Look for patterns." },
-  { id: "killerz", rx: /KILL3RZ/i, cat: "Device State", sev: "CRITICAL",
-    label: "Device name 'KILL3RZ'",
-    fact: "A device named KILL3RZ is referenced.",
-    mechanism: "Documented in prior investigation as unauthorized device rename artifact.",
-    whyCritical: "Direct evidentiary reference.",
-    fitsScenarioWith: [],
-    fix: "Preserve exact context." },
-  { id: "dallasNum", rx: /(\+?1)?\s*214\s*226\s*9138|2142269138/i, cat: "IOC-Phone", sev: "HIGH",
-    label: "Dallas call-forward number",
-    fact: "Documented call-forwarding anomaly target number.",
-    mechanism: "Prior investigation documented this number as destination of unauthorized call-forwarding rules that survived USSD erasure.",
-    whyCritical: "Direct IOC match.",
-    fitsScenarioWith: [],
-    fix: "Preserve with context." },
-  { id: "httpx", rx: /python-httpx\/0\.28/i, cat: "Automation", sev: "HIGH",
-    label: "python-httpx/0.28 user agent",
-    fact: "The python-httpx library version 0.28 user agent appears.",
-    mechanism: "python-httpx is a Python HTTP client. Appearance on device logs means automated script making requests from your account context.",
-    whyCritical: "Automated token regeneration tools commonly use this library. iPhone Safari does not.",
-    fitsScenarioWith: ["ghostIP135"],
-    fix: "Record request target and timestamp." }
+  { re: /bypassPCSEncryption/i, sev: 'crit', label: 'bypassPCSEncryption', cat: 'CKKS', note: 'CKKS encryption bypass active' },
+  { re: /heal-tlk-shares/i, sev: 'crit', label: 'heal-tlk-shares', cat: 'CKKS', note: 'Auto re-distributing keys' },
+  { re: /FTMInternal|FactoryTestMode/i, sev: 'crit', label: 'FTMInternal', cat: 'Device', note: 'Factory Test Mode on retail device' },
+  { re: /inCircle"?\s*[:=]\s*0/i, sev: 'crit', label: 'inCircle: 0', cat: 'iCloud', note: 'Device excluded from own security circle' },
+  { re: /realtime\.call\.incoming/i, sev: 'crit', label: 'realtime.call.incoming', cat: 'Network', note: 'SIP incoming call payload' },
+  { re: /Max-Forwards:\s*6[0-9]/i, sev: 'crit', label: 'High Max-Forwards', cat: 'Network', note: 'Deep SIP routing chain' },
+  { re: /RemoteManagement|WatchEnrollmentSubscriber/i, sev: 'high', label: 'RemoteManagement', cat: 'MDM', note: 'MDM subscriber active' },
+  { re: /ManagedConfiguration/i, sev: 'high', label: 'ManagedConfiguration', cat: 'MDM', note: 'Managed config reference' },
+  { re: /FamilyControlsAgent/i, sev: 'high', label: 'FamilyControlsAgent', cat: 'MDM', note: 'Screen Time daemon' },
+  { re: /denyPrivateBrowsing|denyHistoryClearing/i, sev: 'high', label: 'Safari privacy denial', cat: 'MDM', note: 'Browser privacy enforcement' },
+  { re: /duetexpertd/i, sev: 'high', label: 'duetexpertd', cat: 'Process', note: 'CPU resource exception source' },
+  { re: /Tycoon2FA/i, sev: 'high', label: 'Tycoon2FA', cat: 'Phishing', note: 'Known phishing kit' },
+  { re: /python-httpx\/0\.28/i, sev: 'high', label: 'python-httpx/0.28', cat: 'Automation', note: 'Automated token regen UA' },
+  { re: /135\.232\.92\.137/i, sev: 'high', label: 'IP 135.232.92.137', cat: 'IOC-IP', note: 'm.exe C2 IP' },
+  { re: /172\.56\.47\.172/i, sev: 'high', label: 'IP 172.56.47.172', cat: 'IOC-IP', note: 'GitHub takeover session IP' },
+  { re: /144\.1\.86\.144/i, sev: 'high', label: 'IP 144.1.86.144', cat: 'IOC-IP', note: 'No-ASN ghost IP' },
+  { re: /(\+?1)?\s*214\s*226\s*9138|2142269138/i, sev: 'high', label: 'Dallas forward number', cat: 'IOC-Phone', note: 'Call forwarding anomaly target' },
+  { re: /\.cn[\/\s"'>]|apple\.com\.cn|icloud\.com\.cn/i, sev: 'med', label: 'China-region domain', cat: 'Region', note: 'CN association' },
+  { re: /tailors-joggers-9q@icloud\.com/i, sev: 'crit', label: 'Hide My Email relay', cat: 'IOC-Email', note: 'Unauthorized org creator' },
+  { re: /f5602fd6-520c-4dab-a1ca-414440ed9f42/i, sev: 'crit', label: 'Unauthorized org #1', cat: 'Org', note: 'Deleted Anthropic org UUID' },
+  { re: /284423c2-bcac-429b-8c8b-ff48ebfa1a88/i, sev: 'crit', label: 'Unauthorized org #2', cat: 'Org', note: 'Deleted Anthropic org UUID' },
+  { re: /KILL3RZ/i, sev: 'crit', label: 'Device name KILL3RZ', cat: 'Device', note: 'Unauthorized rename' },
+  { re: /SWC.*(fail|error|invalid)/i, sev: 'med', label: 'SWC validation failure', cat: 'Network', note: 'Associated Domains failed' },
+  { re: /retry.*(loop|exceed|limit)/i, sev: 'med', label: 'Retry loop', cat: 'Network', note: 'Retry pattern' },
+  { re: /Domain hidden/i, sev: 'high', label: 'Domain hidden', cat: 'FileProvider', note: 'Hidden FileProvider domain' },
+  { re: /CVE-2026-20643/i, sev: 'crit', label: 'CVE-2026-20643', cat: 'CVE', note: 'WebKit SOP bypass' },
+  { re: /EXC_(BAD_ACCESS|CRASH|RESOURCE)/i, sev: 'high', label: 'Process exception', cat: 'Crash', note: 'Crash event' },
+  { re: /UNKNOWN\s*PID/i, sev: 'med', label: 'UNKNOWN PID', cat: 'Process', note: 'Unidentified process' },
+  { re: /Greasemonkey|userscript/i, sev: 'high', label: 'Userscript framework', cat: 'Browser', note: 'Greasemonkey ref' },
+  { re: /OAnPeers"?\s*[:=]\s*[1-9]/i, sev: 'high', label: 'OAnPeers external', cat: 'Octagon', note: 'External peers' },
+  { re: /humb\.apple\.com/i, sev: 'med', label: 'humb.apple.com', cat: 'Attestation', note: 'BAA endpoint' },
+  { re: /Sentry|Datadog/i, sev: 'low', label: 'Third-party telemetry', cat: 'Telemetry', note: 'Sentry/Datadog ref' }
 ];
 
-const IP_RE = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
-const EMAIL_RE = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
-const SEV_ORDER = { MAYDAY: -1, CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
-const SEV_COLORS = {
-  MAYDAY: { bg: "#5a0f0f", fg: "#fecaca", border: "#dc2626" },
-  CRITICAL: { bg: "#451a1a", fg: "#fca5a5", border: "#7f1d1d" },
-  HIGH: { bg: "#451f0a", fg: "#fdba74", border: "#9a3412" },
-  MEDIUM: { bg: "#3f2e0a", fg: "#fde047", border: "#854d0e" },
-  LOW: { bg: "#0f2540", fg: "#93c5fd", border: "#1e40af" }
+const TS_PATTERNS = [
+  /\b(20\d{2}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)\b/,
+  /\b(20\d{2}-\d{2}-\d{2})\b/,
+  /\b(\d{4}\/\d{2}\/\d{2}\s+\d{2}:\d{2}:\d{2})\b/
+];
+const IOC_IP = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
+const IOC_EMAIL = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
+const IOC_DOMAIN = /\b(?:[a-z0-9-]+\.)+(?:com|net|org|io|cn|co|app|dev)\b/gi;
+
+// Severity explanation layer — dual-audience
+const SEV_EXPLAIN = {
+  crit: {
+    label: 'CRITICAL',
+    plain: 'Needs attention right now. This is the kind of finding any investigator would flag on first read.',
+    kid:   'Red alert. Something is very wrong here.'
+  },
+  high: {
+    label: 'HIGH',
+    plain: 'Serious. Not an emergency, but not normal either. Should be documented.',
+    kid:   'Orange alert. This should not be happening.'
+  },
+  med: {
+    label: 'MEDIUM',
+    plain: 'Worth noting. May be ordinary behavior, may be part of a larger pattern.',
+    kid:   'Yellow alert. Keep an eye on this.'
+  },
+  low: {
+    label: 'LOW',
+    plain: 'Background noise. Logged for completeness.',
+    kid:   'Blue note. Probably fine, but recorded just in case.'
+  }
 };
 
-const ELEVATION_RULES = [
-  { id: "mdm-on-personal",
-    description: "MDM enforcement on personal retail device",
-    trigger: (f) => f.some(x => ["mdm","remoteManagement","familyControls","denyPrivacy","ftm"].includes(x.patternId)),
-    applyTo: ["mdm","remoteManagement","familyControls","denyPrivacy"],
-    elevateTo: "CRITICAL",
-    reason: "MDM-layer enforcement on a personal retail device with no user-installed MDM profile is unauthorized management." },
-  { id: "mdm-multi-file",
-    description: "MDM enforcement across multiple files",
-    trigger: (f) => {
-      const m = f.filter(x => ["mdm","remoteManagement","familyControls","denyPrivacy"].includes(x.patternId));
-      const u = new Set(m.map(x => x.file));
-      return m.length >= 2 && u.size >= 2;
-    },
-    applyTo: ["mdm","remoteManagement","familyControls","denyPrivacy"],
-    elevateTo: "MAYDAY",
-    reason: "MDM enforcement across 2+ files means device-wide policy. Evidence of active, persistent unauthorized management." },
-  { id: "fileprovider-mdm-hidden",
-    description: "FileProvider + MDM + Domain hidden compound",
-    trigger: (f) => f.some(x => ["mdm","remoteManagement"].includes(x.patternId)) && f.some(x => x.patternId === "domainHidden"),
-    applyTo: ["mdm","remoteManagement","domainHidden"],
-    elevateTo: "MAYDAY",
-    reason: "FileProvider 'Domain hidden' AND MDM enforcement active. Files exist but invisible, enforced at management layer." },
-  { id: "ckks-compound",
-    description: "CKKS encryption compromise compound",
-    trigger: (f) => {
-      const ids = new Set(f.map(x => x.patternId));
-      return ["bypassPCS","healTLK","oanPeers","inCircleZero"].filter(id => ids.has(id)).length >= 2;
-    },
-    applyTo: ["bypassPCS","healTLK","oanPeers","inCircleZero"],
-    elevateTo: "MAYDAY",
-    reason: "Two or more CKKS anomalies together describe a keychain actively readable by parties other than device owner, with automatic re-provisioning on every boot." },
-  { id: "swc-wallet-interception",
-    description: "Wallet credential interception compound",
-    trigger: (f) => {
-      const ids = new Set(f.map(x => x.patternId));
-      return ids.has("walletDomain") && (ids.has("swcFail") || ids.has("invalidChar")) && (ids.has("retryLoop") || ids.has("http404"));
-    },
-    applyTo: ["swcFail","invalidChar","retryLoop","http404","walletDomain"],
-    elevateTo: "MAYDAY",
-    reason: "wallet.apple.com SWC validation failing with HTML-substituted-for-JSON AND retry loops = active interception of Apple Pay credential validation." },
-  { id: "ioc-direct-match",
-    description: "Direct IOC match from prior investigation",
-    trigger: (f) => f.some(x => ["ghostIP135","ghostIP172","ghostIP144","orgUUID1","orgUUID2","relayEmail","killerz","dallasNum"].includes(x.patternId)),
-    applyTo: ["ghostIP135","ghostIP172","ghostIP144","orgUUID1","orgUUID2","relayEmail","killerz","dallasNum"],
-    elevateTo: "CRITICAL",
-    reason: "Direct match to previously documented indicator of compromise. Confirmed by prior record." }
-];
+const $ = (id) => document.getElementById(id);
+const fmtBytes = (n) => n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':n<1073741824?(n/1048576).toFixed(1)+' MB':(n/1073741824).toFixed(2)+' GB';
+const now = () => new Date().toISOString();
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc = (s) => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-function applyElevation(findings) {
-  const elevated = findings.map(f => ({ ...f, originalSev: f.sev, elevatedBy: [] }));
-  for (const rule of ELEVATION_RULES) {
-    if (rule.trigger(elevated)) {
-      for (const finding of elevated) {
-        if (rule.applyTo.includes(finding.patternId)) {
-          if (SEV_ORDER[rule.elevateTo] < SEV_ORDER[finding.sev]) {
-            finding.sev = rule.elevateTo;
-          }
-          finding.elevatedBy.push({ rule: rule.id, description: rule.description, reason: rule.reason, elevatedTo: rule.elevateTo });
-        }
+function setStatus(msg) { $('status-msg').textContent = msg; }
+function updateCounts() {
+  $('nc-findings').textContent = DB.findings.length;
+  $('nc-sources').textContent = DB.sources.length;
+  $('nc-timeline').textContent = DB.timeline.length;
+  $('nc-actors').textContent = DB.actors.length;
+  $('nc-iocs').textContent = DB.iocs.length;
+  $('nc-files').textContent = DB.files.length;
+  const total = DB.findings.length + DB.iocs.length + DB.timeline.length;
+  $('status-right').textContent = `${total.toLocaleString()} records`;
+}
+
+async function ingest(file) {
+  setStatus(`Opening ${file.name} (${fmtBytes(file.size)})`);
+  $('progress')?.classList.add('active');
+  const fileRec = { id: uid(), name: file.name, size: file.size, type: file.name.split('.').pop().toLowerCase() || 'bin', added: now(), lineCount: 0, findingCount: 0, iocCount: 0 };
+  DB.files.push(fileRec);
+  DB.sources.push({ id: fileRec.id, name: file.name, size: file.size, added: fileRec.added });
+  const reader = file.stream().getReader();
+  const decoder = new TextDecoder('utf-8', { fatal: false });
+  let buffer = '', bytesRead = 0, lineNum = 0;
+  const start = performance.now();
+  const seenIPs = new Set(), seenEmails = new Set(), seenDomains = new Set();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytesRead += value.byteLength;
+      buffer += decoder.decode(value, { stream: true });
+      let nl;
+      while ((nl = buffer.indexOf('\n')) !== -1) {
+        const line = buffer.slice(0, nl);
+        buffer = buffer.slice(nl + 1);
+        lineNum++;
+        scanLine(line, lineNum, fileRec, seenIPs, seenEmails, seenDomains);
       }
+      if ($('prog-fill')) {
+        const pct = (bytesRead/file.size)*100;
+        const el = (performance.now()-start)/1000;
+        $('prog-fill').style.width = pct.toFixed(1)+'%';
+        $('prog-pct').textContent = pct.toFixed(1)+'%';
+        $('prog-bytes').textContent = fmtBytes(bytesRead)+' / '+fmtBytes(file.size);
+        $('prog-rate').textContent = (el>0?(bytesRead/1048576/el):0).toFixed(1)+' MB/s';
+      }
+      await new Promise(r => setTimeout(r, 0));
+    }
+    if (buffer.length) { lineNum++; scanLine(buffer, lineNum, fileRec, seenIPs, seenEmails, seenDomains); }
+    fileRec.lineCount = lineNum;
+    const el = ((performance.now()-start)/1000).toFixed(1);
+    setStatus(`✓ ${file.name} — ${lineNum.toLocaleString()} lines, ${fileRec.findingCount} findings, ${fileRec.iocCount} IOCs (${el}s)`);
+    setTimeout(() => $('progress')?.classList.remove('active'), 1200);
+    updateCounts();
+    renderView(currentView);
+  } catch (err) {
+    setStatus(`✗ Error: ${err.message}`);
+    $('progress')?.classList.remove('active');
+  }
+}
+
+function scanLine(line, lineNum, fileRec, seenIPs, seenEmails, seenDomains) {
+  if (!line || line.length < 3) return;
+  for (const re of TS_PATTERNS) {
+    const m = line.match(re);
+    if (m) { DB.timeline.push({ id: uid(), ts: m[1], file: fileRec.name, line: lineNum, preview: line.slice(0, 120) }); break; }
+  }
+  for (const pat of PATTERNS) {
+    if (pat.re.test(line)) {
+      DB.findings.push({ id: uid(), file: fileRec.name, fileId: fileRec.id, line: lineNum, sev: pat.sev, category: pat.cat, label: pat.label, note: pat.note, ctx: line.length > 240 ? line.slice(0,240)+'…' : line, ts: now() });
+      fileRec.findingCount++;
     }
   }
-  return elevated;
-}
-
-function getActiveElevationRules(findings) {
-  return ELEVATION_RULES.filter(r => r.trigger(findings));
-}
-
-function TruthFinderV5() {
-  const [files, setFiles] = useState([]);
-  const [findings, setFindings] = useState([]);
-  const [ips, setIps] = useState({});
-  const [emails, setEmails] = useState({});
-  const [tab, setTab] = useState("dashboard");
-  const [expanded, setExpanded] = useState({});
-  const [search, setSearch] = useState("");
-  const [sevFilter, setSevFilter] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [progress, setProgress] = useState(null);
-  const inputRef = useRef(null);
-  const loadRef = useRef(null);
-
-  const ingestFile = useCallback(async (file) => {
-    setBusy(true);
-    setProgress({ name: file.name, pct: 0, msg: "Opening " + file.name });
-
-    const fileRec = { id: Date.now() + "-" + Math.random().toString(36).slice(2,7), name: file.name, size: file.size, added: new Date().toISOString(), lineCount: 0, findingCount: 0 };
-    const reader = file.stream().getReader();
-    const decoder = new TextDecoder("utf-8", { fatal: false });
-    let buf = "";
-    let bytes = 0;
-    let lineNum = 0;
-    const fileFindings = new Map();
-    const fileIPs = new Set();
-    const fileEmails = new Set();
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        bytes += value.byteLength;
-        buf += decoder.decode(value, { stream: true });
-        let nl;
-        while ((nl = buf.indexOf("\n")) !== -1) {
-          const line = buf.slice(0, nl);
-          buf = buf.slice(nl + 1);
-          lineNum++;
-          scanLine(line, lineNum, file.name, fileFindings, fileIPs, fileEmails);
-        }
-        const pct = file.size > 0 ? (bytes / file.size) * 100 : 0;
-        setProgress({ name: file.name, pct, msg: "Streaming... " + (bytes/1048576).toFixed(1) + "MB" });
-        await new Promise(r => setTimeout(r, 0));
-      }
-      if (buf.length) { lineNum++; scanLine(buf, lineNum, file.name, fileFindings, fileIPs, fileEmails); }
-
-      const arr = Array.from(fileFindings.values());
-      fileRec.lineCount = lineNum;
-      fileRec.findingCount = arr.length;
-      setFiles(p => [...p, fileRec]);
-      setFindings(p => [...p, ...arr]);
-      setIps(p => {
-        const next = { ...p };
-        for (const ip of fileIPs) {
-          if (!next[ip]) next[ip] = { count: 0, files: new Set() };
-          next[ip] = { count: next[ip].count + 1, files: new Set([...next[ip].files, file.name]) };
-        }
-        return next;
-      });
-      setEmails(p => {
-        const next = { ...p };
-        for (const em of fileEmails) {
-          if (!next[em]) next[em] = { count: 0, files: new Set() };
-          next[em] = { count: next[em].count + 1, files: new Set([...next[em].files, file.name]) };
-        }
-        return next;
-      });
-      setProgress({ name: file.name, pct: 100, msg: "Done: " + lineNum.toLocaleString() + " lines, " + arr.length + " findings" });
-      setTimeout(() => setProgress(null), 2000);
-    } catch (err) {
-      setProgress({ name: file.name, pct: 0, msg: "Error: " + err.message });
-    } finally {
-      setBusy(false);
+  let m;
+  while ((m = IOC_IP.exec(line)) !== null) {
+    const ip = m[0];
+    if (!seenIPs.has(ip) && isValidIP(ip)) {
+      seenIPs.add(ip);
+      DB.iocs.push({ id: uid(), type: 'ip', value: ip, file: fileRec.name, line: lineNum, ts: now() });
+      upsertActor({ type: 'ip', id: ip, source: fileRec.name });
+      fileRec.iocCount++;
     }
-  }, []);
-
-  function scanLine(line, lineNum, fileName, fileFindings, fileIPs, fileEmails) {
-    if (!line || line.length < 3) return;
-    for (const pat of PATTERNS) {
-      if (pat.rx.test(line)) {
-        const key = fileName + "::" + pat.id;
-        if (fileFindings.has(key)) {
-          const f = fileFindings.get(key);
-          f.count++;
-          if (f.examples.length < 3) f.examples.push({ line: lineNum, text: line.slice(0,220) });
-        } else {
-          fileFindings.set(key, {
-            id: key + "-" + Date.now(),
-            patternId: pat.id, file: fileName, label: pat.label, cat: pat.cat, sev: pat.sev,
-            fact: pat.fact, mechanism: pat.mechanism, whyCritical: pat.whyCritical,
-            fitsScenarioWith: pat.fitsScenarioWith, fix: pat.fix,
-            count: 1, examples: [{ line: lineNum, text: line.slice(0,220) }]
-          });
-        }
-      }
-    }
-    const ipMatches = line.match(IP_RE);
-    if (ipMatches) for (const ip of ipMatches) {
-      const parts = ip.split(".").map(Number);
-      if (parts.every(p => p >= 0 && p <= 255) && ip !== "0.0.0.0") fileIPs.add(ip);
-    }
-    const emailMatches = line.match(EMAIL_RE);
-    if (emailMatches) for (const em of emailMatches) fileEmails.add(em.toLowerCase());
   }
-
-  const handleFiles = async (fl) => { for (const f of fl) await ingestFile(f); };
-  const clearAll = () => {
-    if (!confirm("Clear all findings and files?")) return;
-    setFiles([]); setFindings([]); setIps({}); setEmails({}); setExpanded({});
-  };
-  const saveSnapshot = () => {
-    const snap = { version: 5, savedAt: new Date().toISOString(), files, findings,
-      ips: Object.fromEntries(Object.entries(ips).map(([k,v]) => [k, { count: v.count, files: Array.from(v.files) }])),
-      emails: Object.fromEntries(Object.entries(emails).map(([k,v]) => [k, { count: v.count, files: Array.from(v.files) }])) };
-    const blob = new Blob([JSON.stringify(snap, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "truthfinder-v5-" + new Date().toISOString().replace(/[:.]/g,"-").slice(0,19) + ".json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-  const restoreSnapshot = async (file) => {
-    try {
-      const snap = JSON.parse(await file.text());
-      setFiles(snap.files || []);
-      setFindings(snap.findings || []);
-      setIps(Object.fromEntries(Object.entries(snap.ips || {}).map(([k,v]) => [k, { count: v.count, files: new Set(v.files) }])));
-      setEmails(Object.fromEntries(Object.entries(snap.emails || {}).map(([k,v]) => [k, { count: v.count, files: new Set(v.files) }])));
-    } catch (err) { alert("Restore failed: " + err.message); }
-  };
-
-  const elevatedFindings = applyElevation(findings);
-  const activeRules = getActiveElevationRules(elevatedFindings);
-  const sevCounts = elevatedFindings.reduce((a,f) => { a[f.sev] = (a[f.sev]||0)+1; return a; }, {});
-
-  const getScenarioMatches = (finding) => {
-    if (!finding.fitsScenarioWith || finding.fitsScenarioWith.length === 0) return [];
-    return elevatedFindings.filter(f => finding.fitsScenarioWith.includes(f.patternId) && f.id !== finding.id);
-  };
-
-  const filteredFindings = elevatedFindings
-    .filter(f => !sevFilter || f.sev === sevFilter)
-    .filter(f => {
-      if (!search) return true;
-      const s = search.toLowerCase();
-      return f.label.toLowerCase().includes(s) || f.file.toLowerCase().includes(s) || f.cat.toLowerCase().includes(s) || f.fact.toLowerCase().includes(s);
-    })
-    .sort((a,b) => SEV_ORDER[a.sev] - SEV_ORDER[b.sev] || b.count - a.count);
-
-  const S = {
-    page: { minHeight: "100vh", background: "#0a0a0a", color: "#e5e5e5", fontSize: 14, paddingBottom: 40 },
-    header: { padding: "12px 16px", borderBottom: "1px solid #222", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, position: "sticky", top: 0, background: "#0a0a0a", zIndex: 10 },
-    title: { fontSize: 16, fontWeight: 600 },
-    sub: { color: "#4a9eff", fontSize: 10, letterSpacing: 1, textTransform: "uppercase" },
-    btns: { display: "flex", gap: 6, flexWrap: "wrap" },
-    btn: { background: "#1a1a1a", color: "#e5e5e5", border: "1px solid #2a2a2a", padding: "6px 12px", borderRadius: 4, fontSize: 12, cursor: "pointer" },
-    btnDanger: { background: "#1a1a1a", color: "#fca5a5", border: "1px solid #7f1d1d", padding: "6px 12px", borderRadius: 4, fontSize: 12, cursor: "pointer" },
-    tabs: { display: "flex", borderBottom: "1px solid #222", overflowX: "auto" },
-    tab: (active) => ({ background: "transparent", color: active ? "#4a9eff" : "#aaa", border: "none", borderBottom: active ? "2px solid #4a9eff" : "2px solid transparent", padding: "10px 16px", fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }),
-    body: { padding: 16 },
-    kpis: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(90px,1fr))", gap: 8, marginBottom: 16 },
-    kpi: { background: "#111", border: "1px solid #222", borderRadius: 6, padding: "12px 8px", textAlign: "center" },
-    kpiN: (c) => ({ fontSize: 22, fontWeight: 700, color: c }),
-    kpiL: { fontSize: 10, color: "#888", textTransform: "uppercase", letterSpacing: 0.5, marginTop: 2 },
-    card: (sev) => ({ background: "#111", border: "1px solid " + (SEV_COLORS[sev]?.border || "#222"), borderLeft: "3px solid " + (SEV_COLORS[sev]?.fg || "#888"), borderRadius: 6, padding: 12, marginBottom: 8 }),
-    cardHead: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, cursor: "pointer" },
-    cardTitle: { fontWeight: 600, fontSize: 13 },
-    pill: (sev) => ({ display: "inline-block", padding: "2px 7px", borderRadius: 3, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, background: SEV_COLORS[sev]?.bg, color: SEV_COLORS[sev]?.fg, whiteSpace: "nowrap" }),
-    meta: { color: "#888", fontSize: 11, marginTop: 4 },
-    section: { marginTop: 10 },
-    sectionLabel: { fontSize: 10, color: "#888", letterSpacing: 0.5, textTransform: "uppercase", fontWeight: 600, marginBottom: 4 },
-    sectionText: { fontSize: 12.5, color: "#d5d5d5", lineHeight: 1.55 },
-    input: { background: "#111", border: "1px solid #222", color: "#e5e5e5", padding: "7px 10px", borderRadius: 4, fontSize: 12 },
-    dropZone: { border: "2px dashed #2a2a2a", borderRadius: 10, padding: 30, textAlign: "center", marginBottom: 16, background: "#0c0c0c" },
-    progress: { background: "#111", border: "1px solid #222", borderRadius: 6, padding: 10, marginBottom: 16 },
-    progressBar: { height: 4, background: "#222", borderRadius: 2, overflow: "hidden", marginTop: 6 },
-    progressFill: (pct) => ({ height: "100%", background: "#4a9eff", width: pct + "%", transition: "width .2s" }),
-    empty: { textAlign: "center", color: "#666", padding: 40, background: "#0d0d0d", border: "1px dashed #222", borderRadius: 6 }
-  };
-
-  return (
-    <div style={S.page}>
-      <div style={S.header}>
-        <div>
-          <div style={S.title}>Truth Finder</div>
-          <div style={S.sub}>Forensic Analyzer v5 · Interpretation Layer</div>
-        </div>
-        <div style={S.btns}>
-          <button style={S.btn} onClick={() => inputRef.current?.click()} disabled={busy}>+ File</button>
-          <button style={S.btn} onClick={saveSnapshot}>Save</button>
-          <button style={S.btn} onClick={() => loadRef.current?.click()}>Load</button>
-          <button style={S.btnDanger} onClick={clearAll}>Clear</button>
-        </div>
-      </div>
-
-      <div style={S.tabs}>
-        {["dashboard","findings","files","iocs"].map(t => (
-          <button key={t} style={S.tab(tab===t)} onClick={() => setTab(t)}>
-            {t === "dashboard" ? "Dashboard" : t === "findings" ? "Findings (" + findings.length + ")" : t === "files" ? "Files (" + files.length + ")" : "IOCs (" + (Object.keys(ips).length + Object.keys(emails).length) + ")"}
-          </button>
-        ))}
-      </div>
-
-      <div style={S.body}>
-        {progress && (
-          <div style={S.progress}>
-            <div style={{display:"flex", justifyContent:"space-between", fontSize:12}}>
-              <span>{progress.name}</span>
-              <span>{progress.pct.toFixed(1)}%</span>
-            </div>
-            <div style={S.progressBar}><div style={S.progressFill(progress.pct)} /></div>
-            <div style={{fontSize:11, color:"#888", marginTop:6}}>{progress.msg}</div>
-          </div>
-        )}
-
-        {tab === "dashboard" && (
-          <div>
-            {sevCounts.MAYDAY > 0 && (
-              <div style={{...S.card("MAYDAY"), marginBottom:16}}>
-                <div style={{fontWeight:700, color:"#fecaca", fontSize:14}}>⚠ MAYDAY · COMPOUND THREAT DETECTED</div>
-                <div style={{fontSize:12, color:"#fca5a5", marginTop:4}}>{sevCounts.MAYDAY} finding(s) elevated to MAYDAY by compound evidence</div>
-                <div style={{marginTop:10, fontSize:12, color:"#e5e5e5", lineHeight:1.5}}>
-                  Individual findings auto-elevated because they appear together in patterns that describe active, persistent unauthorized state — not isolated anomalies.
-                </div>
-                {activeRules.filter(r => r.elevateTo === "MAYDAY").map(r => (
-                  <div key={r.id} style={{marginTop:10, padding:8, background:"#0a0a0a", borderRadius:4, fontSize:11.5, color:"#d5d5d5"}}>
-                    <strong style={{color:"#fecaca"}}>{r.description}:</strong> {r.reason}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div style={S.kpis}>
-              {sevCounts.MAYDAY > 0 && <div style={S.kpi}><div style={S.kpiN(SEV_COLORS.MAYDAY.fg)}>{sevCounts.MAYDAY}</div><div style={S.kpiL}>MAYDAY</div></div>}
-              <div style={S.kpi}><div style={S.kpiN(SEV_COLORS.CRITICAL.fg)}>{sevCounts.CRITICAL || 0}</div><div style={S.kpiL}>Critical</div></div>
-              <div style={S.kpi}><div style={S.kpiN(SEV_COLORS.HIGH.fg)}>{sevCounts.HIGH || 0}</div><div style={S.kpiL}>High</div></div>
-              <div style={S.kpi}><div style={S.kpiN(SEV_COLORS.MEDIUM.fg)}>{sevCounts.MEDIUM || 0}</div><div style={S.kpiL}>Medium</div></div>
-              <div style={S.kpi}><div style={S.kpiN(SEV_COLORS.LOW.fg)}>{sevCounts.LOW || 0}</div><div style={S.kpiL}>Low</div></div>
-              <div style={S.kpi}><div style={S.kpiN("#e5e5e5")}>{files.length}</div><div style={S.kpiL}>Files</div></div>
-              <div style={S.kpi}><div style={S.kpiN("#e5e5e5")}>{Object.keys(ips).length}</div><div style={S.kpiL}>Unique IPs</div></div>
-            </div>
-
-            {findings.length === 0 && (
-              <div style={S.dropZone}>
-                <div style={{fontSize:32, marginBottom:10}}>🔍</div>
-                <div style={{color:"#aaa", marginBottom:12}}>Load a sysdiagnose file, log, CSV, or any text evidence</div>
-                <button style={S.btn} onClick={() => inputRef.current?.click()}>+ Load File</button>
-              </div>
-            )}
-
-            {elevatedFindings.filter(f => f.sev === "MAYDAY").slice(0,5).map(f => (
-              <FindingCard key={f.id} f={f} S={S} expanded={expanded} setExpanded={setExpanded} getScenarioMatches={getScenarioMatches} />
-            ))}
-            {elevatedFindings.filter(f => f.sev === "CRITICAL").slice(0,5).map(f => (
-              <FindingCard key={f.id} f={f} S={S} expanded={expanded} setExpanded={setExpanded} getScenarioMatches={getScenarioMatches} />
-            ))}
-          </div>
-        )}
-
-        {tab === "findings" && (
-          <div>
-            <div style={{display:"flex", gap:8, marginBottom:12, flexWrap:"wrap"}}>
-              <input style={{...S.input, flex:1, minWidth:140}} placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} />
-              <select style={S.input} value={sevFilter} onChange={e => setSevFilter(e.target.value)}>
-                <option value="">All severities</option>
-                <option value="MAYDAY">MAYDAY</option>
-                <option value="CRITICAL">Critical</option>
-                <option value="HIGH">High</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="LOW">Low</option>
-              </select>
-            </div>
-            {filteredFindings.length === 0 ? (
-              <div style={S.empty}>No findings match.</div>
-            ) : (
-              filteredFindings.map(f => <FindingCard key={f.id} f={f} S={S} expanded={expanded} setExpanded={setExpanded} getScenarioMatches={getScenarioMatches} />)
-            )}
-          </div>
-        )}
-
-        {tab === "files" && (
-          <div>
-            {files.length === 0 ? (
-              <div style={S.empty}>No files loaded.</div>
-            ) : (
-              files.map(f => (
-                <div key={f.id} style={{...S.card("LOW"), borderLeft:"3px solid #4a9eff"}}>
-                  <div style={{fontWeight:600}}>{f.name}</div>
-                  <div style={S.meta}>{(f.size/1048576).toFixed(2)} MB · {f.lineCount.toLocaleString()} lines · {f.findingCount} findings · {f.added.slice(0,19).replace("T"," ")}</div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-
-        {tab === "iocs" && (
-          <div>
-            <div style={{fontSize:13, fontWeight:600, color:"#888", marginBottom:8}}>IP Addresses ({Object.keys(ips).length})</div>
-            {Object.keys(ips).length === 0 ? <div style={S.empty}>No IPs extracted yet.</div> :
-              Object.entries(ips).sort((a,b) => b[1].count - a[1].count).slice(0,50).map(([ip,v]) => (
-                <div key={ip} style={{...S.card("LOW"), borderLeft:"3px solid #4a9eff"}}>
-                  <div style={{fontFamily:"monospace", fontSize:12}}>{ip}</div>
-                  <div style={S.meta}>seen in: {Array.from(v.files).join(", ")}</div>
-                </div>
-              ))
-            }
-            <div style={{fontSize:13, fontWeight:600, color:"#888", marginTop:16, marginBottom:8}}>Emails ({Object.keys(emails).length})</div>
-            {Object.keys(emails).length === 0 ? <div style={S.empty}>No emails extracted yet.</div> :
-              Object.entries(emails).slice(0,50).map(([em,v]) => (
-                <div key={em} style={{...S.card("LOW"), borderLeft:"3px solid #4a9eff"}}>
-                  <div style={{fontFamily:"monospace", fontSize:12}}>{em}</div>
-                  <div style={S.meta}>seen in: {Array.from(v.files).join(", ")}</div>
-                </div>
-              ))
-            }
-          </div>
-        )}
-      </div>
-
-      <input type="file" ref={inputRef} style={{display:"none"}} multiple onChange={e => handleFiles(Array.from(e.target.files))} />
-      <input type="file" ref={loadRef} style={{display:"none"}} accept=".json" onChange={e => e.target.files[0] && restoreSnapshot(e.target.files[0])} />
-    </div>
-  );
+  IOC_IP.lastIndex = 0;
+  while ((m = IOC_EMAIL.exec(line)) !== null) {
+    const em = m[0].toLowerCase();
+    if (!seenEmails.has(em)) {
+      seenEmails.add(em);
+      DB.iocs.push({ id: uid(), type: 'email', value: em, file: fileRec.name, line: lineNum, ts: now() });
+      upsertActor({ type: 'email', id: em, source: fileRec.name });
+      fileRec.iocCount++;
+    }
+  }
+  IOC_EMAIL.lastIndex = 0;
+  while ((m = IOC_DOMAIN.exec(line)) !== null) {
+    const d = m[0].toLowerCase();
+    if (!seenDomains.has(d) && d.length > 5 && d.length < 60) {
+      seenDomains.add(d);
+      DB.iocs.push({ id: uid(), type: 'domain', value: d, file: fileRec.name, line: lineNum, ts: now() });
+      fileRec.iocCount++;
+    }
+  }
+  IOC_DOMAIN.lastIndex = 0;
 }
 
-function FindingCard({ f, S, expanded, setExpanded, getScenarioMatches }) {
-  const open = expanded[f.id];
-  const matches = open ? getScenarioMatches(f) : [];
-  const wasElevated = f.originalSev && f.originalSev !== f.sev;
-
-  return (
-    <div style={S.card(f.sev)}>
-      <div style={S.cardHead} onClick={() => setExpanded(p => ({ ...p, [f.id]: !p[f.id] }))}>
-        <div style={{flex:1, minWidth:0}}>
-          <div style={S.cardTitle}>{f.label}</div>
-          <div style={S.meta}>
-            {f.cat} · {f.count}x · {f.file}
-            {wasElevated && <span style={{marginLeft:8, color:"#fca5a5"}}>⬆ elevated from {f.originalSev}</span>}
-          </div>
-        </div>
-        <div style={{display:"flex", gap:6, alignItems:"center"}}>
-          <span style={S.pill(f.sev)}>{f.sev}</span>
-          <span style={{color:"#666"}}>{open ? "▴" : "▾"}</span>
-        </div>
-      </div>
-
-      {open && (
-        <div>
-          {wasElevated && f.elevatedBy && f.elevatedBy.length > 0 && (
-            <div style={{...S.section, padding:10, background:"#0a0a0a", border:"1px solid #451a1a", borderRadius:4}}>
-              <div style={{...S.sectionLabel, color:"#fca5a5"}}>Why elevated {f.originalSev} → {f.sev}</div>
-              {f.elevatedBy.map((e,i) => (
-                <div key={i} style={{...S.sectionText, marginTop:4}}>
-                  <strong>{e.description}:</strong> {e.reason}
-                </div>
-              ))}
-            </div>
-          )}
-          <div style={S.section}>
-            <div style={S.sectionLabel}>Fact</div>
-            <div style={S.sectionText}>{f.fact}</div>
-          </div>
-          <div style={S.section}>
-            <div style={{...S.sectionLabel, color:"#fdba74"}}>Mechanism</div>
-            <div style={S.sectionText}>{f.mechanism}</div>
-          </div>
-          <div style={S.section}>
-            <div style={{...S.sectionLabel, color:"#fca5a5"}}>Why it matters on a personal device</div>
-            <div style={S.sectionText}>{f.whyCritical}</div>
-          </div>
-          {matches.length > 0 && (
-            <div style={S.section}>
-              <div style={{...S.sectionLabel, color:"#93c5fd"}}>Other findings that fit the same scenario</div>
-              <div style={{marginTop:4}}>
-                {matches.map(m => (
-                  <div key={m.id} style={{fontSize:11.5, color:"#bbb", padding:"3px 0"}}>
-                    <span style={S.pill(m.sev)}>{m.sev}</span> {m.label} ({m.file})
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          <div style={S.section}>
-            <div style={{...S.sectionLabel, color:"#86efac"}}>What to do / document</div>
-            <div style={S.sectionText}>{f.fix}</div>
-          </div>
-          {f.examples.length > 0 && (
-            <div style={{marginTop:8, background:"#0a0a0a", border:"1px solid #222", borderRadius:4, padding:8, fontFamily:"monospace", fontSize:10.5, color:"#aaa", wordBreak:"break-all", whiteSpace:"pre-wrap"}}>
-              {f.examples.map((ex,i) => (
-                <div key={i} style={{marginBottom:4}}>line {ex.line}: {ex.text}</div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
+function isValidIP(ip) {
+  const parts = ip.split('.').map(Number);
+  if (parts.some(p => p > 255 || p < 0 || isNaN(p))) return false;
+  if (ip === '0.0.0.0') return false;
+  return true;
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<TruthFinderV5 />);
+function upsertActor({ type, id, source }) {
+  const existing = DB.actors.find(a => a.id === id);
+  if (existing) {
+    existing.sightings = (existing.sightings || 1) + 1;
+    if (!existing.sources.includes(source)) existing.sources.push(source);
+  } else {
+    DB.actors.push({ id, type, firstSeen: now(), sightings: 1, sources: [source] });
+  }
+}
+
+let currentView = 'report-dashboard';
+
+function renderView(view) {
+  currentView = view;
+  const c = $('view-container');
+  if (view === 'table-findings') c.innerHTML = renderTable('Findings', DB.findings, ['sev','category','label','file','line','note','ts'], 'Table');
+  else if (view === 'table-sources') c.innerHTML = renderTable('Sources', DB.sources, ['name','size','added'], 'Table');
+  else if (view === 'table-timeline') c.innerHTML = renderTimeline();
+  else if (view === 'table-actors') c.innerHTML = renderTable('Actors', DB.actors, ['type','id','sightings','firstSeen'], 'Table');
+  else if (view === 'table-iocs') c.innerHTML = renderTable('IOCs', DB.iocs, ['type','value','file','line','ts'], 'Table');
+  else if (view === 'table-files') c.innerHTML = renderTable('Files', DB.files, ['name','type','size','lineCount','findingCount','iocCount','added'], 'Table');
+  else if (view === 'query-builder') c.innerHTML = renderQueryBuilder();
+  else if (view === 'query-crit') c.innerHTML = renderTable('Query: Critical Only', DB.findings.filter(f => f.sev === 'crit'), ['category','label','file','line','note','ts'], 'Query');
+  else if (view === 'query-cross') c.innerHTML = renderCrossFile();
+  else if (view === 'form-finding') c.innerHTML = renderFormFinding();
+  else if (view === 'form-actor') c.innerHTML = renderFormActor();
+  else if (view === 'form-ioc') c.innerHTML = renderFormIOC();
+  else if (view === 'report-dashboard') c.innerHTML = renderDashboard();
+  else if (view === 'report-timeseries') { c.innerHTML = renderTimeseriesReport(); drawTrends(); }
+  else if (view === 'report-severity') c.innerHTML = renderSeverityReport();
+  else if (view === 'report-combo') c.innerHTML = renderComboReport();
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === view));
+  if (window.innerWidth <= 768) $('nav-pane').classList.remove('open');
+}
+
+function viewHeader(title, type, extra='') {
+  return `<div class="view-header"><div class="view-title">${esc(title)}<span class="type">${esc(type)}</span></div><div>${extra}</div></div>`;
+}
+
+function renderTable(title, rows, cols, type) {
+  if (!rows.length) return viewHeader(title, type) + `<div class="view-body"><div class="empty">No records in ${esc(title)}.<br><br>Load a file to populate.</div></div>`;
+  const head = cols.map(c => `<th>${esc(c)}</th>`).join('');
+  const body = rows.slice(-500).reverse().map(r => {
+    const tds = cols.map(col => {
+      let v = r[col];
+      if (col === 'sev') return `<td><span class="sev-pill ${v}">${v}</span></td>`;
+      if (col === 'size' && typeof v === 'number') v = fmtBytes(v);
+      if (col === 'ts' || col === 'added' || col === 'firstSeen') v = String(v).slice(0,19).replace('T',' ');
+      if (col === 'ctx' || col === 'note') return `<td class="ctx" title="${esc(v)}">${esc(v)}</td>`;
+      if (Array.isArray(v)) v = v.join(', ');
+      return `<td title="${esc(v)}">${esc(v)}</td>`;
+    }).join('');
+    return `<tr>${tds}</tr>`;
+  }).join('');
+  const note = rows.length > 500 ? `<div style="color:var(--dim);font-size:11px;margin-bottom:8px">Showing latest 500 of ${rows.length.toLocaleString()} records</div>` : '';
+  return viewHeader(title, type) + `<div class="view-body">${note}<table class="datasheet"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+function renderTimeline() {
+  const rows = DB.timeline.slice().sort((a,b) => a.ts.localeCompare(b.ts));
+  return renderTable('Timeline', rows, ['ts','file','line','preview'], 'Table');
+}
+
+function renderQueryBuilder() {
+  return viewHeader('Query Builder', 'Query') + `
+    <div class="view-body">
+      <div class="query-grid">
+        <div class="query-row header"><div class="query-cell">Field</div><div class="query-cell">Operator</div><div class="query-cell">Value</div><div class="query-cell">Action</div></div>
+        <div class="query-row">
+          <div class="query-cell"><select id="q-field"><option value="label">label</option><option value="category">category</option><option value="sev">sev</option><option value="file">file</option><option value="ctx">ctx (full line)</option></select></div>
+          <div class="query-cell"><select id="q-op"><option value="contains">contains</option><option value="equals">equals</option><option value="regex">regex</option></select></div>
+          <div class="query-cell"><input id="q-val" type="text" placeholder="Value"></div>
+          <div class="query-cell"><button class="primary sm" onclick="runQuery()">Run</button></div>
+        </div>
+      </div>
+      <div id="q-results" style="margin-top:16px"></div>
+    </div>`;
+}
+
+function runQuery() {
+  const field = $('q-field').value, op = $('q-op').value, val = $('q-val').value;
+  if (!val) { $('q-results').innerHTML = '<div class="empty">Enter a value.</div>'; return; }
+  let filter;
+  try {
+    if (op === 'equals') filter = (r) => String(r[field]) === val;
+    else if (op === 'contains') filter = (r) => String(r[field]||'').toLowerCase().includes(val.toLowerCase());
+    else if (op === 'regex') { const re = new RegExp(val, 'i'); filter = (r) => re.test(String(r[field]||'')); }
+  } catch (e) { $('q-results').innerHTML = `<div class="empty">Query error: ${esc(e.message)}</div>`; return; }
+  const rows = DB.findings.filter(filter);
+  $('q-results').innerHTML = `<div style="color:var(--dim);margin-bottom:8px">Matched ${rows.length} of ${DB.findings.length} findings</div>` + (rows.length ? buildTable(rows, ['sev','category','label','file','line','ctx']) : '<div class="empty">No matches.</div>');
+}
+window.runQuery = runQuery;
+
+function buildTable(rows, cols) {
+  const head = cols.map(c => `<th>${esc(c)}</th>`).join('');
+  const body = rows.slice(0, 300).map(r => {
+    const tds = cols.map(col => {
+      let v = r[col];
+      if (col === 'sev') return `<td><span class="sev-pill ${v}">${v}</span></td>`;
+      if (col === 'ctx') return `<td class="ctx" title="${esc(v)}">${esc(v)}</td>`;
+      return `<td title="${esc(v)}">${esc(v)}</td>`;
+    }).join('');
+    return `<tr>${tds}</tr>`;
+  }).join('');
+  return `<table class="datasheet"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+
+function renderCrossFile() {
+  const byLabel = {};
+  for (const f of DB.findings) { if (!byLabel[f.label]) byLabel[f.label] = new Set(); byLabel[f.label].add(f.file); }
+  const rows = Object.entries(byLabel).filter(([,set]) => set.size >= 2).map(([label, set]) => ({ label, fileCount: set.size, files: Array.from(set).join(', ') })).sort((a,b) => b.fileCount - a.fileCount);
+  return viewHeader('Cross-File Patterns', 'Query') + `<div class="view-body">${rows.length === 0 ? '<div class="empty">No cross-file patterns yet. Load 2+ files to surface correlations.</div>' : buildTable(rows, ['label','fileCount','files'])}</div>`;
+}
+
+function renderFormFinding() {
+  return viewHeader('New Finding', 'Form') + `
+    <div class="view-body"><div class="form-card">
+      <div class="form-row">
+        <div class="form-field"><label>Label</label><input id="ff-label" type="text"></div>
+        <div class="form-field"><label>Severity</label><select id="ff-sev"><option value="crit">Critical</option><option value="high">High</option><option value="med" selected>Medium</option><option value="low">Low</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Category</label><input id="ff-cat" type="text" placeholder="CKKS, MDM, Network..."></div>
+        <div class="form-field"><label>Source File</label><input id="ff-file" type="text"></div>
+      </div>
+      <div class="form-field"><label>Note</label><textarea id="ff-note"></textarea></div>
+
+```
+  <div class="form-field"><label>Context / Quote</label><textarea id="ff-ctx"></textarea></div>
+  <button class="primary" onclick="saveFinding()">Save Record</button>
+</div></div>`;
+```
+
+}
+function saveFinding() {
+const label = $(‘ff-label’).value.trim(); if (!label) return;
+DB.findings.push({ id: uid(), label, sev: $(‘ff-sev’).value, category: $(‘ff-cat’).value||‘Manual’, file: $(‘ff-file’).value||’(manual)’, line: 0, note: $(‘ff-note’).value, ctx: $(‘ff-ctx’).value, ts: now() });
+updateCounts(); setStatus(`Finding saved: ${label}`); renderView(‘table-findings’);
+}
+window.saveFinding = saveFinding;
+
+function renderFormActor() {
+return viewHeader(‘New Actor’, ‘Form’) + ` <div class="view-body"><div class="form-card"> <div class="form-row"> <div class="form-field"><label>Identifier</label><input id="fa-id" type="text" placeholder="IP, email, username..."></div> <div class="form-field"><label>Type</label><select id="fa-type"><option>ip</option><option>email</option><option>phone</option><option>user</option><option>service</option><option>device</option></select></div> </div> <div class="form-field"><label>Notes</label><textarea id="fa-note"></textarea></div> <button class="primary" onclick="saveActor()">Save Actor</button> </div></div>`;
+}
+function saveActor() {
+const id = $(‘fa-id’).value.trim(); if (!id) return;
+DB.actors.push({ id, type: $(‘fa-type’).value, note: $(‘fa-note’).value, firstSeen: now(), sightings: 1, sources: [‘manual’] });
+updateCounts(); setStatus(`Actor saved: ${id}`); renderView(‘table-actors’);
+}
+window.saveActor = saveActor;
+
+function renderFormIOC() {
+return viewHeader(‘New IOC’, ‘Form’) + ` <div class="view-body"><div class="form-card"> <div class="form-row"> <div class="form-field"><label>Type</label><select id="fi-type"><option>ip</option><option>email</option><option>domain</option><option>hash</option><option>phone</option><option>uuid</option></select></div> <div class="form-field"><label>Value</label><input id="fi-val" type="text"></div> </div> <div class="form-field"><label>Context</label><textarea id="fi-ctx"></textarea></div> <button class="primary" onclick="saveIOC()">Save IOC</button> </div></div>`;
+}
+function saveIOC() {
+const val = $(‘fi-val’).value.trim(); if (!val) return;
+DB.iocs.push({ id: uid(), type: $(‘fi-type’).value, value: val, file: ‘(manual)’, line: 0, ctx: $(‘fi-ctx’).value, ts: now() });
+updateCounts(); setStatus(`IOC saved: ${val}`); renderView(‘table-iocs’);
+}
+window.saveIOC = saveIOC;
+
+function renderDashboard() {
+const counts = severityCounts();
+return viewHeader(‘Dashboard’, ‘Report’) + ` <div class="view-body"> <div class="report"><h2>Evidence Overview</h2> <div class="kpi-grid"> <div class="kpi"><div class="n" style="color:var(--crit)">${counts.crit}</div><div class="l">Critical</div></div> <div class="kpi"><div class="n" style="color:var(--high)">${counts.high}</div><div class="l">High</div></div> <div class="kpi"><div class="n" style="color:var(--med)">${counts.med}</div><div class="l">Medium</div></div> <div class="kpi"><div class="n" style="color:var(--low)">${counts.low}</div><div class="l">Low</div></div> <div class="kpi"><div class="n">${DB.files.length}</div><div class="l">Files</div></div> <div class="kpi"><div class="n">${DB.iocs.length}</div><div class="l">IOCs</div></div> <div class="kpi"><div class="n">${DB.actors.length}</div><div class="l">Actors</div></div> <div class="kpi"><div class="n">${DB.timeline.length}</div><div class="l">Timeline</div></div> </div> </div> <div class="report"><h2>Recent Findings</h2> ${DB.findings.length === 0 ? '<div class="empty">No findings yet.</div>' : buildTable(DB.findings.slice(-10).reverse(), ['sev','category','label','file','line'])} </div> <div class="drop-zone" id="drop-zone"> <p style="color:var(--dim);margin-bottom:10px">Drop file(s) here or tap to select</p> <button class="primary" onclick="document.getElementById('file-input').click()">+ Load File</button> </div> <div class="progress" id="progress"> <div class="progress-text"><span id="prog-label">Reading...</span><span id="prog-pct">0%</span></div> <div class="progress-bar"><div id="prog-fill" class="progress-fill"></div></div> <div class="progress-text" style="margin-top:4px"><span id="prog-bytes">0 / 0</span><span id="prog-rate">0 MB/s</span></div> </div> </div>`;
+}
+
+function renderTimeseriesReport() {
+return viewHeader(‘Time-Series Trends’, ‘Report’) + ` <div class="view-body"> <div class="chart-wrap"><div class="chart-title"><span>Findings over time · by severity</span><span id="ts-range">—</span></div> <canvas class="trend" id="chart-sev"></canvas> <div class="legend"> <span><span class="sw" style="background:var(--crit)"></span>Critical</span> <span><span class="sw" style="background:var(--high)"></span>High</span> <span><span class="sw" style="background:var(--med)"></span>Medium</span> <span><span class="sw" style="background:var(--low)"></span>Low</span> </div> </div> <div class="chart-wrap"><div class="chart-title"><span>Findings by file · volume trend</span><span></span></div><canvas class="trend" id="chart-file"></canvas></div> <div class="chart-wrap"><div class="chart-title"><span>Category distribution over time</span><span></span></div><canvas class="trend" id="chart-cat"></canvas></div> </div>`;
+}
+
+function renderSeverityReport() {
+const byCategory = {};
+for (const f of DB.findings) {
+const k = f.category || ‘Uncategorized’;
+byCategory[k] = (byCategory[k] || { total:0, crit:0, high:0, med:0, low:0 });
+byCategory[k].total++; byCategory[k][f.sev]++;
+}
+const rows = Object.entries(byCategory).map(([cat, c]) => ({ category: cat, total: c.total, crit: c.crit, high: c.high, med: c.med, low: c.low })).sort((a,b) => b.total - a.total);
+return viewHeader(‘Severity Report’, ‘Report’) + `<div class="view-body"><div class="report"><h2>Category × Severity Crosstab</h2>${rows.length === 0 ? '<div class="empty">No findings.</div>' : buildTable(rows, ['category','total','crit','high','med','low'])}</div></div>`;
+}
+
+function renderComboReport() {
+const byLabel = {};
+for (const f of DB.findings) {
+if (!byLabel[f.label]) byLabel[f.label] = { files: new Set(), count: 0, sev: f.sev };
+byLabel[f.label].files.add(f.file); byLabel[f.label].count++;
+}
+const rows = Object.entries(byLabel).filter(([,v]) => v.files.size >= 2).map(([label,v]) => ({ label, sev: v.sev, files: v.files.size, occurrences: v.count, sources: Array.from(v.files).join(’, ’) })).sort((a,b) => b.files - a.files);
+return viewHeader(‘Cross-File Combos’, ‘Report’) + `<div class="view-body"><div class="report"><h2>Patterns Appearing Across Multiple Files</h2><p style="color:var(--dim);font-size:12px;margin-bottom:12px">These are the "it's not a coincidence" correlations. A finding appearing in multiple files captured weeks apart is signal, not noise.</p>${rows.length === 0 ? '<div class="empty">Load 2+ files to see combos.</div>' : buildTable(rows, ['sev','label','files','occurrences','sources'])}</div></div>`;
+}
+
+function severityCounts() {
+const c = { crit:0, high:0, med:0, low:0 };
+for (const f of DB.findings) c[f.sev] = (c[f.sev]||0)+1;
+return c;
+}
+
+function drawTrends() { drawSeverityTrend(); drawFileTrend(); drawCategoryTrend(); }
+function groupByDay(items, tsKey=‘ts’) {
+const bins = {};
+for (const it of items) {
+const day = String(it[tsKey]||’’).slice(0,10);
+if (!day || day.length < 10) continue;
+bins[day] = bins[day] || []; bins[day].push(it);
+}
+return bins;
+}
+function drawSeverityTrend() {
+const canvas = $(‘chart-sev’); if (!canvas) return;
+const bins = groupByDay(DB.findings);
+const days = Object.keys(bins).sort();
+if (days.length === 0) { drawEmpty(canvas, ‘No timestamped findings yet’); return; }
+$(‘ts-range’).textContent = days[0] + ’ → ’ + days[days.length-1];
+const series = {
+crit: days.map(d => bins[d].filter(x => x.sev===‘crit’).length),
+high: days.map(d => bins[d].filter(x => x.sev===‘high’).length),
+med:  days.map(d => bins[d].filter(x => x.sev===‘med’).length),
+low:  days.map(d => bins[d].filter(x => x.sev===‘low’).length)
+};
+drawMultiLine(canvas, days, [
+{ data: series.crit, color: ‘#ef4444’ },
+{ data: series.high, color: ‘#f97316’ },
+{ data: series.med,  color: ‘#eab308’ },
+{ data: series.low,  color: ‘#4a9eff’ }
+]);
+}
+function drawFileTrend() {
+const canvas = $(‘chart-file’); if (!canvas) return;
+const byFile = {};
+for (const f of DB.findings) {
+const day = String(f.ts).slice(0,10);
+if (!day || day.length<10) continue;
+byFile[f.file] = byFile[f.file] || {};
+byFile[f.file][day] = (byFile[f.file][day]||0)+1;
+}
+const allDays = […new Set(DB.findings.map(f => String(f.ts).slice(0,10)).filter(d => d.length===10))].sort();
+if (allDays.length === 0) { drawEmpty(canvas, ‘No data yet’); return; }
+const palette = [’#4a9eff’,’#f97316’,’#22c55e’,’#a855f7’,’#ec4899’,’#eab308’,’#14b8a6’];
+const series = Object.keys(byFile).slice(0,7).map((fname, i) => ({ data: allDays.map(d => byFile[fname][d]||0), color: palette[i % palette.length] }));
+drawMultiLine(canvas, allDays, series);
+}
+function drawCategoryTrend() {
+const canvas = $(‘chart-cat’); if (!canvas) return;
+const byCat = {};
+for (const f of DB.findings) {
+const day = String(f.ts).slice(0,10);
+if (!day || day.length<10) continue;
+const cat = f.category || ‘Uncat’;
+byCat[cat] = byCat[cat] || {};
+byCat[cat][day] = (byCat[cat][day]||0)+1;
+}
+const allDays = […new Set(DB.findings.map(f => String(f.ts).slice(0,10)).filter(d => d.length===10))].sort();
+if (allDays.length === 0) { drawEmpty(canvas, ‘No data yet’); return; }
+const palette = [’#ef4444’,’#f97316’,’#eab308’,’#4a9eff’,’#22c55e’,’#a855f7’,’#ec4899’,’#14b8a6’];
+const series = Object.keys(byCat).slice(0,8).map((cat, i) => ({ data: allDays.map(d => byCat[cat][d]||0), color: palette[i % palette.length] }));
+drawMultiLine(canvas, allDays, series);
+}
+function drawMultiLine(canvas, labels, seriesList) {
+const dpr = window.devicePixelRatio || 1;
+const w = canvas.clientWidth, h = canvas.clientHeight;
+canvas.width = w*dpr; canvas.height = h*dpr;
+const ctx = canvas.getContext(‘2d’);
+ctx.scale(dpr, dpr); ctx.clearRect(0,0,w,h);
+const padL = 36, padR = 12, padT = 10, padB = 24;
+const chartW = w - padL - padR, chartH = h - padT - padB;
+const maxY = Math.max(1, …seriesList.flatMap(s => s.data));
+const n = labels.length;
+ctx.strokeStyle = ‘#222’; ctx.lineWidth = 1; ctx.font = ‘10px system-ui’; ctx.fillStyle = ‘#555’;
+for (let i = 0; i <= 4; i++) {
+const y = padT + (chartH * i / 4);
+ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL+chartW, y); ctx.stroke();
+const val = Math.round(maxY * (4-i)/4);
+ctx.fillText(val, 4, y+3);
+}
+const step = Math.max(1, Math.floor(n/6));
+for (let i = 0; i < n; i += step) {
+const x = padL + (n>1 ? (chartW * i / (n-1)) : chartW/2);
+ctx.fillText(labels[i].slice(5), x-14, h-6);
+}
+for (const s of seriesList) {
+ctx.strokeStyle = s.color; ctx.lineWidth = 2;
+ctx.beginPath();
+for (let i = 0; i < n; i++) {
+const x = padL + (n>1 ? (chartW * i / (n-1)) : chartW/2);
+const y = padT + chartH - (chartH * s.data[i] / maxY);
+if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+}
+ctx.stroke();
+ctx.fillStyle = s.color;
+for (let i = 0; i < n; i++) {
+const x = padL + (n>1 ? (chartW * i / (n-1)) : chartW/2);
+const y = padT + chartH - (chartH * s.data[i] / maxY);
+ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
+}
+}
+}
+function drawEmpty(canvas, msg) {
+const dpr = window.devicePixelRatio || 1;
+const w = canvas.clientWidth, h = canvas.clientHeight;
+canvas.width = w*dpr; canvas.height = h*dpr;
+const ctx = canvas.getContext(‘2d’);
+ctx.scale(dpr, dpr); ctx.clearRect(0,0,w,h);
+ctx.fillStyle = ‘#555’; ctx.font = ‘12px system-ui’; ctx.textAlign = ‘center’;
+ctx.fillText(msg, w/2, h/2);
+}
+
+/* ============================================================
+PRINT PDF — renders whichever view is currently open
+Human-readable. Dual-audience severity. No recalculation.
+============================================================ */
+function buildPdfRoot() {
+const root = document.createElement(‘div’);
+root.className = ‘pdf-root’;
+const header = `<h1>Truth Finder — ${esc(viewTitleFor(currentView))}</h1> <div class="meta">Snapshot: ${new Date().toLocaleString()}</div> <div class="meta">${DB.files.length} file(s) loaded · ${DB.findings.length} findings · ${DB.iocs.length} IOCs · ${DB.actors.length} actors · ${DB.timeline.length} timeline entries</div> <hr>`;
+let body = ‘’;
+if (currentView === ‘report-dashboard’ || currentView.startsWith(‘table-’) || currentView === ‘query-crit’ || currentView === ‘query-cross’ || currentView === ‘report-combo’ || currentView === ‘report-severity’) {
+body = renderPdfBody(currentView);
+} else if (currentView === ‘report-timeseries’) {
+body = renderPdfTimeseries();
+} else {
+body = renderPdfBody(‘report-dashboard’);
+}
+root.innerHTML = header + body + pdfLegend();
+return root;
+}
+
+function viewTitleFor(v) {
+const map = {
+‘table-findings’:‘Findings’,‘table-sources’:‘Sources’,‘table-timeline’:‘Timeline’,
+‘table-actors’:‘Actors’,‘table-iocs’:‘IOCs’,‘table-files’:‘Files’,
+‘query-builder’:‘Query Builder’,‘query-crit’:‘Critical Findings’,‘query-cross’:‘Cross-File Patterns’,
+‘report-dashboard’:‘Dashboard’,‘report-timeseries’:‘Time-Series Trends’,
+‘report-severity’:‘Severity Report’,‘report-combo’:‘Cross-File Combos’,
+‘form-finding’:‘New Finding’,‘form-actor’:‘New Actor’,‘form-ioc’:‘New IOC’
+};
+return map[v] || ‘Report’;
+}
+
+function pdfLegend() {
+return `<hr> <h2>How to read severity</h2> ${Object.keys(SEV_EXPLAIN).map(k =>`
+<div class="pdf-explain">
+<span class="pdf-sev ${k}">${SEV_EXPLAIN[k].label}</span>
+<div style="margin-top:6px"><span class="label">Plain</span>${esc(SEV_EXPLAIN[k].plain)}</div>
+<div style="margin-top:4px"><span class="label">Simple</span>${esc(SEV_EXPLAIN[k].kid)}</div>
+</div>
+`).join('')} `;
+}
+
+function renderPdfBody(view) {
+const counts = severityCounts();
+if (view === ‘report-dashboard’) {
+return `<h2>Evidence Overview</h2> <div class="pdf-kpi-row"> <div class="pdf-kpi"><div class="n" style="color:#ef4444">${counts.crit}</div><div class="l">Critical</div></div> <div class="pdf-kpi"><div class="n" style="color:#f97316">${counts.high}</div><div class="l">High</div></div> <div class="pdf-kpi"><div class="n" style="color:#eab308">${counts.med}</div><div class="l">Medium</div></div> <div class="pdf-kpi"><div class="n" style="color:#4a9eff">${counts.low}</div><div class="l">Low</div></div> <div class="pdf-kpi"><div class="n">${DB.files.length}</div><div class="l">Files</div></div> <div class="pdf-kpi"><div class="n">${DB.iocs.length}</div><div class="l">IOCs</div></div> <div class="pdf-kpi"><div class="n">${DB.actors.length}</div><div class="l">Actors</div></div> <div class="pdf-kpi"><div class="n">${DB.timeline.length}</div><div class="l">Timeline</div></div> </div> <h2>All Findings</h2> ${renderPdfFindingCards(DB.findings)}`;
+}
+if (view === ‘query-crit’) return `<h2>Critical Findings Only</h2>${renderPdfFindingCards(DB.findings.filter(f => f.sev === 'crit'))}`;
+if (view === ‘table-findings’) return `<h2>Findings</h2>${renderPdfFindingCards(DB.findings)}`;
+if (view === ‘table-files’) return `<h2>Files</h2>${pdfTable(DB.files, ['name','type','size','lineCount','findingCount','iocCount','added'])}`;
+if (view === ‘table-iocs’) return `<h2>IOCs</h2>${pdfTable(DB.iocs, ['type','value','file','line','ts'])}`;
+if (view === ‘table-actors’) return `<h2>Actors</h2>${pdfTable(DB.actors.map(a => ({...a, sources: Array.isArray(a.sources)?a.sources.join(', '):a.sources})), ['type','id','sightings','firstSeen','sources'])}`;
+if (view === ‘table-sources’) return `<h2>Sources</h2>${pdfTable(DB.sources, ['name','size','added'])}`;
+if (view === ‘table-timeline’) return `<h2>Timeline</h2>${pdfTable(DB.timeline.slice().sort((a,b)=>a.ts.localeCompare(b.ts)), ['ts','file','line','preview'])}`;
+if (view === ‘report-severity’) {
+const byCategory = {};
+for (const f of DB.findings) {
+const k = f.category || ‘Uncategorized’;
+byCategory[k] = (byCategory[k] || { total:0, crit:0, high:0, med:0, low:0 });
+byCategory[k].total++; byCategory[k][f.sev]++;
+}
+const rows = Object.entries(byCategory).map(([cat, c]) => ({ category: cat, total: c.total, crit: c.crit, high: c.high, med: c.med, low: c.low })).sort((a,b)=>b.total-a.total);
+return `<h2>Severity Report — Category × Severity</h2>${pdfTable(rows, ['category','total','crit','high','med','low'])}`;
+}
+if (view === ‘query-cross’ || view === ‘report-combo’) {
+const byLabel = {};
+for (const f of DB.findings) {
+if (!byLabel[f.label]) byLabel[f.label] = { files: new Set(), count: 0, sev: f.sev };
+byLabel[f.label].files.add(f.file); byLabel[f.label].count++;
+}
+const rows = Object.entries(byLabel).filter(([,v])=>v.files.size>=2).map(([label,v])=>({ label, sev: v.sev, files: v.files.size, occurrences: v.count, sources: Array.from(v.files).join(’, ’) })).sort((a,b)=>b.files-a.files);
+return `<h2>Cross-File Patterns</h2><p style="color:#888;font-size:11px;margin-bottom:10px">Patterns appearing in 2 or more files. Repetition across independent captures is signal, not noise.</p>${pdfTable(rows, ['sev','label','files','occurrences','sources'])}`;
+}
+return ‘<p>No data for this view.</p>’;
+}
+
+function renderPdfTimeseries() {
+const bins = groupByDay(DB.findings);
+const days = Object.keys(bins).sort();
+if (days.length === 0) return ‘<h2>Time-Series Trends</h2><p style="color:#888">No timestamped findings yet.</p>’;
+const rows = days.map(d => ({
+day: d,
+critical: bins[d].filter(x=>x.sev===‘crit’).length,
+high: bins[d].filter(x=>x.sev===‘high’).length,
+medium: bins[d].filter(x=>x.sev===‘med’).length,
+low: bins[d].filter(x=>x.sev===‘low’).length,
+total: bins[d].length
+}));
+return `<h2>Time-Series Trends</h2><div class="meta">Range: ${days[0]} → ${days[days.length-1]}</div>${pdfTable(rows, ['day','critical','high','medium','low','total'])}`;
+}
+
+function renderPdfFindingCards(rows) {
+if (!rows.length) return ‘<p style="color:#888">No findings.</p>’;
+return rows.map(f => `<div class="pdf-card"> <span class="pdf-sev ${f.sev}">${SEV_EXPLAIN[f.sev]?.label || f.sev.toUpperCase()}</span> <h2 style="margin:8px 0 4px;color:#fff;font-size:15px">${esc(f.label)}</h2> <div class="meta">${esc(f.category||'—')} · ${esc(f.file)} · line ${esc(f.line)} · ${String(f.ts||'').slice(0,19).replace('T',' ')}</div> <h3>The finding</h3> <div>${esc(f.note||'—')}</div> <h3>Why it matters</h3> <div>${esc(SEV_EXPLAIN[f.sev]?.plain || '')}</div> <h3>Simple version</h3> <div>${esc(SEV_EXPLAIN[f.sev]?.kid || '')}</div> ${f.ctx ?`<h3>Evidence line</h3><div style="font-family:'SF Mono',Menlo,monospace;font-size:10px;color:#aaa;word-break:break-all">${esc(f.ctx)}</div>`: ''} </div>`).join(’’);
+}
+
+function pdfTable(rows, cols) {
+if (!rows.length) return ‘<p style="color:#888">No rows.</p>’;
+const head = cols.map(c => `<th>${esc(c)}</th>`).join(’’);
+const body = rows.map(r => {
+const tds = cols.map(col => {
+let v = r[col];
+if (col === ‘size’ && typeof v === ‘number’) v = fmtBytes(v);
+if (col === ‘ts’ || col === ‘added’ || col === ‘firstSeen’) v = String(v||’’).slice(0,19).replace(‘T’,’ ‘);
+if (col === ‘sev’) return `<td><span class="pdf-sev ${v}">${String(v).toUpperCase()}</span></td>`;
+return `<td>${esc(v)}</td>`;
+}).join(’’);
+return `<tr>${tds}</tr>`;
+}).join(’’);
+return `<table class="pdf-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+
+function printPDF() {
+setStatus(‘Generating PDF…’);
+const root = buildPdfRoot();
+// Must be attached to DOM for html2canvas to measure it
+root.style.position = ‘fixed’;
+root.style.left = ‘-10000px’;
+root.style.top = ‘0’;
+document.body.appendChild(root);
+const stamp = new Date().toISOString().replace(/[:.]/g,’-’).slice(0,19);
+const fname = `TruthFinder_${viewTitleFor(currentView).replace(/\s+/g,'_')}_${stamp}.pdf`;
+html2pdf().set({
+margin: 0.4,
+filename: fname,
+image: { type: ‘jpeg’, quality: 0.95 },
+html2canvas: { scale: 2, backgroundColor: ‘#000000’, useCORS: true, logging: false },
+jsPDF: { unit: ‘in’, format: ‘letter’, orientation: ‘portrait’ },
+pagebreak: { mode: [‘css’,‘legacy’], avoid: ‘.pdf-card’ }
+}).from(root).save().then(() => {
+document.body.removeChild(root);
+setStatus(`✓ PDF saved: ${fname}`);
+}).catch(err => {
+document.body.removeChild(root);
+setStatus(`✗ PDF error: ${err.message}`);
+});
+}
+window.printPDF = printPDF;
+
+function saveDB() {
+const snap = { version: 4, savedAt: now(), …DB };
+snap.actors = DB.actors.map(a => ({…a, sources: Array.isArray(a.sources) ? a.sources : Array.from(a.sources||[])}));
+const blob = new Blob([JSON.stringify(snap, null, 2)], { type: ‘application/json’ });
+const url = URL.createObjectURL(blob);
+const a = document.createElement(‘a’);
+a.href = url; a.download = `truthfinder-db-${now().replace(/[:.]/g,'-').slice(0,19)}.json`;
+a.click();
+URL.revokeObjectURL(url);
+setStatus(`✓ Saved · ${DB.findings.length} findings, ${DB.iocs.length} IOCs, ${DB.actors.length} actors`);
+}
+
+async function restoreDB(file) {
+try {
+const snap = JSON.parse(await file.text());
+DB.findings = snap.findings || [];
+DB.sources = snap.sources || [];
+DB.timeline = snap.timeline || [];
+DB.actors = snap.actors || [];
+DB.iocs = snap.iocs || [];
+DB.files = snap.files || [];
+updateCounts();
+renderView(currentView);
+setStatus(`✓ Restored ${DB.findings.length} findings from snapshot`);
+} catch (err) {
+setStatus(`✗ Restore failed: ${err.message}`);
+}
+}
+
+document.addEventListener(‘DOMContentLoaded’, () => {
+document.querySelectorAll(’.nav-item’).forEach(el => {
+el.addEventListener(‘click’, () => renderView(el.dataset.view));
+});
+$(‘btn-nav-toggle’).addEventListener(‘click’, () => { $(‘nav-pane’).classList.toggle(‘open’); });
+$(‘btn-load’).addEventListener(‘click’, () => $(‘file-input’).click());
+$(‘file-input’).addEventListener(‘change’, async (e) => {
+for (const f of e.target.files) await ingest(f);
+e.target.value = ‘’;
+});
+$(‘btn-save’).addEventListener(‘click’, saveDB);
+$(‘btn-restore’).addEventListener(‘click’, () => $(‘load-input’).click());
+$(‘load-input’).addEventListener(‘change’, async (e) => {
+if (e.target.files[0]) await restoreDB(e.target.files[0]);
+e.target.value = ‘’;
+});
+$(‘btn-pdf’).addEventListener(‘click’, printPDF);
+document.body.addEventListener(‘dragover’, (e) => { e.preventDefault(); });
+document.body.addEventListener(‘drop’, async (e) => {
+e.preventDefault();
+for (const f of e.dataTransfer.files) await ingest(f);
+});
+renderView(‘report-dashboard’);
+updateCounts();
+setStatus(‘Truth Finder v4 ready · Print PDF armed · Streaming engine active’);
+});
 </script>
 
 </body>
