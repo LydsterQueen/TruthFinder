@@ -11,9 +11,9 @@
   :root {
     --bg: #0a0a0a; --panel: #111; --panel2: #161616;
     --border: #222; --border2: #2a2a2a;
-    --text: #e5e5e5; --dim: #888; --dim2: #555;
-    --accent: #4a9eff; --accent2: #1d4ed8;
-    --crit: #ef4444; --high: #f97316; --med: #eab308; --low: #4a9eff; --ok: #22c55e;
+    --text: #e8e3d5; --dim: #8a8270; --dim2: #555044;
+    --accent: #c9a961; --accent2: #8a7234;
+    --crit: #a83232; --high: #b8702a; --med: #a88830; --low: #3a6b8a; --ok: #5a8a4a;
   }
   body {
     background: var(--bg); color: var(--text);
@@ -29,9 +29,9 @@
   .ribbon .brand { display: flex; align-items: center; gap: 10px; }
   .ribbon .brand .logo {
     width: 28px; height: 28px; border-radius: 6px;
-    background: linear-gradient(135deg, #1d4ed8, #4a9eff);
+    background: linear-gradient(135deg, #8a7234, #c9a961);
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px; color: white;
+    font-weight: 700; font-size: 14px; color: #0a0a0a;
   }
   .ribbon .brand .title { font-size: 14px; font-weight: 600; }
   .ribbon .brand .sub { font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
@@ -43,10 +43,10 @@ padding: 6px 12px; border-radius: 4px; cursor: pointer;
 font-family: inherit; font-size: 12px; white-space: nowrap;
 }
 button:hover { background: var(–panel2); border-color: #3a3a3a; }
-button.primary { background: var(–accent2); border-color: var(–accent2); color: white; }
+button.primary { background: var(–accent2); border-color: var(–accent); color: #0a0a0a; font-weight: 600; }
 button.primary:hover { background: var(–accent); }
-button.pdf { background: #14532d; border-color: #166534; color: #bbf7d0; }
-button.pdf:hover { background: #166534; }
+button.pdf { background: #2a2418; border-color: var(–accent); color: var(–accent); font-weight: 600; }
+button.pdf:hover { background: var(–accent2); color: #0a0a0a; }
 button.sm { padding: 4px 8px; font-size: 11px; }
 
 .workspace { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 46px); }
@@ -65,7 +65,7 @@ display: flex; justify-content: space-between; align-items: center;
 border-left: 2px solid transparent;
 }
 .nav-item:hover { background: #141414; }
-.nav-item.active { background: #141f33; border-left-color: var(–accent); color: var(–accent); }
+.nav-item.active { background: #1a1508; border-left-color: var(–accent); color: var(–accent); }
 .nav-item .count { color: var(–dim); font-size: 10px; }
 .nav-item .icon { margin-right: 6px; font-size: 11px; opacity: 0.7; }
 
@@ -94,11 +94,11 @@ max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap
 }
 table.datasheet tr:hover td { background: #141414; }
 table.datasheet td.ctx { font-family: “SF Mono”, Menlo, monospace; font-size: 11px; color: var(–dim); }
-.sev-pill { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-.sev-pill.crit { background: #451a1a; color: #fca5a5; }
-.sev-pill.high { background: #451f0a; color: #fdba74; }
-.sev-pill.med  { background: #3f2e0a; color: #fde047; }
-.sev-pill.low  { background: #0f2540; color: #93c5fd; }
+.sev-pill { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.sev-pill.crit { background: #3a1818; color: #d48888; border: 1px solid #5a2525; }
+.sev-pill.high { background: #3a2818; color: #d4a070; border: 1px solid #5a3d25; }
+.sev-pill.med  { background: #3a3018; color: #d4b860; border: 1px solid #5a4825; }
+.sev-pill.low  { background: #1a2838; color: #7ba0c4; border: 1px solid #2a4055; }
 
 .form-card { background: var(–panel); border: 1px solid var(–border); border-radius: 6px; padding: 16px; max-width: 600px; }
 .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
@@ -136,7 +136,7 @@ color: var(–text); padding: 4px 6px; border-radius: 3px; font-size: 11px;
 }
 
 .drop-zone { border: 2px dashed var(–border2); border-radius: 10px; padding: 30px 20px; text-align: center; margin-bottom: 16px; background: #0c0c0c; transition: all 0.2s; }
-.drop-zone.drag { border-color: var(–accent); background: #0f1a2e; }
+.drop-zone.drag { border-color: var(–accent); background: #1a1508; }
 
 .progress { display: none; margin-bottom: 16px; padding: 12px; background: var(–panel); border: 1px solid var(–border); border-radius: 6px; }
 .progress.active { display: block; }
@@ -159,18 +159,18 @@ input[type=“file”] { display: none; }
 .nav-toggle { display: none; }
 
 /* ==== PDF RENDER STYLES ==== */
-.pdf-root { background: #000; color: #fff; padding: 40px; font-family: system-ui, -apple-system, sans-serif; width: 760px; }
-.pdf-root h1 { color: #4a9eff; font-size: 24px; margin-bottom: 6px; }
-.pdf-root h2 { color: #4a9eff; font-size: 16px; margin: 20px 0 10px; }
-.pdf-root h3 { color: #93c5fd; font-size: 13px; margin-top: 12px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-.pdf-root .meta { color: #888; font-size: 11px; margin-bottom: 4px; }
-.pdf-root hr { border: 0; border-top: 1px solid #333; margin: 20px 0; }
+.pdf-root { background: #0a0a0a; color: #e8e3d5; padding: 40px; font-family: system-ui, -apple-system, sans-serif; width: 760px; }
+.pdf-root h1 { color: #c9a961; font-size: 24px; margin-bottom: 6px; }
+.pdf-root h2 { color: #c9a961; font-size: 16px; margin: 20px 0 10px; }
+.pdf-root h3 { color: #8a7234; font-size: 13px; margin-top: 12px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pdf-root .meta { color: #8a8270; font-size: 11px; margin-bottom: 4px; }
+.pdf-root hr { border: 0; border-top: 1px solid #2a2418; margin: 20px 0; }
 .pdf-card { page-break-inside: avoid; margin-bottom: 18px; padding: 16px; border: 1px solid #333; border-radius: 8px; }
-.pdf-sev { font-weight: 700; font-size: 11px; letter-spacing: 1px; display: inline-block; padding: 2px 8px; border-radius: 3px; }
-.pdf-sev.crit { background: #451a1a; color: #fca5a5; }
-.pdf-sev.high { background: #451f0a; color: #fdba74; }
-.pdf-sev.med  { background: #3f2e0a; color: #fde047; }
-.pdf-sev.low  { background: #0f2540; color: #93c5fd; }
+.pdf-sev { font-weight: 700; font-size: 11px; letter-spacing: 1px; display: inline-block; padding: 2px 8px; border-radius: 3px; border: 1px solid; }
+.pdf-sev.crit { background: #3a1818; color: #d48888; border-color: #5a2525; }
+.pdf-sev.high { background: #3a2818; color: #d4a070; border-color: #5a3d25; }
+.pdf-sev.med  { background: #3a3018; color: #d4b860; border-color: #5a4825; }
+.pdf-sev.low  { background: #1a2838; color: #7ba0c4; border-color: #2a4055; }
 .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
 .pdf-table th, .pdf-table td { padding: 6px 8px; border: 1px solid #333; text-align: left; vertical-align: top; word-wrap: break-word; }
 .pdf-table th { background: #1a1a1a; color: #aaa; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
@@ -178,8 +178,8 @@ input[type=“file”] { display: none; }
 .pdf-kpi { flex: 1 1 110px; padding: 12px; border: 1px solid #333; border-radius: 6px; text-align: center; min-width: 110px; }
 .pdf-kpi .n { font-size: 22px; font-weight: 700; }
 .pdf-kpi .l { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-.pdf-explain { background: #0f1a2e; border-left: 3px solid #4a9eff; padding: 10px 12px; margin: 10px 0; font-size: 12px; }
-.pdf-explain .label { color: #93c5fd; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.pdf-explain { background: #1a1508; border-left: 3px solid #c9a961; padding: 10px 12px; margin: 10px 0; font-size: 12px; }
+.pdf-explain .label { color: #8a7234; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
 </style>
 
 </head>
@@ -191,7 +191,7 @@ input[type=“file”] { display: none; }
     <div class="logo">TF</div>
     <div>
       <div class="title">Truth Finder</div>
-      <div class="sub">Access DB v4 · Time-Series</div>
+      <div class="sub">Access DB v4 · Gold Edition</div>
     </div>
   </div>
   <div class="tools">
