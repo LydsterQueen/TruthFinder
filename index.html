@@ -6,123 +6,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Truth Finder v7 — Gold Edition</title>
 <style>
-  :root {
-    --bg:#0a0a0a; --panel:#111111; --panel2:#161616; --border:#2a2418;
-    --accent:#c9a961; --accent2:#8a7234; --text:#e8e3d5; --dim:#8a8270;
-    --crit:#a83232; --high:#b8702a; --med:#a88830; --low:#3a6b8a;
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    margin: 0; padding: 0;
-    background: var(--bg); color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-    font-size: 14px; line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
-  }
-  .topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: linear-gradient(180deg,#0e0c08,#0a0907);
-    border-bottom: 1px solid var(--border);
-    padding: 8px 10px;
-  }
-  .ribbon { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-  .logo { font-weight: 700; letter-spacing: 0.5px; font-size: 14px; color: var(--accent); margin-right: auto; display: flex; align-items: center; gap: 6px; }
-  .logo small { color: var(--dim); font-weight: 400; font-size: 10px; letter-spacing: 1px;}
-  .btn {
-    background: #1a1610; color: var(--text);
-    border: 1px solid var(--border);
-    padding: 7px 11px; border-radius: 6px;
-    font-size: 12px; font-weight: 500;
-    cursor: pointer; white-space: nowrap;
-    -webkit-appearance: none; -moz-appearance: none; appearance: none;
-    font-family: inherit;
-  }
-  .btn:active { background: #221c12; }
-  .btn.primary { background: var(--accent2); color: #0a0a0a; border-color: var(--accent); font-weight: 600;}
-  .btn.ghost { background: transparent; }
-  .btn.danger { color: var(--crit); border-color: #4a1818; }
-  .btn:disabled { opacity: 0.4; }
-
-.filebar {
-margin-top: 8px;
-display: flex; gap: 6px; align-items: center;
-padding: 6px 8px;
-background: var(–panel2);
-border: 1px solid var(–border);
-border-radius: 6px;
+:root {
+  --bg:#050505; --panel:#0c0c0c; --panel2:#111110; --border:#2a2418;
+  --accent:#c9a961; --accent2:#8a7234; --text:#e8e3d5; --dim:#8a8270;
+  --crit:#a83232; --high:#b8702a; --med:#a88830; --low:#3a6b8a;
 }
-.filebar .fname { font-size: 11px; color: var(–dim); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(180deg,#080604,#050505);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 10px;
+}
+.ribbon { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.logo { font-weight: 700; letter-spacing: 0.5px; font-size: 14px; color: var(--accent); margin-right: auto; display: flex; align-items: center; gap: 6px; }
+.logo small { color: var(--dim); font-weight: 400; font-size: 10px; letter-spacing: 1px;}
+.btn {
+  background: #131110; color: var(--text);
+  border: 1px solid var(--border);
+  padding: 7px 11px; border-radius: 6px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer; white-space: nowrap;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  font-family: inherit;
+}
+.btn:active { background: #1a1610; }
+.btn.primary { background: var(--accent2); color: #050505; border-color: var(--accent); font-weight: 600;}
+.btn.ghost { background: transparent; }
+.btn.danger { color: var(--crit); border-color: #4a1818; }
+.btn:disabled { opacity: 0.4; }
+.filebar {
+  margin-top: 8px;
+  display: flex; gap: 6px; align-items: center;
+  padding: 6px 8px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.filebar .fname { font-size: 11px; color: var(--dim); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .hidden-file { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-
 .container { display: flex; min-height: calc(100vh - 110px); }
 .sidenav {
-width: 180px; flex-shrink: 0;
-background: var(–panel);
-border-right: 1px solid var(–border);
-padding: 8px 6px;
+  width: 180px; flex-shrink: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: 8px 6px;
 }
 .sidenav.collapsed { display: none; }
-.navgroup { font-size: 10px; color: var(–dim); text-transform: uppercase; padding: 8px 8px 4px; letter-spacing: 1px; }
+.navgroup { font-size: 10px; color: var(--dim); text-transform: uppercase; padding: 8px 8px 4px; letter-spacing: 1px; }
 .navitem {
-display: block; padding: 8px 10px;
-font-size: 13px; color: var(–text);
-cursor: pointer; border-radius: 5px;
-border: 1px solid transparent;
+  display: block; padding: 8px 10px;
+  font-size: 13px; color: var(--text);
+  cursor: pointer; border-radius: 5px;
+  border: 1px solid transparent;
 }
-.navitem.active { background: #1a1510; color: var(–accent); border-color: var(–border); }
-.navitem:active { background: #221b10; }
+.navitem.active { background: #141210; color: var(--accent); border-color: var(--border); }
+.navitem:active { background: #1a1610; }
 .main { flex: 1; padding: 12px; min-width: 0; }
 .navtoggle { display: none; }
-
 @media (max-width: 720px) {
-.sidenav { position: fixed; top: 110px; left: 0; bottom: 0; z-index: 90; width: 220px; overflow-y: auto;}
-.navtoggle { display: inline-flex; }
-.main { padding: 10px; }
+  .sidenav { position: fixed; top: 110px; left: 0; bottom: 0; z-index: 90; width: 220px; overflow-y: auto;}
+  .navtoggle { display: inline-flex; }
+  .main { padding: 10px; }
 }
-
 .panel {
-background: var(–panel);
-border: 1px solid var(–border);
-border-radius: 8px;
-padding: 12px; margin-bottom: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px; margin-bottom: 12px;
 }
-.panel h2 { margin: 0 0 10px; font-size: 15px; color: var(–accent); font-weight: 600;}
-.panel h3 { margin: 12px 0 8px; font-size: 13px; color: var(–accent); font-weight: 600;}
+.panel h2 { margin: 0 0 10px; font-size: 15px; color: var(--accent); font-weight: 600;}
+.panel h3 { margin: 12px 0 8px; font-size: 13px; color: var(--accent); font-weight: 600;}
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
 .stat {
-background: var(–panel2);
-border: 1px solid var(–border);
-border-radius: 6px;
-padding: 8px 10px;
-flex: 1; min-width: 120px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  flex: 1; min-width: 120px;
 }
-.stat .lbl { font-size: 10px; color: var(–dim); text-transform: uppercase; letter-spacing: 1px;}
-.stat .val { font-size: 18px; color: var(–accent); font-weight: 600; margin-top: 2px;}
-
-.tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(–border); border-radius: 6px;}
+.stat .lbl { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px;}
+.stat .val { font-size: 18px; color: var(--accent); font-weight: 600; margin-top: 2px;}
+.stat .val.crit-color { color: var(--crit); }
+.stat .val.high-color { color: var(--high); }
+.stat .val.med-color { color: var(--med); }
+.stat .val.low-color { color: var(--low); }
+.tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 6px;}
 table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 500px;}
-th, td { padding: 7px 9px; text-align: left; border-bottom: 1px solid var(–border); vertical-align: top;}
-th { background: var(–panel2); color: var(–accent); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;}
+th, td { padding: 7px 9px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top;}
+th { background: var(--panel2); color: var(--accent); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;}
 tr:last-child td { border-bottom: none; }
-td.mono, .mono { font-family: ui-monospace, “SF Mono”, Menlo, monospace; font-size: 11px; color: var(–dim); }
-
+td.mono, .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: var(--dim); }
 .sev { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
-.sev.crit { background: var(–crit); color: #fff; }
-.sev.high { background: var(–high); color: #fff; }
-.sev.med  { background: var(–med);  color: #0a0a0a; }
-.sev.low  { background: var(–low);  color: #fff; }
-
-label { display: block; font-size: 11px; color: var(–dim); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px;}
+.sev.crit { background: var(--crit); color: #fff; }
+.sev.high { background: var(--high); color: #fff; }
+.sev.med { background: var(--med); color: #050505; }
+.sev.low { background: var(--low); color: #fff; }
+.count-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; background: var(--panel2); border: 1px solid var(--border); font-size: 10px; color: var(--accent); margin-left: 6px; font-weight: 600; }
+label { display: block; font-size: 11px; color: var(--dim); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px;}
 input[type=text], input[type=number], input[type=date], textarea, select {
-width: 100%;
-background: var(–panel2);
-color: var(–text);
-border: 1px solid var(–border);
-border-radius: 5px;
-padding: 8px 10px;
-font-size: 14px;
-font-family: inherit;
--webkit-appearance: none;
+  width: 100%;
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-family: inherit;
+  -webkit-appearance: none;
 }
 textarea { min-height: 70px; resize: vertical; }
 .formgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -131,48 +129,45 @@ textarea { min-height: 70px; resize: vertical; }
 .formfield.full { grid-column: 1 / -1; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .toolbar input[type=text] { flex: 1; min-width: 150px; }
-
-.progress { height: 4px; background: #1a1610; border-radius: 2px; overflow: hidden; margin-top: 6px; width: 80px;}
-.progress > div { height: 100%; background: var(–accent); transition: width 0.2s;}
-
+.progress { height: 4px; background: #141210; border-radius: 2px; overflow: hidden; margin-top: 6px; width: 80px;}
+.progress > div { height: 100%; background: var(--accent); transition: width 0.2s;}
 .toast {
-position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-background: #1a1610; color: var(–accent);
-border: 1px solid var(–accent2);
-padding: 10px 16px; border-radius: 6px;
-z-index: 200; font-size: 13px;
-box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-max-width: 90%;
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: #141210; color: var(--accent);
+  border: 1px solid var(--accent2);
+  padding: 10px 16px; border-radius: 6px;
+  z-index: 200; font-size: 13px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+  max-width: 90%;
 }
-.empty { color: var(–dim); text-align: center; padding: 24px; font-style: italic;}
-.pill { display: inline-block; padding: 1px 6px; border-radius: 3px; background: var(–panel2); border: 1px solid var(–border); font-size: 10px; color: var(–dim); margin-right: 4px;}
-.helptext { font-size: 11px; color: var(–dim); margin-top: 4px; }
-.divider { height: 1px; background: var(–border); margin: 12px 0; }
+.empty { color: var(--dim); text-align: center; padding: 24px; font-style: italic;}
+.pill { display: inline-block; padding: 1px 6px; border-radius: 3px; background: var(--panel2); border: 1px solid var(--border); font-size: 10px; color: var(--dim); margin-right: 4px;}
+.helptext { font-size: 11px; color: var(--dim); margin-top: 4px; }
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
 details { margin: 6px 0; }
-summary { cursor: pointer; color: var(–accent); font-size: 12px; padding: 4px 0; }
+summary { cursor: pointer; color: var(--accent); font-size: 12px; padding: 4px 0; }
 .codebox {
-background: #0a0807; border: 1px solid var(–border); border-radius: 4px;
-padding: 6px 8px; font-family: ui-monospace, monospace; font-size: 10px;
-color: var(–dim); white-space: pre-wrap; word-break: break-all;
-max-height: 240px; overflow: auto;
+  background: #030303; border: 1px solid var(--border); border-radius: 4px;
+  padding: 6px 8px; font-family: ui-monospace, monospace; font-size: 10px;
+  color: var(--dim); white-space: pre-wrap; word-break: break-all;
+  max-height: 240px; overflow: auto;
 }
-.bar { display: flex; height: 10px; background:#1a1610; border-radius:2px; overflow:hidden; }
+.bar { display: flex; height: 10px; background:#141210; border-radius:2px; overflow:hidden; }
 .bar > div { height: 100%; }
-.barlbl { display:flex; justify-content:space-between; font-size:11px; color:var(–dim); margin-bottom:2px; }
+.barlbl { display:flex; justify-content:space-between; font-size:11px; color:var(--dim); margin-bottom:2px; }
 .trendrow { margin-bottom: 6px; }
-
+.lockdown-label { text-align: center; color: var(--accent2); font-size: 12px; letter-spacing: 1px; padding: 12px 0; opacity: 0.7; }
 @media print {
-.topbar, .sidenav, .toolbar, .btn, .navtoggle { display: none !important; }
-.main { padding: 0; }
-body { background: #fff; color: #000; }
-.panel { border: 1px solid #999; background: #fff; page-break-inside: avoid; }
-.panel h2, .panel h3 { color: #000; }
-th { background: #eee; color: #000; }
-.stat { background: #f5f5f5; }
-.stat .val { color: #000; }
+  .topbar, .sidenav, .toolbar, .btn, .navtoggle { display: none !important; }
+  .main { padding: 0; }
+  body { background: #fff; color: #000; }
+  .panel { border: 1px solid #999; background: #fff; page-break-inside: avoid; }
+  .panel h2, .panel h3 { color: #000; }
+  th { background: #eee; color: #000; }
+  .stat { background: #f5f5f5; }
+  .stat .val { color: #000; }
 }
 </style>
-
 </head>
 <body>
 <div id="topbar"></div>
@@ -181,1171 +176,684 @@ th { background: #eee; color: #000; }
   <div id="main" class="main"></div>
 </div>
 <div id="toast-host"></div>
-
 <script>
 "use strict";
 (function(){
 
-// ============================================================
-// PATTERN LIBRARY
-// ============================================================
 var PATTERNS = [
-  { id:'gh_takeover', re:/password\s+(was\s+)?changed|2FA\s+enabled|recovery\s+codes\s+(downloaded|generated)|security\s+key\s+registered/i, sev:'crit', cat:'Account Takeover', label:'GitHub/account takeover indicators'},
-  { id:'oauth_revoke', re:/OAuth\s+token\s+revoked|app\s+access\s+revoked|authorized\s+application\s+removed/i, sev:'high', cat:'Account Takeover', label:'OAuth/app access revocation'},
-  { id:'unauth_signin', re:/(unauthorized|suspicious|unrecognized)\s+sign[- ]?in|new\s+device\s+signed\s+in/i, sev:'high', cat:'Account Takeover', label:'Unauthorized sign-in event'},
-  { id:'bypassPCS', re:/bypassPCSEncryption[^a-z]*(?:=|:)?\s*(?:1|true|YES)/i, sev:'crit', cat:'CKKS/iCloud', label:'bypassPCSEncryption active'},
-  { id:'inCircle0', re:/inCircle[^a-z]*(?:=|:)?\s*0/i, sev:'crit', cat:'CKKS/iCloud', label:'Device excluded from iCloud security circle (inCircle:0)'},
-  { id:'tlk_shares', re:/heal-tlk-shares|TLK\s+share|tlkShare/i, sev:'high', cat:'CKKS/iCloud', label:'TLK share / heal-tlk-shares activity'},
-  { id:'rotating_ckids', re:/CloudKit.*account.*identifier|ckAccountID/i, sev:'med', cat:'CKKS/iCloud', label:'CloudKit account identifier reference'},
-  { id:'oqe_drain', re:/OQE.*items|itemsyncing.*paused/i, sev:'high', cat:'CKKS/iCloud', label:'Passwords OQE drain / itemsyncing paused'},
-  { id:'userviews_disabled', re:/userViews.*(?:disabled|DISABLED)/i, sev:'high', cat:'CKKS/iCloud', label:'userViews policy disabled'},
-  { id:'findmy_mismatch', re:/FindMy.*(?:mismatch|send.*recv)/i, sev:'high', cat:'CKKS/iCloud', label:'FindMy zone send/recv mismatch'},
-  { id:'sensitive_visible', re:/SensitivePropertiesVisible[^a-z]*(?:=|:)?\s*(?:true|YES|1)/i, sev:'crit', cat:'CKKS/iCloud', label:'SensitivePropertiesVisible = true'},
-  { id:'untrusted_tunnel', re:/untrusted\s+tunnel|tunnel.*untrusted|CoreDevice.*tunnel/i, sev:'high', cat:'CKKS/iCloud', label:'CoreDevice untrusted tunnel service'},
-  { id:'mdm_profile', re:/MDM\s+profile|managedConfiguration|com\.apple\.mdm/i, sev:'high', cat:'MDM/Profile', label:'MDM profile reference'},
-  { id:'tmobile_mdm', re:/T-?Mobile.*(profile|managed|MDM)|com\.tmobile/i, sev:'high', cat:'MDM/Profile', label:'T-Mobile managed/MDM reference'},
-  { id:'azure_cert', re:/Microsoft\s+Azure|azure.*cert|Microsoft\s+IT\s+TLS/i, sev:'high', cat:'MDM/Profile', label:'Microsoft Azure certificate on iOS'},
-  { id:'share_ext_block', re:/share\s+extension.*(?:block|disabled|suppress)|com\.apple\.share/i, sev:'med', cat:'MDM/Profile', label:'Share extension suppression'},
-  { id:'cellular_cap', re:/cellular.*(?:limit|cap|100\s*MB|transfer\s+limit)/i, sev:'med', cat:'MDM/Profile', label:'Cellular transfer cap'},
-  { id:'private_addr_off', re:/Private\s+(MAC\s+)?Address.*OFF|privateAddress.*false|wifi\.privateAddress.*0/i, sev:'high', cat:'Network', label:'Private MAC Address OFF'},
-  { id:'real_mac', re:/\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b/, sev:'low', cat:'Network', label:'MAC address present'},
-  { id:'call_forward', re:/call\s+forward|forwardingNumber|\+1?214[0-9]{7}/i, sev:'high', cat:'Network', label:'Call forwarding indicator'},
-  { id:'tmobile_ipv6', re:/2607:fb90:[0-9a-f:]+/i, sev:'med', cat:'Network', label:'T-Mobile IPv6 (2607:fb90:) address'},
-  { id:'serial_match', re:/CW4XKX9QYM/i, sev:'high', cat:'Device', label:'Target iPhone serial CW4XKX9QYM'},
-  { id:'udid_anon', re:/UDID.*(?:anonymous|no\s+account|unattributed)/i, sev:'high', cat:'Device', label:'Anonymous/unattributed UDID'},
-  { id:'diag_enroll', re:/diagnostic.*enroll|enrolled.*diagnostic|MDMRegistered/i, sev:'high', cat:'Device', label:'Apple diagnostic enrollment'},
-  { id:'clouddocs_noclient', re:/com\.apple\.CloudDocs.*(?:no\s+client|missing)/i, sev:'high', cat:'Files', label:'com.apple.CloudDocs no declared client'},
-  { id:'notes_mislabel', re:/com\.apple\.notes.*Settings|Settings.*com\.apple\.notes/i, sev:'med', cat:'Files', label:'com.apple.notes mislabeled as Settings'},
-  { id:'productkit_b389', re:/productkit.*b389|b389.*productkit/i, sev:'med', cat:'Files', label:'productkit b389 anomaly'},
-  { id:'auth_failure', re:/UserAuthenticationFailure|authentication\s+failed.*retry/i, sev:'med', cat:'Auth', label:'Authentication failure / retry'},
-  { id:'ext_id_mutation', re:/ExternalIdentifierMutated|externalId.*changed/i, sev:'high', cat:'Auth', label:'External identifier mutation'},
-  { id:'no_auth_session', re:/no\s+auth\s+session|without\s+(?:auth|authentication)\s+session/i, sev:'high', cat:'Auth', label:'Action without auth session'},
-  { id:'webkit_sop', re:/CVE-2026-20643|WebKit.*Same\s*Origin|SOP\s+bypass/i, sev:'crit', cat:'CVE', label:'WebKit SOP bypass (CVE-2026-20643)'},
-  { id:'cve_generic', re:/CVE-\d{4}-\d{4,7}/i, sev:'med', cat:'CVE', label:'CVE reference'},
-  { id:'ipv4', re:/\b(?:\d{1,3}\.){3}\d{1,3}\b/, sev:'low', cat:'IOC', label:'IPv4 address'},
-  { id:'ipv6', re:/\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i, sev:'low', cat:'IOC', label:'IPv6 address'},
-  { id:'domain', re:/\b[a-z0-9-]+\.(?:com|net|org|io|co|app|dev|cloud)\b/i, sev:'low', cat:'IOC', label:'Domain reference'},
-  { id:'hash', re:/\b[a-f0-9]{32,64}\b/i, sev:'low', cat:'IOC', label:'Hash (MD5/SHA)'},
-  // Apple Intelligence / PrivateCloudCompute / WritingTools
-  { id:'donottrack_marker', re:/DoNotTrack[- ]?ME/i, sev:'crit', cat:'Apple Intelligence', label:'DoNotTrack-ME marker (user-injected canary)'},
-  { id:'span_color_inject', re:/<span\s+style\s*=\s*[\\"']*color:\s*red/i, sev:'high', cat:'Apple Intelligence', label:'HTML <span style="color:red"> injection in model response'},
-  { id:'private_cloud_compute', re:/PrivateCloudCompute|executionEnvironment.*PrivateCloud/i, sev:'high', cat:'Apple Intelligence', label:'PrivateCloudCompute execution environment'},
-  { id:'writing_tools', re:/WritingToolsUIService|com\.apple\.WritingTools/i, sev:'med', cat:'Apple Intelligence', label:'WritingToolsUIService client'},
-  { id:'model_request', re:/modelRequests|PromptTemplateInfo|com\.apple\.fm\.language/i, sev:'med', cat:'Apple Intelligence', label:'On-device/cloud model request'},
-  { id:'open_ended_tone', re:/textComposition\.OpenEndedTone|OpenEndedToneQueryResponse/i, sev:'med', cat:'Apple Intelligence', label:'OpenEndedTone composition template'},
-  { id:'apple_uuid', re:/\b[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\b/, sev:'low', cat:'IOC', label:'Apple UUID identifier'},
-  { id:'unix_ts_recent', re:/"timestamp"\s*:\s*17[0-9]{8}\.[0-9]+/i, sev:'low', cat:'IOC', label:'Unix timestamp (2024-2026 range)'}
+{ id:‘gh_takeover’, re:/password\s+(was\s+)?changed|2FA\s+enabled|recovery\s+codes\s+(downloaded|generated)|security\s+key\s+registered/i, sev:‘crit’, cat:‘Account Takeover’, label:‘GitHub/account takeover indicators’},
+{ id:‘oauth_revoke’, re:/OAuth\s+token\s+revoked|app\s+access\s+revoked|authorized\s+application\s+removed/i, sev:‘high’, cat:‘Account Takeover’, label:‘OAuth/app access revocation’},
+{ id:‘unauth_signin’, re:/(unauthorized|suspicious|unrecognized)\s+sign[- ]?in|new\s+device\s+signed\s+in/i, sev:‘high’, cat:‘Account Takeover’, label:‘Unauthorized sign-in event’},
+{ id:‘bypassPCS’, re:/bypassPCSEncryption[^a-z]*(?:=|:)?\s*(?:1|true|YES)/i, sev:‘crit’, cat:‘CKKS/iCloud’, label:‘bypassPCSEncryption active’},
+{ id:‘inCircle0’, re:/inCircle[^a-z]*(?:=|:)?\s*0/i, sev:‘crit’, cat:‘CKKS/iCloud’, label:‘Device excluded from iCloud security circle (inCircle:0)’},
+{ id:‘tlk_shares’, re:/heal-tlk-shares|TLK\s+share|tlkShare/i, sev:‘high’, cat:‘CKKS/iCloud’, label:‘TLK share / heal-tlk-shares activity’},
+{ id:‘rotating_ckids’, re:/CloudKit.*account.*identifier|ckAccountID/i, sev:‘med’, cat:‘CKKS/iCloud’, label:‘CloudKit account identifier reference’},
+{ id:‘oqe_drain’, re:/OQE.*items|itemsyncing.*paused/i, sev:‘high’, cat:‘CKKS/iCloud’, label:‘Passwords OQE drain / itemsyncing paused’},
+{ id:‘userviews_disabled’, re:/userViews.*(?:disabled|DISABLED)/i, sev:‘high’, cat:‘CKKS/iCloud’, label:‘userViews policy disabled’},
+{ id:‘findmy_mismatch’, re:/FindMy.*(?:mismatch|send.*recv)/i, sev:‘high’, cat:‘CKKS/iCloud’, label:‘FindMy zone send/recv mismatch’},
+{ id:‘sensitive_visible’, re:/SensitivePropertiesVisible[^a-z]*(?:=|:)?\s*(?:true|YES|1)/i, sev:‘crit’, cat:‘CKKS/iCloud’, label:‘SensitivePropertiesVisible = true’},
+{ id:‘untrusted_tunnel’, re:/untrusted\s+tunnel|tunnel.*untrusted|CoreDevice.*tunnel/i, sev:‘high’, cat:‘CKKS/iCloud’, label:‘CoreDevice untrusted tunnel service’},
+{ id:‘mdm_profile’, re:/MDM\s+profile|managedConfiguration|com.apple.mdm/i, sev:‘high’, cat:‘MDM/Profile’, label:‘MDM profile reference’},
+{ id:‘tmobile_mdm’, re:/T-?Mobile.*(profile|managed|MDM)|com.tmobile/i, sev:‘high’, cat:‘MDM/Profile’, label:‘T-Mobile managed/MDM reference’},
+{ id:‘azure_cert’, re:/Microsoft\s+Azure|azure.*cert|Microsoft\s+IT\s+TLS/i, sev:‘high’, cat:‘MDM/Profile’, label:‘Microsoft Azure certificate on iOS’},
+{ id:‘share_ext_block’, re:/share\s+extension.*(?:block|disabled|suppress)|com.apple.share/i, sev:‘med’, cat:‘MDM/Profile’, label:‘Share extension suppression’},
+{ id:‘cellular_cap’, re:/cellular.*(?:limit|cap|100\s*MB|transfer\s+limit)/i, sev:‘med’, cat:‘MDM/Profile’, label:‘Cellular transfer cap’},
+{ id:‘private_addr_off’, re:/Private\s+(MAC\s+)?Address.*OFF|privateAddress.*false|wifi.privateAddress.*0/i, sev:‘high’, cat:‘Network’, label:‘Private MAC Address OFF’},
+{ id:‘real_mac’, re:/\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b/, sev:‘low’, cat:‘Network’, label:‘MAC address present’},
+{ id:‘call_forward’, re:/call\s+forward|forwardingNumber|+1?214\d{7}/i, sev:‘high’, cat:‘Network’, label:‘Call forwarding indicator’},
+{ id:‘tmobile_ipv6’, re:/2607:fb90:[0-9a-f:]+/i, sev:‘med’, cat:‘Network’, label:‘T-Mobile IPv6 (2607:fb90:) address’},
+{ id:‘serial_match’, re:/CW4XKX9QYM/i, sev:‘high’, cat:‘Device’, label:‘Target iPhone serial CW4XKX9QYM’},
+{ id:‘udid_anon’, re:/UDID.*(?:anonymous|no\s+account|unattributed)/i, sev:‘high’, cat:‘Device’, label:‘Anonymous/unattributed UDID’},
+{ id:‘diag_enroll’, re:/diagnostic.*enroll|enrolled.*diagnostic|MDMRegistered/i, sev:‘high’, cat:‘Device’, label:‘Apple diagnostic enrollment’},
+{ id:‘clouddocs_noclient’, re:/com.apple.CloudDocs.*(?:no\s+client|missing)/i, sev:‘high’, cat:‘Files’, label:‘com.apple.CloudDocs no declared client’},
+{ id:‘notes_mislabel’, re:/com.apple.notes.*Settings|Settings.*com.apple.notes/i, sev:‘med’, cat:‘Files’, label:‘com.apple.notes mislabeled as Settings’},
+{ id:‘productkit_b389’, re:/productkit.*b389|b389.*productkit/i, sev:‘med’, cat:‘Files’, label:‘productkit b389 anomaly’},
+{ id:‘auth_failure’, re:/UserAuthenticationFailure|authentication\s+failed.*retry/i, sev:‘med’, cat:‘Auth’, label:‘Authentication failure / retry’},
+{ id:‘ext_id_mutation’, re:/ExternalIdentifierMutated|externalId.*changed/i, sev:‘high’, cat:‘Auth’, label:‘External identifier mutation’},
+{ id:‘no_auth_session’, re:/no\s+auth\s+session|without\s+(?:auth|authentication)\s+session/i, sev:‘high’, cat:‘Auth’, label:‘Action without auth session’},
+{ id:‘webkit_sop’, re:/CVE-2026-20643|WebKit.*Same\s*Origin|SOP\s+bypass/i, sev:‘crit’, cat:‘CVE’, label:‘WebKit SOP bypass (CVE-2026-20643)’},
+{ id:‘cve_generic’, re:/CVE-\d{4}-\d{4,7}/i, sev:‘med’, cat:‘CVE’, label:‘CVE reference’},
+{ id:‘ipv4’, re:/\b(?:\d{1,3}.){3}\d{1,3}\b/, sev:‘low’, cat:‘IOC’, label:‘IPv4 address’},
+{ id:‘ipv6’, re:/\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i, sev:‘low’, cat:‘IOC’, label:‘IPv6 address’},
+{ id:‘domain’, re:/\b[a-z0-9-]+.(?:com|net|org|io|co|app|dev|cloud)\b/i, sev:‘low’, cat:‘IOC’, label:‘Domain reference’},
+{ id:‘hash’, re:/\b[a-f0-9]{32,64}\b/i, sev:‘low’, cat:‘IOC’, label:‘Hash (MD5/SHA)’},
+{ id:‘donottrack_marker’, re:/DoNotTrack[- ]?ME/i, sev:‘crit’, cat:‘Apple Intelligence’, label:‘DoNotTrack-ME marker (user-injected canary)’},
+{ id:‘span_color_inject’, re:/<span\s+style\s*=\s*[”’]*color:\s*red/i, sev:‘high’, cat:‘Apple Intelligence’, label:‘HTML span color:red injection in model response’},
+{ id:‘private_cloud_compute’, re:/PrivateCloudCompute|executionEnvironment.*PrivateCloud/i, sev:‘high’, cat:‘Apple Intelligence’, label:‘PrivateCloudCompute execution environment’},
+{ id:‘writing_tools’, re:/WritingToolsUIService|com.apple.WritingTools/i, sev:‘med’, cat:‘Apple Intelligence’, label:‘WritingToolsUIService client’},
+{ id:‘model_request’, re:/modelRequests|PromptTemplateInfo|com.apple.fm.language/i, sev:‘med’, cat:‘Apple Intelligence’, label:‘On-device/cloud model request’},
+{ id:‘open_ended_tone’, re:/textComposition.OpenEndedTone|OpenEndedToneQueryResponse/i, sev:‘med’, cat:‘Apple Intelligence’, label:‘OpenEndedTone composition template’},
+{ id:‘apple_uuid’, re:/\b[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\b/, sev:‘low’, cat:‘IOC’, label:‘Apple UUID identifier’},
+{ id:‘unix_ts_recent’, re:/“timestamp”\s*:\s*17[0-9]{8}.[0-9]+/i, sev:‘low’, cat:‘IOC’, label:‘Unix timestamp (2024-2026 range)’}
 ];
+
 var SEV_RANK = { crit:4, high:3, med:2, low:1 };
-var SEV_LABEL = { crit:'CRITICAL', high:'HIGH', med:'MEDIUM', low:'LOW' };
+var SEV_LABEL = { crit:‘CRITICAL’, high:‘HIGH’, med:‘MEDIUM’, low:‘LOW’ };
 var SEV_EXPLAIN = {
-  crit: { plain:'Confirmed indicator of unauthorized access, key compromise, or security-circle exclusion. Treat as primary evidence.', simple:'A red-flag finding. The system is showing signs that someone or something is bypassing normal protections.' },
-  high: { plain:'Strong anomaly with documented attribution patterns. Requires correlation with timeline and actor records.', simple:'A serious finding. Something unusual happened that maps to known attack or surveillance behavior.' },
-  med:  { plain:'Notable anomaly worth tracking. May be benign in isolation but pattern-relevant in aggregate.', simple:'A finding to keep an eye on. Alone it might be nothing — together with others it can mean something.' },
-  low:  { plain:'Indicator-of-compromise candidate (IPs, hashes, MAC addresses). Use for cross-file correlation.', simple:'A piece of raw data — an address, a code — useful for connecting the dots between files.' }
+crit: { plain:‘Confirmed indicator of unauthorized access, key compromise, or security-circle exclusion. Treat as primary evidence.’, simple:‘A red-flag finding. The system is showing signs that someone or something is bypassing normal protections.’ },
+high: { plain:‘Strong anomaly with documented attribution patterns. Requires correlation with timeline and actor records.’, simple:‘A serious finding. Something unusual happened that maps to known attack or surveillance behavior.’ },
+med: { plain:‘Notable anomaly worth tracking. May be benign in isolation but pattern-relevant in aggregate.’, simple:‘A finding to keep an eye on. Alone it might be nothing, together with others it can mean something.’ },
+low: { plain:‘Indicator-of-compromise candidate (IPs, hashes, MAC addresses). Use for cross-file correlation.’, simple:‘A piece of raw data, an address, a code, useful for connecting the dots between files.’ }
 };
 
-// ============================================================
-// STATE
-// ============================================================
 function initialDB(){
-  return {
-    meta: { created: new Date().toISOString(), version:'v7', name:'Truth Finder Database' },
-    findings: [], sources: [], timeline: [], actors: [], iocs: [], files: []
-  };
+return {
+meta: { created: new Date().toISOString(), version:‘v7’, name:‘Truth Finder Database’ },
+findings: [], sources: [], timeline: [], actors: [], iocs: [], files: []
+};
 }
+
 var state = {
-  db: initialDB(),
-  view: 'report_dashboard',
-  navCollapsed: window.innerWidth < 720,
-  busy: false,
-  progress: 0,
-  currentFile: '',
-  findingsQ: '',
-  findingsSev: 'all',
-  searches: {} // per-table search state
+db: initialDB(),
+view: ‘report_dashboard’,
+navCollapsed: window.innerWidth < 720,
+busy: false,
+progress: 0,
+currentFile: ‘’,
+findingsQ: ‘’,
+findingsSev: ‘all’,
+searches: {},
+formFinding: null,
+formActor: null,
+formIOC: null,
+queryResults: [],
+queryFilter: { sev:‘all’, cat:‘all’, fileName:’’ }
 };
 
-// ============================================================
-// DOM HELPERS
-// ============================================================
 function el(tag, attrs, children) {
-  var n = document.createElement(tag);
-  if (attrs) {
-    for (var k in attrs) {
-      var v = attrs[k];
-      if (k === 'class') n.className = v;
-      else if (k === 'style' && typeof v === 'object') { for (var s in v) n.style[s] = v[s]; }
-      else if (k.indexOf('on') === 0 && typeof v === 'function') n.addEventListener(k.slice(2).toLowerCase(), v);
-      else if (k === 'value') n.value = v;
-      else if (k === 'checked') n.checked = !!v;
-      else if (k === 'html') n.innerHTML = v;
-      else if (v != null) n.setAttribute(k, v);
-    }
-  }
-  if (children != null) {
-    if (!Array.isArray(children)) children = [children];
-    for (var i=0;i<children.length;i++){
-      var c = children[i];
-      if (c == null || c === false) continue;
-      if (typeof c === 'string' || typeof c === 'number') n.appendChild(document.createTextNode(String(c)));
-      else if (Array.isArray(c)) { for (var j=0;j<c.length;j++){ if (c[j]) n.appendChild(c[j]); } }
-      else n.appendChild(c);
-    }
-  }
-  return n;
+var n = document.createElement(tag);
+if (attrs) {
+for (var k in attrs) {
+var v = attrs[k];
+if (k === ‘class’) n.className = v;
+else if (k === ‘style’ && typeof v === ‘object’) { for (var s in v) n.style[s] = v[s]; }
+else if (k.indexOf(‘on’) === 0 && typeof v === ‘function’) n.addEventListener(k.slice(2).toLowerCase(), v);
+else if (k === ‘value’) n.value = v;
+else if (k === ‘checked’) n.checked = !!v;
+else if (k === ‘html’) n.innerHTML = v;
+else if (v != null) n.setAttribute(k, v);
+}
+}
+if (children != null) {
+if (!Array.isArray(children)) children = [children];
+for (var i=0;i<children.length;i++){
+var c = children[i];
+if (c == null || c === false) continue;
+if (typeof c === ‘string’ || typeof c === ‘number’) n.appendChild(document.createTextNode(String(c)));
+else if (Array.isArray(c)) { for (var j=0;j<c.length;j++){ if (c[j]) n.appendChild(c[j]); } }
+else n.appendChild(c);
+}
+}
+return n;
 }
 function clear(node){ while (node.firstChild) node.removeChild(node.firstChild); }
-function uid(p){ p = p || 'id'; return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7); }
+function uid(p){ p = p || ‘id’; return p+’*’+Date.now().toString(36)+’*’+Math.random().toString(36).slice(2,7); }
 function nowISO(){ return new Date().toISOString(); }
-
 function toast(msg) {
-  var host = document.getElementById('toast-host');
-  clear(host);
-  host.appendChild(el('div', { class: 'toast' }, msg));
-  setTimeout(function(){ clear(host); }, 2400);
+var host = document.getElementById(‘toast-host’);
+clear(host);
+host.appendChild(el(‘div’, { class: ‘toast’ }, msg));
+setTimeout(function(){ clear(host); }, 2800);
 }
-
 function downloadBlob(data, filename, type){
-  type = type || 'application/json';
-  var blob = new Blob([data], { type: type });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url; a.download = filename;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+type = type || ‘application/json’;
+var blob = new Blob([data], { type: type });
+var url = URL.createObjectURL(blob);
+var a = document.createElement(‘a’);
+a.href = url; a.download = filename;
+document.body.appendChild(a); a.click();
+document.body.removeChild(a);
+setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
 }
 
-// ============================================================
-// GZIP DECOMPRESSION (pure JS, Lockdown-safe)
-// Minimal INFLATE implementation for .gz files
-// ============================================================
 function inflate(input) {
-  // Bit reader over Uint8Array
-  var pos = 0, bitBuf = 0, bitCount = 0;
-  function readBits(n) {
-    while (bitCount < n) {
-      bitBuf |= input[pos++] << bitCount;
-      bitCount += 8;
-    }
-    var v = bitBuf & ((1 << n) - 1);
-    bitBuf >>>= n;
-    bitCount -= n;
-    return v;
-  }
-
-  // Build Huffman table from code lengths
-  function buildHuffman(lengths) {
-    var maxLen = 0, i;
-    for (i = 0; i < lengths.length; i++) if (lengths[i] > maxLen) maxLen = lengths[i];
-    var counts = new Array(maxLen + 1); for (i = 0; i <= maxLen; i++) counts[i] = 0;
-    for (i = 0; i < lengths.length; i++) counts[lengths[i]]++;
-    counts[0] = 0;
-    var offsets = new Array(maxLen + 1); offsets[0] = 0;
-    for (i = 1; i <= maxLen; i++) offsets[i] = offsets[i-1] + counts[i-1];
-    var sorted = new Array(lengths.length);
-    for (i = 0; i < lengths.length; i++) {
-      if (lengths[i] !== 0) sorted[offsets[lengths[i]]++] = i;
-    }
-    return { counts: counts, sorted: sorted, maxLen: maxLen };
-  }
-
-  function decodeSymbol(table) {
-    var code = 0, first = 0, idx = 0;
-    for (var len = 1; len <= table.maxLen; len++) {
-      code |= readBits(1);
-      var count = table.counts[len];
-      if (code - count < first) return table.sorted[idx + (code - first)];
-      idx += count;
-      first = (first + count) << 1;
-      code <<= 1;
-    }
-    throw new Error('Huffman decode failed');
-  }
-
-  var output = [];
-  var lengthBase = [3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
-  var lengthExtra = [0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
-  var distBase = [1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
-  var distExtra = [0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
-  var codeOrder = [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
-
-  // Fixed Huffman tables
-  var fixedLitLens = new Array(288);
-  for (var i = 0; i < 144; i++) fixedLitLens[i] = 8;
-  for (i = 144; i < 256; i++) fixedLitLens[i] = 9;
-  for (i = 256; i < 280; i++) fixedLitLens[i] = 7;
-  for (i = 280; i < 288; i++) fixedLitLens[i] = 8;
-  var fixedDistLens = new Array(30); for (i = 0; i < 30; i++) fixedDistLens[i] = 5;
-  var fixedLitTable = buildHuffman(fixedLitLens);
-  var fixedDistTable = buildHuffman(fixedDistLens);
-
-  var bfinal = 0;
-  while (!bfinal) {
-    bfinal = readBits(1);
-    var btype = readBits(2);
-
-    if (btype === 0) {
-      // Stored block
-      bitBuf = 0; bitCount = 0;
-      var len = input[pos++] | (input[pos++] << 8);
-      pos += 2; // skip nlen
-      for (var k = 0; k < len; k++) output.push(input[pos++]);
-    } else {
-      var litTable, distTable;
-      if (btype === 1) {
-        litTable = fixedLitTable;
-        distTable = fixedDistTable;
-      } else if (btype === 2) {
-        // Dynamic Huffman
-        var hlit = readBits(5) + 257;
-        var hdist = readBits(5) + 1;
-        var hclen = readBits(4) + 4;
-        var codeLengths = new Array(19); for (i = 0; i < 19; i++) codeLengths[i] = 0;
-        for (i = 0; i < hclen; i++) codeLengths[codeOrder[i]] = readBits(3);
-        var codeTable = buildHuffman(codeLengths);
-        var lengths = new Array(hlit + hdist);
-        i = 0;
-        while (i < hlit + hdist) {
-          var sym = decodeSymbol(codeTable);
-          if (sym < 16) { lengths[i++] = sym; }
-          else if (sym === 16) { var rep = readBits(2) + 3; var prev = lengths[i-1]; while (rep--) lengths[i++] = prev; }
-          else if (sym === 17) { rep = readBits(3) + 3; while (rep--) lengths[i++] = 0; }
-          else if (sym === 18) { rep = readBits(7) + 11; while (rep--) lengths[i++] = 0; }
-        }
-        litTable = buildHuffman(lengths.slice(0, hlit));
-        distTable = buildHuffman(lengths.slice(hlit));
-      } else {
-        throw new Error('Invalid block type');
-      }
-
-      while (true) {
-        var lit = decodeSymbol(litTable);
-        if (lit < 256) {
-          output.push(lit);
-        } else if (lit === 256) {
-          break;
-        } else {
-          var lenIdx = lit - 257;
-          var lengthVal = lengthBase[lenIdx] + readBits(lengthExtra[lenIdx]);
-          var dsym = decodeSymbol(distTable);
-          var distVal = distBase[dsym] + readBits(distExtra[dsym]);
-          var start = output.length - distVal;
-          for (var c = 0; c < lengthVal; c++) output.push(output[start + c]);
-        }
-      }
-    }
-  }
-  return new Uint8Array(output);
+var pos = 0, bitBuf = 0, bitCount = 0;
+function readBits(n) {
+while (bitCount < n) { bitBuf |= input[pos++] << bitCount; bitCount += 8; }
+var v = bitBuf & ((1 << n) - 1); bitBuf >>>= n; bitCount -= n; return v;
+}
+function buildHuffman(lengths) {
+var maxLen = 0, i;
+for (i = 0; i < lengths.length; i++) if (lengths[i] > maxLen) maxLen = lengths[i];
+var counts = new Array(maxLen + 1); for (i = 0; i <= maxLen; i++) counts[i] = 0;
+for (i = 0; i < lengths.length; i++) counts[lengths[i]]++;
+counts[0] = 0;
+var offsets = new Array(maxLen + 1); offsets[0] = 0;
+for (i = 1; i <= maxLen; i++) offsets[i] = offsets[i-1] + counts[i-1];
+var sorted = new Array(lengths.length);
+for (i = 0; i < lengths.length; i++) { if (lengths[i] !== 0) sorted[offsets[lengths[i]]++] = i; }
+return { counts: counts, sorted: sorted, maxLen: maxLen };
+}
+function decodeSymbol(table) {
+var code = 0, first = 0, idx = 0;
+for (var len = 1; len <= table.maxLen; len++) {
+code |= readBits(1);
+var count = table.counts[len];
+if (code - count < first) return table.sorted[idx + (code - first)];
+idx += count; first = (first + count) << 1; code <<= 1;
+}
+throw new Error(‘Huffman decode failed’);
+}
+var output = [];
+var lengthBase = [3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
+var lengthExtra = [0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+var distBase = [1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
+var distExtra = [0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+var codeOrder = [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
+var fixedLitLens = new Array(288);
+for (var i = 0; i < 144; i++) fixedLitLens[i] = 8;
+for (i = 144; i < 256; i++) fixedLitLens[i] = 9;
+for (i = 256; i < 280; i++) fixedLitLens[i] = 7;
+for (i = 280; i < 288; i++) fixedLitLens[i] = 8;
+var fixedDistLens = new Array(30); for (i = 0; i < 30; i++) fixedDistLens[i] = 5;
+var fixedLitTable = buildHuffman(fixedLitLens);
+var fixedDistTable = buildHuffman(fixedDistLens);
+var bfinal = 0;
+while (!bfinal) {
+bfinal = readBits(1);
+var btype = readBits(2);
+if (btype === 0) {
+bitBuf = 0; bitCount = 0;
+var len = input[pos++] | (input[pos++] << 8); pos += 2;
+for (var k = 0; k < len; k++) output.push(input[pos++]);
+} else {
+var litTable, distTable;
+if (btype === 1) { litTable = fixedLitTable; distTable = fixedDistTable; }
+else if (btype === 2) {
+var hlit = readBits(5) + 257, hdist = readBits(5) + 1, hclen = readBits(4) + 4;
+var codeLengths = new Array(19); for (i = 0; i < 19; i++) codeLengths[i] = 0;
+for (i = 0; i < hclen; i++) codeLengths[codeOrder[i]] = readBits(3);
+var codeTable = buildHuffman(codeLengths);
+var lengths = new Array(hlit + hdist); i = 0;
+while (i < hlit + hdist) {
+var sym = decodeSymbol(codeTable);
+if (sym < 16) { lengths[i++] = sym; }
+else if (sym === 16) { var rep = readBits(2) + 3; var prev = lengths[i-1]; while (rep– > 0) lengths[i++] = prev; }
+else if (sym === 17) { rep = readBits(3) + 3; while (rep– > 0) lengths[i++] = 0; }
+else if (sym === 18) { rep = readBits(7) + 11; while (rep– > 0) lengths[i++] = 0; }
+}
+litTable = buildHuffman(lengths.slice(0, hlit));
+distTable = buildHuffman(lengths.slice(hlit));
+} else { throw new Error(‘Invalid block type’); }
+while (true) {
+var lit = decodeSymbol(litTable);
+if (lit < 256) { output.push(lit); }
+else if (lit === 256) { break; }
+else {
+var lenIdx = lit - 257;
+var lengthVal = lengthBase[lenIdx] + readBits(lengthExtra[lenIdx]);
+var dsym = decodeSymbol(distTable);
+var distVal = distBase[dsym] + readBits(distExtra[dsym]);
+var start = output.length - distVal;
+for (var c = 0; c < lengthVal; c++) output.push(output[start + c]);
+}
+}
+}
+}
+return new Uint8Array(output);
 }
 
-function isGzip(bytes) {
-  return bytes && bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b;
-}
-
+function isGzip(bytes) { return bytes && bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b; }
 function decompressGzip(bytes) {
-  // gzip header: 10 bytes minimum
-  // [0x1f, 0x8b, method, flags, mtime(4), xfl, os]
-  if (!isGzip(bytes)) throw new Error('Not a gzip file');
-  var pos = 10;
-  var flags = bytes[3];
-  if (flags & 0x04) { // FEXTRA
-    var xlen = bytes[pos] | (bytes[pos+1] << 8);
-    pos += 2 + xlen;
-  }
-  if (flags & 0x08) { // FNAME
-    while (bytes[pos] !== 0) pos++;
-    pos++;
-  }
-  if (flags & 0x10) { // FCOMMENT
-    while (bytes[pos] !== 0) pos++;
-    pos++;
-  }
-  if (flags & 0x02) { // FHCRC
-    pos += 2;
-  }
-  // Deflate stream starts at pos, ends 8 bytes before end (CRC32 + ISIZE)
-  var deflateStream = bytes.subarray(pos, bytes.length - 8);
-  return inflate(deflateStream);
+if (!isGzip(bytes)) throw new Error(‘Not a gzip file’);
+var pos = 10, flags = bytes[3];
+if (flags & 0x04) { var xlen = bytes[pos] | (bytes[pos+1] << 8); pos += 2 + xlen; }
+if (flags & 0x08) { while (bytes[pos] !== 0) pos++; pos++; }
+if (flags & 0x10) { while (bytes[pos] !== 0) pos++; pos++; }
+if (flags & 0x02) { pos += 2; }
+return inflate(bytes.subarray(pos, bytes.length - 8));
 }
 
-// ============================================================
-// FILE INGEST (Lockdown-safe: uses Blob.text() / arrayBuffer()
-// instead of FileReader which Lockdown Mode may restrict)
-// Handles both line-delimited logs AND giant single-line JSON
-// AND .gz compressed files
-// ============================================================
-function ingestFile(file, onProgress, onChunk){
-  return new Promise(function(resolve, reject){
-    var chunkSize = 256 * 1024;
-    var maxBuffer = 64 * 1024;
-    var offset = 0;
-    var buffer = '';
-    var lineNo = 0;
-    var total = file.size || 1;
-
-    function readNext(){
-      if (offset >= file.size) {
-        if (buffer.length) {
-          lineNo++;
-          try { onChunk(buffer, lineNo); } catch(e){}
-          buffer = '';
-        }
-        onProgress(100);
-        resolve(lineNo);
-        return;
-      }
-      var slice = file.slice(offset, offset + chunkSize);
-      // Use Blob.text() instead of FileReader.readAsText
-      slice.text().then(function(text){
-        buffer += text;
-        var nl;
-        while ((nl = buffer.indexOf('\n')) >= 0) {
-          var line = buffer.slice(0, nl);
-          buffer = buffer.slice(nl + 1);
-          lineNo++;
-          try { onChunk(line, lineNo); } catch(e){}
-        }
-        if (buffer.length > maxBuffer) {
-          var overlap = buffer.slice(-1024);
-          var scanChunk = buffer.slice(0, -1024);
-          lineNo++;
-          try { onChunk(scanChunk, lineNo); } catch(e){}
-          buffer = overlap;
-        }
-        offset += chunkSize;
-        onProgress(Math.min(100, Math.round((offset/total)*100)));
-        setTimeout(readNext, 0);
-      }).catch(function(err){
-        reject(err);
-      });
-    }
-    readNext();
-  });
+function extractTimestamps(text) {
+var stamps = [];
+var unixMs = /\b(1[5-9]\d{11}|2[0-2]\d{11})\b/g;
+var unixSec = /\b(1[5-9]\d{8}|2[0-2]\d{8})\b/g;
+var iso = /\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/g;
+var m;
+while ((m = unixMs.exec(text)) !== null) { var d = new Date(parseInt(m[1],10)); if (!isNaN(d) && d.getFullYear()>=2020 && d.getFullYear()<=2030) stamps.push(d); }
+while ((m = unixSec.exec(text)) !== null) { var d2 = new Date(parseInt(m[1],10)*1000); if (!isNaN(d2) && d2.getFullYear()>=2020 && d2.getFullYear()<=2030) stamps.push(d2); }
+while ((m = iso.exec(text)) !== null) { var d3 = new Date(m[0]); if (!isNaN(d3)) stamps.push(d3); }
+return stamps;
 }
 
+/* === FIXED: scanLine now returns per-pattern, not per-global-match for non-IOC === */
 function scanLine(line, fileName, fileId){
-  var hits = [];
-  for (var i=0;i<PATTERNS.length;i++){
-    var p = PATTERNS[i];
-    // Use global flag for IOC and Apple Intelligence patterns to catch all occurrences
-    var useGlobal = p.cat === 'IOC' || p.cat === 'Apple Intelligence';
-    if (useGlobal) {
-      var gre = new RegExp(p.re.source, p.re.flags.indexOf('g') >= 0 ? p.re.flags : p.re.flags + 'g');
-      var m;
-      var matchCount = 0;
-      while ((m = gre.exec(line)) !== null && matchCount < 50) {
-        hits.push({
-          patternId: p.id, label: p.label, category: p.cat, severity: p.sev,
-          match: String(m[0]).slice(0,200), fileName: fileName, fileId: fileId
-        });
-        matchCount++;
-        if (m.index === gre.lastIndex) gre.lastIndex++;
-      }
-    } else {
-      var sm = line.match(p.re);
-      if (sm) {
-        hits.push({
-          patternId: p.id, label: p.label, category: p.cat, severity: p.sev,
-          match: String(sm[0]).slice(0,200), fileName: fileName, fileId: fileId
-        });
-      }
-    }
-  }
-  return hits;
+var hits = [];
+for (var i=0;i<PATTERNS.length;i++){
+var p = PATTERNS[i];
+/* IOC patterns: count every match individually for cross-correlation */
+if (p.cat === ‘IOC’) {
+var gre = new RegExp(p.re.source, p.re.flags.indexOf(‘g’) >= 0 ? p.re.flags : p.re.flags + ‘g’);
+var m, mc = 0;
+while ((m = gre.exec(line)) !== null && mc < 50) {
+hits.push({ patternId: p.id, label: p.label, category: p.cat, severity: p.sev, match: String(m[0]).slice(0,200), fileName: fileName, fileId: fileId });
+mc++;
+if (m.index === gre.lastIndex) gre.lastIndex++;
+}
+} else {
+/* Non-IOC: one hit per pattern per line */
+var sm = line.match(p.re);
+if (sm) {
+hits.push({ patternId: p.id, label: p.label, category: p.cat, severity: p.sev, match: String(sm[0]).slice(0,200), fileName: fileName, fileId: fileId });
+}
+}
+}
+return hits;
 }
 
-// ============================================================
-// ACTIONS
-// ============================================================
-function setView(v){
-  state.view = v;
-  if (window.innerWidth < 720) state.navCollapsed = true;
-  render();
-}
+function setView(v){ state.view = v; if (window.innerWidth < 720) state.navCollapsed = true; render(); }
 function toggleNav(){ state.navCollapsed = !state.navCollapsed; render(); }
 
+/* === FIXED: deduplication on ingest === */
+function deduplicateFindings(rawFindings) {
+var map = {};
+for (var i = 0; i < rawFindings.length; i++) {
+var f = rawFindings[i];
+var key = f.patternId + ‘||’ + f.fileName;
+if (!map[key]) {
+map[key] = Object.assign({}, f, { count: 1, firstLine: f.lineNo, lastLine: f.lineNo });
+} else {
+map[key].count++;
+if (f.lineNo != null) {
+if (map[key].firstLine == null || f.lineNo < map[key].firstLine) map[key].firstLine = f.lineNo;
+if (map[key].lastLine == null || f.lineNo > map[key].lastLine) map[key].lastLine = f.lineNo;
+}
+}
+}
+var deduped = [];
+for (var k in map) {
+var item = map[k];
+if (item.count > 1) {
+item.label = item.label + ’ (\u00d7’ + item.count + ‘)’;
+item.lineNo = item.firstLine;
+}
+deduped.push(item);
+}
+return deduped;
+}
+
 function handleLoadFile(file){
-  if (!file) return;
-  state.busy = true; state.progress = 0; state.currentFile = file.name;
-  render();
-  var fileId = uid('file');
-  var collected = [];
-  var iocsCollected = [];
-  var allTimestamps = [];
+if (!file) return;
+state.busy = true; state.progress = 0; state.currentFile = file.name;
+render();
+var fileId = uid(‘file’);
+var collected = [];
+var iocsCollected = [];
+var allTimestamps = [];
+var isGz = /.gz$/i.test(file.name);
 
-  // Check if .gz — read first 2 bytes as binary to confirm magic number
-  var isGz = /\.gz$/i.test(file.name);
+function processText(text, totalLines){
+var earliest = null, latest = null, gapFindings = [];
+if (allTimestamps.length) {
+allTimestamps.sort(function(a,b){ return a - b; });
+earliest = allTimestamps[0]; latest = allTimestamps[allTimestamps.length - 1];
+for (var k=1;k<allTimestamps.length;k++){
+var gapMs = allTimestamps[k] - allTimestamps[k-1];
+var gapHours = gapMs / (1000*60*60);
+if (gapHours > 24) {
+gapFindings.push({
+id: uid(‘find’), patternId: ‘reporting_gap’,
+label: ‘Reporting gap: ’ + Math.round(gapHours) + ‘h silence’,
+category: ‘Apple Intelligence’, severity: gapHours > 168 ? ‘crit’ : ‘high’,
+match: allTimestamps[k-1].toISOString() + ’ \u2192 ’ + allTimestamps[k].toISOString() + ’ (’ + Math.round(gapHours) + ‘h)’,
+fileName: file.name, fileId: fileId, lineNo: null, createdAt: nowISO(), source: ‘auto-timestamp-analysis’, count: 1
+});
+}
+}
+}
+/* Deduplicate before storing */
+var deduped = deduplicateFindings(collected);
+/* Assign IDs to deduped */
+for (var di = 0; di < deduped.length; di++) { if (!deduped[di].id) deduped[di].id = uid(‘find’); deduped[di].createdAt = deduped[di].createdAt || nowISO(); deduped[di].source = deduped[di].source || ‘auto’; }
 
-  function processText(textContent, totalLines){
-    // Compute timestamp range and detect reporting gaps
-    var earliest = null, latest = null, gapFindings = [];
-    if (allTimestamps.length) {
-      allTimestamps.sort(function(a,b){ return a - b; });
-      earliest = allTimestamps[0];
-      latest = allTimestamps[allTimestamps.length - 1];
-      for (var k=1;k<allTimestamps.length;k++){
-        var gapMs = allTimestamps[k] - allTimestamps[k-1];
-        var gapHours = gapMs / (1000*60*60);
-        if (gapHours > 24) {
-          gapFindings.push({
-            id: uid('find'),
-            patternId: 'reporting_gap',
-            label: 'Reporting gap detected: ' + Math.round(gapHours) + 'h silence',
-            category: 'Apple Intelligence',
-            severity: gapHours > 168 ? 'crit' : 'high',
-            match: allTimestamps[k-1].toISOString() + ' → ' + allTimestamps[k].toISOString() + ' (' + Math.round(gapHours) + 'h)',
-            fileName: file.name,
-            fileId: fileId,
-            lineNo: null,
-            createdAt: nowISO(),
-            source: 'auto-timestamp-analysis'
-          });
-        }
-      }
-    }
+state.db.files.push({
+id: fileId, name: file.name, size: file.size, lines: totalLines,
+ingestedAt: nowISO(), hits: deduped.length + gapFindings.length,
+rawHits: collected.length,
+timestampCount: allTimestamps.length,
+dataEarliest: earliest ? earliest.toISOString() : null,
+dataLatest: latest ? latest.toISOString() : null,
+gaps: gapFindings.length, compressed: isGz
+});
+state.db.findings = state.db.findings.concat(deduped).concat(gapFindings);
+state.db.iocs = state.db.iocs.concat(iocsCollected);
+state.db.sources.push({ id: uid(‘src’), name: file.name, type: isGz ? ‘file (gzip)’ : ‘file’, addedAt: nowISO(), fileId: fileId });
+state.busy = false; state.progress = 0;
+state.view = ‘findings’;
+render();
+var msg = file.name + ‘: ’ + deduped.length + ’ unique findings’;
+if (collected.length !== deduped.length) msg += ’ (’ + collected.length + ’ raw matches deduplicated)’;
+if (allTimestamps.length) msg += ’ | ’ + earliest.toISOString().slice(0,10) + ’ to ’ + latest.toISOString().slice(0,10);
+if (gapFindings.length) msg += ’ | ’ + gapFindings.length + ’ gap(s)’;
+toast(msg);
+}
 
-    state.db.files.push({
-      id: fileId, name: file.name, size: file.size, lines: totalLines,
-      ingestedAt: nowISO(), hits: collected.length + gapFindings.length,
-      timestampCount: allTimestamps.length,
-      dataEarliest: earliest ? earliest.toISOString() : null,
-      dataLatest: latest ? latest.toISOString() : null,
-      gaps: gapFindings.length,
-      compressed: isGz
-    });
-    state.db.findings = state.db.findings.concat(collected).concat(gapFindings);
-    state.db.iocs = state.db.iocs.concat(iocsCollected);
-    state.db.sources.push({ id: uid('src'), name: file.name, type: isGz ? 'file (gzip)' : 'file', addedAt: nowISO(), fileId: fileId });
-    state.busy = false; state.progress = 0;
-    state.view = 'findings';
-    render();
-    var msg = 'Ingested ' + file.name + ' — ' + collected.length + ' hits';
-    if (allTimestamps.length) msg += ' · data: ' + earliest.toISOString().slice(0,10) + ' → ' + latest.toISOString().slice(0,10);
-    if (gapFindings.length) msg += ' · ' + gapFindings.length + ' gap(s)';
-    if (isGz) msg += ' · gz';
-    toast(msg);
-  }
+function scanText(text){
+var chunkLen = 64 * 1024, pos = 0, lineNo = 0, buffer = ‘’;
+function processChunk(){
+if (pos >= text.length) {
+if (buffer.length) {
+lineNo++;
+var hits = scanLine(buffer, file.name, fileId);
+for (var i=0;i<hits.length;i++){
+var hit = Object.assign({}, hits[i], { id: uid(‘find’), lineNo: lineNo, createdAt: nowISO(), source: ‘auto’ });
+collected.push(hit);
+if (hit.category === ‘IOC’) iocsCollected.push({ id: uid(‘ioc’), type: hit.patternId, value: hit.match, context: file.name+’:’+lineNo, severity: ‘low’, createdAt: nowISO() });
+}
+var ts = extractTimestamps(buffer);
+for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
+}
+state.progress = 100; updateTopbarProgress();
+processText(text, lineNo);
+return;
+}
+var end = Math.min(pos + chunkLen, text.length);
+buffer += text.slice(pos, end); pos = end;
+var nl;
+while ((nl = buffer.indexOf(’\n’)) >= 0) {
+var line = buffer.slice(0, nl); buffer = buffer.slice(nl + 1); lineNo++;
+var hits2 = scanLine(line, file.name, fileId);
+for (var i2=0;i2<hits2.length;i2++){
+var hit2 = Object.assign({}, hits2[i2], { id: uid(‘find’), lineNo: lineNo, createdAt: nowISO(), source: ‘auto’ });
+collected.push(hit2);
+if (hit2.category === ‘IOC’) iocsCollected.push({ id: uid(‘ioc’), type: hit2.patternId, value: hit2.match, context: file.name+’:’+lineNo, severity: ‘low’, createdAt: nowISO() });
+}
+var ts2 = extractTimestamps(line);
+for (var j2=0;j2<ts2.length;j2++) allTimestamps.push(ts2[j2]);
+}
+state.progress = Math.min(99, Math.round((pos/text.length)*100));
+updateTopbarProgress();
+setTimeout(processChunk, 0);
+}
+processChunk();
+}
 
-  function scanText(text){
-    // Process text in 64KB chunks with newline awareness
-    var chunkLen = 64 * 1024;
-    var totalLines = 0;
-    var pos = 0;
-    var lineNo = 0;
-    var buffer = '';
-
-    function processChunk(){
-      if (pos >= text.length) {
-        if (buffer.length) {
-          lineNo++;
-          var hits = scanLine(buffer, file.name, fileId);
-          for (var i=0;i<hits.length;i++){
-            var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
-            collected.push(hit);
-            if (hit.category === 'IOC') iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
-          }
-          var ts = extractTimestamps(buffer);
-          for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
-        }
-        state.progress = 100;
-        updateTopbarProgress();
-        processText(text, lineNo);
-        return;
-      }
-      var end = Math.min(pos + chunkLen, text.length);
-      buffer += text.slice(pos, end);
-      pos = end;
-      var nl;
-      while ((nl = buffer.indexOf('\n')) >= 0) {
-        var line = buffer.slice(0, nl);
-        buffer = buffer.slice(nl + 1);
-        lineNo++;
-        var hits = scanLine(line, file.name, fileId);
-        for (var i=0;i<hits.length;i++){
-          var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
-          collected.push(hit);
-          if (hit.category === 'IOC') iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
-        }
-        var ts = extractTimestamps(line);
-        for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
-      }
-      // Force-flush oversized buffer (giant JSON case)
-      if (buffer.length > 64 * 1024) {
-        var overlap = buffer.slice(-1024);
-        var scanChunk = buffer.slice(0, -1024);
-        lineNo++;
-        var hits = scanLine(scanChunk, file.name, fileId);
-        for (var i=0;i<hits.length;i++){
-          var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
-          collected.push(hit);
-          if (hit.category === 'IOC') iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
-        }
-        var ts = extractTimestamps(scanChunk);
-        for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
-        buffer = overlap;
-      }
-      state.progress = Math.min(99, Math.round((pos/text.length)*100));
-      updateTopbarProgress();
-      setTimeout(processChunk, 0);
-    }
-    processChunk();
-  }
-
-  if (isGz) {
-    // Read entire .gz file as binary, decompress, then scan as text
-    var reader = new FileReader();
-    reader.onload = function(ev){
-      try {
-        state.progress = 30; updateTopbarProgress();
-        var bytes = new Uint8Array(ev.target.result);
-        if (!isGzip(bytes)) {
-          state.busy = false; render();
-          toast('File has .gz extension but is not gzip-compressed');
-          return;
-        }
-        var decompressed = decompressGzip(bytes);
-        state.progress = 60; updateTopbarProgress();
-        var text;
-        if (typeof TextDecoder !== 'undefined') {
-          text = new TextDecoder('utf-8').decode(decompressed);
-        } else {
-          // Fallback: build string from byte values
-          var s = '';
-          for (var i=0;i<decompressed.length;i++) s += String.fromCharCode(decompressed[i]);
-          text = decodeURIComponent(escape(s));
-        }
-        state.progress = 70; updateTopbarProgress();
-        scanText(text);
-      } catch (e) {
-        state.busy = false; render();
-        toast('Gzip decompression failed: ' + (e && e.message ? e.message : 'unknown'));
-      }
-    };
-    reader.onerror = function(){
-      state.busy = false; render();
-      toast('Read error on .gz file');
-    };
-    reader.readAsArrayBuffer(file);
-  } else {
-    // Standard text streaming
-    ingestFile(file,
-      function(p){ state.progress = p; updateTopbarProgress(); },
-      function(line, lineNo){
-        var hits = scanLine(line, file.name, fileId);
-        for (var i=0;i<hits.length;i++){
-          var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
-          collected.push(hit);
-          if (hit.category === 'IOC') iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
-        }
-        var ts = extractTimestamps(line);
-        for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
-      }
-    ).then(function(totalLines){
-      processText(null, totalLines);
-    }).catch(function(e){
-      state.busy = false; state.progress = 0;
-      render();
-      toast('Ingest error: ' + (e && e.message ? e.message : 'unknown'));
-    });
-  }
+if (isGz) {
+file.arrayBuffer().then(function(buf){
+try {
+state.progress = 30; updateTopbarProgress();
+var bytes = new Uint8Array(buf);
+if (!isGzip(bytes)) { state.busy = false; render(); toast(‘Not gzip-compressed’); return; }
+var decompressed = decompressGzip(bytes);
+state.progress = 60; updateTopbarProgress();
+var text = typeof TextDecoder !== ‘undefined’ ? new TextDecoder(‘utf-8’).decode(decompressed) : decodeURIComponent(escape(Array.from(decompressed).map(function(b){return String.fromCharCode(b);}).join(’’)));
+state.progress = 70; updateTopbarProgress();
+scanText(text);
+} catch (e) { state.busy = false; render(); toast(’Gzip failed: ’ + (e.message||‘unknown’)); }
+}).catch(function(){ state.busy = false; render(); toast(‘Read error on .gz file’); });
+} else {
+file.text().then(function(text){
+state.progress = 20; updateTopbarProgress();
+scanText(text);
+}).catch(function(e){ state.busy = false; state.progress = 0; render(); toast(’Ingest error: ’ + (e.message||‘unknown’)); });
+}
 }
 
 function handleSaveDB(){
-  var data = JSON.stringify(Object.assign({}, state.db, { exportedAt: nowISO() }), null, 2);
-  downloadBlob(data, 'truthfinder_' + new Date().toISOString().slice(0,10) + '.json');
-  toast('Database saved');
+var data = JSON.stringify(Object.assign({}, state.db, { exportedAt: nowISO() }), null, 2);
+downloadBlob(data, ‘truthfinder_’ + new Date().toISOString().slice(0,10) + ‘.json’);
+toast(‘Database saved’);
 }
-
 function handleRestore(file){
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(){
-    try {
-      var parsed = JSON.parse(reader.result);
-      if (!parsed || typeof parsed !== 'object') throw new Error('Invalid JSON');
-      state.db = {
-        meta: parsed.meta || initialDB().meta,
-        findings: parsed.findings || [],
-        sources: parsed.sources || [],
-        timeline: parsed.timeline || [],
-        actors: parsed.actors || [],
-        iocs: parsed.iocs || [],
-        files: parsed.files || []
-      };
-      render();
-      toast('Database restored');
-    } catch(e){
-      toast('Restore failed: ' + (e && e.message ? e.message : 'invalid file'));
-    }
-  };
-  reader.onerror = function(){ toast('Restore failed: read error'); };
-  reader.readAsText(file);
+if (!file) return;
+file.text().then(function(content){
+try {
+var parsed = JSON.parse(content);
+if (!parsed || typeof parsed !== ‘object’) throw new Error(‘Invalid JSON’);
+state.db = { meta: parsed.meta || initialDB().meta, findings: parsed.findings || [], sources: parsed.sources || [], timeline: parsed.timeline || [], actors: parsed.actors || [], iocs: parsed.iocs || [], files: parsed.files || [] };
+render(); toast(‘Database restored’);
+} catch(e){ toast(’Restore failed: ’ + (e.message||‘invalid file’)); }
+}).catch(function(){ toast(‘Restore failed: read error’); });
 }
-
-function handlePrint(){
-  state.view = 'report_dashboard';
-  render();
-  setTimeout(function(){ window.print(); }, 250);
-}
-
-function removeFinding(id){
-  state.db.findings = state.db.findings.filter(function(f){ return f.id !== id; });
-  render();
-}
-
-// ============================================================
-// COMPONENTS
-// ============================================================
-function sevBadge(s){ return el('span', { class: 'sev ' + s }, SEV_LABEL[s] || s); }
+function handlePrint(){ state.view = ‘report_dashboard’; render(); setTimeout(function(){ window.print(); }, 250); }
+function removeFinding(id){ state.db.findings = state.db.findings.filter(function(f){ return f.id !== id; }); render(); }
+function sevBadge(s){ return el(‘span’, { class: ’sev ’ + s }, SEV_LABEL[s] || s); }
 
 function buildTable(columns, rows, emptyMsg) {
-  if (!rows.length) return el('div', { class: 'empty' }, emptyMsg || 'No records');
-  var head = el('tr', null, columns.map(function(c){ return el('th', null, c.label); }));
-  var body = rows.map(function(r, i){
-    return el('tr', { key: r.id || i }, columns.map(function(c){
-      var content = c.render ? c.render(r) : (r[c.key] != null ? String(r[c.key]) : '');
-      return el('td', { class: c.mono ? 'mono' : '' }, content);
-    }));
-  });
-  return el('div', { class: 'tablewrap' },
-    el('table', null, [
-      el('thead', null, head),
-      el('tbody', null, body)
-    ])
-  );
+if (!rows.length) return el(‘div’, { class: ‘empty’ }, emptyMsg || ‘No records’);
+var head = el(‘tr’, null, columns.map(function(c){ return el(‘th’, null, c.label); }));
+var body = rows.map(function(r){
+return el(‘tr’, null, columns.map(function(c){
+var content = c.render ? c.render(r) : (r[c.key] != null ? String(r[c.key]) : ‘’);
+return el(‘td’, { class: c.mono ? ‘mono’ : ‘’ }, content);
+}));
+});
+return el(‘div’, { class: ‘tablewrap’ }, el(‘table’, null, [el(‘thead’, null, head), el(‘tbody’, null, body)]));
 }
 
-// ============================================================
-// VIEWS
-// ============================================================
+function viewDashboard(){
+var counts = { crit:0, high:0, med:0, low:0 };
+var byCat = {};
+state.db.findings.forEach(function(f){
+counts[f.severity] = (counts[f.severity]||0) + 1;
+byCat[f.category] = (byCat[f.category]||0) + 1;
+});
+var total = state.db.findings.length;
+var catRows = Object.keys(byCat).sort(function(a,b){ return byCat[b]-byCat[a]; }).map(function(c){
+var pct = total > 0 ? Math.min(100, (byCat[c]/total)*100) : 0;
+return el(‘div’, { class:‘trendrow’ }, [
+el(‘div’, { class:‘barlbl’ }, [el(‘span’, null, c), el(‘span’, null, String(byCat[c]))]),
+el(‘div’, { class:‘bar’ }, el(‘div’, { style:{ width: pct+’%’, background:’#c9a961’ } }))
+]);
+});
+return el(‘div’, { class:‘panel’ }, [
+el(‘h2’, null, ‘Dashboard’),
+el(‘div’, { class:‘row’ }, [
+el(‘div’, { class:‘stat’ }, [el(‘div’,{class:‘lbl’},‘Critical’), el(‘div’,{class:‘val crit-color’}, String(counts.crit))]),
+el(‘div’, { class:‘stat’ }, [el(‘div’,{class:‘lbl’},‘High’), el(‘div’,{class:‘val high-color’}, String(counts.high))]),
+el(‘div’, { class:‘stat’ }, [el(‘div’,{class:‘lbl’},‘Medium’), el(‘div’,{class:‘val med-color’}, String(counts.med))])
+]),
+el(‘div’, { class:‘row’ }, [
+el(‘div’, { class:‘stat’ }, [el(‘div’,{class:‘lbl’},‘Low’), el(‘div’,{class:‘val low-color’}, String(counts.low))]),
+el(‘div’, { class:‘stat’ }, [el(‘div’,{class:‘lbl’},‘Findings’), el(‘div’,{class:‘val’}, String(total))]),
+el(‘div’, { class:‘stat’ }, [el(‘div’,{class:‘lbl’},‘Files’), el(‘div’,{class:‘val’}, String(state.db.files.length))]),
+el(‘div’, { class:‘stat’ }, [el(‘div’,{class:‘lbl’},‘IOCs’), el(‘div’,{class:‘val’}, String(state.db.iocs.length))])
+]),
+el(‘div’, { class:‘row’ }, [
+el(‘div’, { class:‘stat’ }, [el(‘div’,{class:‘lbl’},‘Actors’), el(‘div’,{class:‘val’}, String(state.db.actors.length))])
+]),
+el(‘h3’, null, ‘By Category’),
+catRows.length ? el(‘div’, null, catRows) : el(‘div’, { class:‘empty’ }, ‘No findings yet.’)
+]);
+}
+
 function viewFindings(){
-  var q = state.findingsQ.toLowerCase();
-  var sev = state.findingsSev;
-  var filtered = state.db.findings.filter(function(f){
-    if (sev !== 'all' && f.severity !== sev) return false;
-    if (q) {
-      if ((f.label||'').toLowerCase().indexOf(q) < 0 &&
-          (f.category||'').toLowerCase().indexOf(q) < 0 &&
-          (f.match||'').toLowerCase().indexOf(q) < 0 &&
-          (f.fileName||'').toLowerCase().indexOf(q) < 0) return false;
-    }
-    return true;
-  }).sort(function(a,b){ return (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
-
-  var qInput = el('input', { type:'text', placeholder:'Search findings…', value: state.findingsQ, oninput: function(e){ state.findingsQ = e.target.value; renderMain(); } });
-  var sevSel = el('select', { onchange: function(e){ state.findingsSev = e.target.value; renderMain(); } }, [
-    el('option', { value:'all' }, 'All severities'),
-    el('option', { value:'crit' }, 'Critical'),
-    el('option', { value:'high' }, 'High'),
-    el('option', { value:'med' }, 'Medium'),
-    el('option', { value:'low' }, 'Low')
-  ]);
-  sevSel.value = state.findingsSev;
-
-  return el('div', { class:'panel' }, [
-    el('h2', null, 'Findings (' + filtered.length + ' / ' + state.db.findings.length + ')'),
-    el('div', { class:'toolbar' }, [qInput, sevSel]),
-    buildTable([
-      { key:'severity', label:'Sev', render: function(r){ return sevBadge(r.severity); } },
-      { key:'label', label:'Finding' },
-      { key:'category', label:'Category' },
-      { key:'fileName', label:'Source', mono:true },
-      { key:'lineNo', label:'Line', render: function(r){ return r.lineNo != null ? String(r.lineNo) : '—'; } },
-      { key:'match', label:'Match', mono:true, render: function(r){ return (r.match||'').slice(0,80); } },
-      { key:'actions', label:'', render: function(r){ return el('button', { class:'btn danger', onclick: function(){ removeFinding(r.id); } }, '×'); } }
-    ], filtered, 'No findings yet. Load a file or add one manually.')
-  ]);
+var q = state.findingsQ.toLowerCase(), sev = state.findingsSev;
+var filtered = state.db.findings.filter(function(f){
+if (sev !== ‘all’ && f.severity !== sev) return false;
+if (q) { if ((f.label||’’).toLowerCase().indexOf(q)<0 && (f.category||’’).toLowerCase().indexOf(q)<0 && (f.match||’’).toLowerCase().indexOf(q)<0 && (f.fileName||’’).toLowerCase().indexOf(q)<0) return false; }
+return true;
+}).sort(function(a,b){ return (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
+var qInput = el(‘input’, { type:‘text’, placeholder:‘Search findings\u2026’, value: state.findingsQ, oninput: function(e){ state.findingsQ = e.target.value; renderMain(); } });
+var sevSel = el(‘select’, { onchange: function(e){ state.findingsSev = e.target.value; renderMain(); } }, [
+el(‘option’,{value:‘all’},‘All severities’), el(‘option’,{value:‘crit’},‘Critical’), el(‘option’,{value:‘high’},‘High’), el(‘option’,{value:‘med’},‘Medium’), el(‘option’,{value:‘low’},‘Low’)
+]); sevSel.value = state.findingsSev;
+return el(‘div’, { class:‘panel’ }, [
+el(‘h2’, null, ‘Findings (’ + filtered.length + ’ / ’ + state.db.findings.length + ‘)’),
+el(‘div’, { class:‘toolbar’ }, [qInput, sevSel]),
+buildTable([
+{ key:‘severity’, label:‘Sev’, render: function(r){ return sevBadge(r.severity); } },
+{ key:‘label’, label:‘Finding’, render: function(r){
+var nodes = [document.createTextNode(r.label)];
+if (r.count && r.count > 1) { /* count already in label from dedup */ }
+return el(‘span’, null, nodes);
+}},
+{ key:‘category’, label:‘Category’ },
+{ key:‘fileName’, label:‘Source’, mono:true },
+{ key:‘lineNo’, label:‘Line’, render: function(r){ return r.lineNo != null ? String(r.lineNo) : ‘-’; } },
+{ key:‘match’, label:‘Match’, mono:true, render: function(r){ return (r.match||’’).slice(0,80); } },
+{ key:‘actions’, label:’’, render: function(r){ return el(‘button’, { class:‘btn danger’, onclick: function(){ removeFinding(r.id); } }, ‘\u00d7’); } }
+], filtered, ‘No findings yet. Load a file or add one manually.’)
+]);
 }
 
 function simpleTableView(title, rows, columns, emptyMsg, key){
-  state.searches[key] = state.searches[key] || '';
-  var q = state.searches[key].toLowerCase();
-  var filtered = q ? rows.filter(function(r){
-    var keys = Object.keys(r);
-    for (var i=0;i<keys.length;i++) if (String(r[keys[i]]||'').toLowerCase().indexOf(q) >= 0) return true;
-    return false;
-  }) : rows;
-  var input = el('input', { type:'text', placeholder:'Search…', value: state.searches[key], oninput: function(e){ state.searches[key] = e.target.value; renderMain(); } });
-  return el('div', { class:'panel' }, [
-    el('h2', null, title + ' (' + filtered.length + ')'),
-    el('div', { class:'toolbar' }, input),
-    buildTable(columns, filtered, emptyMsg)
-  ]);
+state.searches[key] = state.searches[key] || ‘’;
+var q = state.searches[key].toLowerCase();
+var filtered = q ? rows.filter(function(r){ var keys = Object.keys(r); for (var i=0;i<keys.length;i++) if (String(r[keys[i]]||’’).toLowerCase().indexOf(q)>=0) return true; return false; }) : rows;
+var input = el(‘input’, { type:‘text’, placeholder:‘Search\u2026’, value: state.searches[key], oninput: function(e){ state.searches[key] = e.target.value; renderMain(); } });
+return el(‘div’, { class:‘panel’ }, [el(‘h2’, null, title + ’ (’ + filtered.length + ‘)’), el(‘div’, { class:‘toolbar’ }, input), buildTable(columns, filtered, emptyMsg)]);
 }
 
-function viewSources(){ return simpleTableView('Sources', state.db.sources,
-  [{key:'name',label:'Name'},{key:'type',label:'Type'},{key:'addedAt',label:'Added',mono:true}],
-  'No sources.', 'sources'); }
-function viewTimeline(){ return simpleTableView('Timeline', state.db.timeline,
-  [{key:'when',label:'When'},{key:'event',label:'Event'},{key:'notes',label:'Notes'}],
-  'No timeline events. Restore a JSON to populate.', 'timeline'); }
-function viewActors(){ return simpleTableView('Actors', state.db.actors,
-  [{key:'name',label:'Name'},{key:'role',label:'Role'},{key:'firstSeen',label:'First Seen'},{key:'notes',label:'Notes'}],
-  'No actors yet.', 'actors'); }
-function viewIOCs(){ return simpleTableView('IOCs', state.db.iocs,
-  [{key:'type',label:'Type'},{key:'value',label:'Value',mono:true},
-   {key:'severity',label:'Sev',render:function(r){ return sevBadge(r.severity); }},
-   {key:'context',label:'Context',mono:true}],
-  'No IOCs yet.', 'iocs'); }
-function viewFiles(){ return simpleTableView('Files', state.db.files,
-  [{key:'name',label:'Name'},
-   {key:'size',label:'Bytes'},
-   {key:'lines',label:'Lines'},
-   {key:'hits',label:'Hits'},
-   {key:'timestampCount',label:'Timestamps',render:function(r){ return r.timestampCount != null ? String(r.timestampCount) : '—'; }},
-   {key:'dataEarliest',label:'Data Earliest',mono:true,render:function(r){ return r.dataEarliest ? r.dataEarliest.slice(0,16).replace('T',' ') : '—'; }},
-   {key:'dataLatest',label:'Data Latest',mono:true,render:function(r){ return r.dataLatest ? r.dataLatest.slice(0,16).replace('T',' ') : '—'; }},
-   {key:'gaps',label:'Gaps',render:function(r){ return r.gaps ? String(r.gaps) : '0'; }},
-   {key:'ingestedAt',label:'Ingested',mono:true,render:function(r){ return (r.ingestedAt||'').slice(0,16).replace('T',' '); }}],
-  'No files ingested.', 'files'); }
+function viewSources(){ return simpleTableView(‘Sources’, state.db.sources, [{key:‘name’,label:‘Name’},{key:‘type’,label:‘Type’},{key:‘addedAt’,label:‘Added’,mono:true}], ‘No sources.’, ‘sources’); }
+function viewTimeline(){ return simpleTableView(‘Timeline’, state.db.timeline, [{key:‘when’,label:‘When’},{key:‘event’,label:‘Event’},{key:‘notes’,label:‘Notes’}], ‘No timeline events.’, ‘timeline’); }
+function viewActors(){ return simpleTableView(‘Actors’, state.db.actors, [{key:‘name’,label:‘Name’},{key:‘role’,label:‘Role’},{key:‘firstSeen’,label:‘First Seen’},{key:‘notes’,label:‘Notes’}], ‘No actors yet.’, ‘actors’); }
+function viewIOCs(){ return simpleTableView(‘IOCs’, state.db.iocs, [{key:‘type’,label:‘Type’},{key:‘value’,label:‘Value’,mono:true},{key:‘severity’,label:‘Sev’,render:function(r){return sevBadge(r.severity);}},{key:‘context’,label:‘Context’,mono:true}], ‘No IOCs yet.’, ‘iocs’); }
+function viewFiles(){ return simpleTableView(‘Files’, state.db.files, [{key:‘name’,label:‘Name’},{key:‘size’,label:‘Bytes’},{key:‘lines’,label:‘Lines’},{key:‘hits’,label:‘Unique’},{key:‘rawHits’,label:‘Raw’,render:function(r){return r.rawHits!=null?String(r.rawHits):’-’;}},{key:‘timestampCount’,label:‘TS’,render:function(r){return r.timestampCount!=null?String(r.timestampCount):’-’;}},{key:‘dataEarliest’,label:‘Earliest’,mono:true,render:function(r){return r.dataEarliest?r.dataEarliest.slice(0,16).replace(‘T’,’ ‘):’-’;}},{key:‘dataLatest’,label:‘Latest’,mono:true,render:function(r){return r.dataLatest?r.dataLatest.slice(0,16).replace(‘T’,’ ‘):’-’;}},{key:‘gaps’,label:‘Gaps’,render:function(r){return r.gaps?String(r.gaps):‘0’;}},{key:‘ingestedAt’,label:‘Ingested’,mono:true,render:function(r){return (r.ingestedAt||’’).slice(0,16).replace(‘T’,’ ’);}}], ‘No files ingested.’, ‘files’); }
 
-// FORMS
 function viewNewFinding(){
-  var f = state.formFinding = state.formFinding || { label:'', category:'Manual', severity:'med', match:'', fileName:'', lineNo:'', notes:'' };
-  function inp(key, type){
-    var n = el('input', { type: type || 'text', value: f[key], oninput: function(e){ f[key] = e.target.value; } });
-    return n;
-  }
-  function ta(key){
-    var n = el('textarea', { oninput: function(e){ f[key] = e.target.value; } });
-    n.value = f[key]; return n;
-  }
-  var sevSel = el('select', { onchange: function(e){ f.severity = e.target.value; } }, [
-    el('option', { value:'crit' }, 'Critical'),
-    el('option', { value:'high' }, 'High'),
-    el('option', { value:'med' }, 'Medium'),
-    el('option', { value:'low' }, 'Low')
-  ]);
-  sevSel.value = f.severity;
-  return el('div', { class:'panel' }, [
-    el('h2', null, '+ New Finding'),
-    el('div', { class:'formgrid' }, [
-      el('div', { class:'formfield full' }, [el('label', null, 'Label'), inp('label')]),
-      el('div', { class:'formfield' }, [el('label', null, 'Category'), inp('category')]),
-      el('div', { class:'formfield' }, [el('label', null, 'Severity'), sevSel]),
-      el('div', { class:'formfield' }, [el('label', null, 'Source File'), inp('fileName')]),
-      el('div', { class:'formfield' }, [el('label', null, 'Line / Ref'), inp('lineNo')]),
-      el('div', { class:'formfield full' }, [el('label', null, 'Match / Excerpt'), ta('match')]),
-      el('div', { class:'formfield full' }, [el('label', null, 'Notes'), ta('notes')])
-    ]),
-    el('button', { class:'btn primary', onclick: function(){
-      if (!f.label.trim()) { toast('Label required'); return; }
-      state.db.findings.push(Object.assign({}, f, { id: uid('find'), createdAt: nowISO(), source:'manual' }));
-      state.formFinding = { label:'', category:'Manual', severity:'med', match:'', fileName:'', lineNo:'', notes:'' };
-      toast('Finding added'); renderMain();
-    } }, 'Save Finding')
-  ]);
+var f = state.formFinding = state.formFinding || { label:’’, category:‘Manual’, severity:‘med’, match:’’, fileName:’’, lineNo:’’, notes:’’ };
+function inp(key,type){ return el(‘input’,{type:type||‘text’,value:f[key],oninput:function(e){f[key]=e.target.value;}}); }
+function ta(key){ var n=el(‘textarea’,{oninput:function(e){f[key]=e.target.value;}}); n.value=f[key]; return n; }
+var sevSel = el(‘select’,{onchange:function(e){f.severity=e.target.value;}},[el(‘option’,{value:‘crit’},‘Critical’),el(‘option’,{value:‘high’},‘High’),el(‘option’,{value:‘med’},‘Medium’),el(‘option’,{value:‘low’},‘Low’)]); sevSel.value=f.severity;
+return el(‘div’,{class:‘panel’},[el(‘h2’,null,’+ New Finding’),el(‘div’,{class:‘formgrid’},[el(‘div’,{class:‘formfield full’},[el(‘label’,null,‘Label’),inp(‘label’)]),el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Category’),inp(‘category’)]),el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Severity’),sevSel]),el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Source File’),inp(‘fileName’)]),el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Line / Ref’),inp(‘lineNo’)]),el(‘div’,{class:‘formfield full’},[el(‘label’,null,‘Match / Excerpt’),ta(‘match’)]),el(‘div’,{class:‘formfield full’},[el(‘label’,null,‘Notes’),ta(‘notes’)])]),el(‘button’,{class:‘btn primary’,onclick:function(){if(!f.label.trim()){toast(‘Label required’);return;}state.db.findings.push(Object.assign({},f,{id:uid(‘find’),createdAt:nowISO(),source:‘manual’,count:1}));state.formFinding={label:’’,category:‘Manual’,severity:‘med’,match:’’,fileName:’’,lineNo:’’,notes:’’};toast(‘Finding added’);renderMain();}},‘Save Finding’)]);
 }
-
 function viewNewActor(){
-  var a = state.formActor = state.formActor || { name:'', role:'', notes:'', firstSeen:'' };
-  function inp(key, type){
-    return el('input', { type: type || 'text', value: a[key], oninput: function(e){ a[key] = e.target.value; } });
-  }
-  return el('div', { class:'panel' }, [
-    el('h2', null, '+ New Actor'),
-    el('div', { class:'formgrid' }, [
-      el('div', { class:'formfield' }, [el('label', null, 'Name'), inp('name')]),
-      el('div', { class:'formfield' }, [el('label', null, 'Role'), inp('role')]),
-      el('div', { class:'formfield' }, [el('label', null, 'First Seen'), inp('firstSeen','date')]),
-      el('div', { class:'formfield full' }, [el('label', null, 'Notes'),
-        (function(){ var t = el('textarea', { oninput: function(e){ a.notes = e.target.value; } }); t.value = a.notes; return t; })()
-      ])
-    ]),
-    el('button', { class:'btn primary', onclick: function(){
-      if (!a.name.trim()) { toast('Name required'); return; }
-      state.db.actors.push(Object.assign({}, a, { id: uid('actor'), createdAt: nowISO() }));
-      state.formActor = { name:'', role:'', notes:'', firstSeen:'' };
-      toast('Actor added'); renderMain();
-    } }, 'Save Actor')
-  ]);
+var a = state.formActor = state.formActor || { name:’’, role:’’, notes:’’, firstSeen:’’ };
+function inp(key,type){ return el(‘input’,{type:type||‘text’,value:a[key],oninput:function(e){a[key]=e.target.value;}}); }
+return el(‘div’,{class:‘panel’},[el(‘h2’,null,’+ New Actor’),el(‘div’,{class:‘formgrid’},[el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Name’),inp(‘name’)]),el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Role’),inp(‘role’)]),el(‘div’,{class:‘formfield’},[el(‘label’,null,‘First Seen’),inp(‘firstSeen’,‘date’)]),el(‘div’,{class:‘formfield full’},[el(‘label’,null,‘Notes’),(function(){var t=el(‘textarea’,{oninput:function(e){a.notes=e.target.value;}});t.value=a.notes;return t;})()])]),el(‘button’,{class:‘btn primary’,onclick:function(){if(!a.name.trim()){toast(‘Name required’);return;}state.db.actors.push(Object.assign({},a,{id:uid(‘actor’),createdAt:nowISO()}));state.formActor={name:’’,role:’’,notes:’’,firstSeen:’’};toast(‘Actor added’);renderMain();}},‘Save Actor’)]);
 }
-
 function viewNewIOC(){
-  var i = state.formIOC = state.formIOC || { type:'ipv4', value:'', context:'', severity:'low' };
-  var typeSel = el('select', { onchange: function(e){ i.type = e.target.value; } },
-    ['ipv4','ipv6','domain','hash','mac','udid','other'].map(function(t){ return el('option',{value:t},t.toUpperCase()); })
-  );
-  typeSel.value = i.type;
-  var sevSel = el('select', { onchange: function(e){ i.severity = e.target.value; } }, [
-    el('option', { value:'crit' }, 'Critical'),
-    el('option', { value:'high' }, 'High'),
-    el('option', { value:'med' }, 'Medium'),
-    el('option', { value:'low' }, 'Low')
-  ]);
-  sevSel.value = i.severity;
-  return el('div', { class:'panel' }, [
-    el('h2', null, '+ New IOC'),
-    el('div', { class:'formgrid' }, [
-      el('div', { class:'formfield' }, [el('label', null, 'Type'), typeSel]),
-      el('div', { class:'formfield' }, [el('label', null, 'Severity'), sevSel]),
-      el('div', { class:'formfield full' }, [el('label', null, 'Value'),
-        el('input', { type:'text', value: i.value, oninput: function(e){ i.value = e.target.value; } })
-      ]),
-      el('div', { class:'formfield full' }, [el('label', null, 'Context'),
-        (function(){ var t = el('textarea', { oninput: function(e){ i.context = e.target.value; } }); t.value = i.context; return t; })()
-      ])
-    ]),
-    el('button', { class:'btn primary', onclick: function(){
-      if (!i.value.trim()) { toast('Value required'); return; }
-      state.db.iocs.push(Object.assign({}, i, { id: uid('ioc'), createdAt: nowISO() }));
-      state.formIOC = { type:'ipv4', value:'', context:'', severity:'low' };
-      toast('IOC added'); renderMain();
-    } }, 'Save IOC')
-  ]);
+var i = state.formIOC = state.formIOC || { type:‘ipv4’, value:’’, context:’’, severity:‘low’ };
+var typeSel = el(‘select’,{onchange:function(e){i.type=e.target.value;}},[‘ipv4’,‘ipv6’,‘domain’,‘hash’,‘mac’,‘udid’,‘other’].map(function(t){return el(‘option’,{value:t},t.toUpperCase());})); typeSel.value=i.type;
+var sevSel = el(‘select’,{onchange:function(e){i.severity=e.target.value;}},[el(‘option’,{value:‘crit’},‘Critical’),el(‘option’,{value:‘high’},‘High’),el(‘option’,{value:‘med’},‘Medium’),el(‘option’,{value:‘low’},‘Low’)]); sevSel.value=i.severity;
+return el(‘div’,{class:‘panel’},[el(‘h2’,null,’+ New IOC’),el(‘div’,{class:‘formgrid’},[el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Type’),typeSel]),el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Severity’),sevSel]),el(‘div’,{class:‘formfield full’},[el(‘label’,null,‘Value’),el(‘input’,{type:‘text’,value:i.value,oninput:function(e){i.value=e.target.value;}})]),el(‘div’,{class:‘formfield full’},[el(‘label’,null,‘Context’),(function(){var t=el(‘textarea’,{oninput:function(e){i.context=e.target.value;}});t.value=i.context;return t;})()])]),el(‘button’,{class:‘btn primary’,onclick:function(){if(!i.value.trim()){toast(‘Value required’);return;}state.db.iocs.push(Object.assign({},i,{id:uid(‘ioc’),createdAt:nowISO()}));state.formIOC={type:‘ipv4’,value:’’,context:’’,severity:‘low’};toast(‘IOC added’);renderMain();}},‘Save IOC’)]);
 }
 
-// QUERIES
+function viewSeverityReport(){
+var groups = { crit:[], high:[], med:[], low:[] };
+state.db.findings.forEach(function(f){ if (groups[f.severity]) groups[f.severity].push(f); });
+var sections = [‘crit’,‘high’,‘med’,‘low’].map(function(s){
+return el(‘div’, null, [
+el(‘h3’, null, SEV_LABEL[s] + ’ (’ + groups[s].length + ‘)’),
+el(‘div’, { class:‘helptext’ }, SEV_EXPLAIN[s].plain),
+el(‘div’, { class:‘helptext’ }, ’Plain: ’ + SEV_EXPLAIN[s].simple),
+groups[s].length ? buildTable([{key:‘label’,label:‘Finding’},{key:‘category’,label:‘Category’},{key:‘fileName’,label:‘Source’,mono:true}], groups[s]) : el(‘div’, { class:‘empty’ }, ‘None at this severity.’)
+]);
+});
+return el(‘div’, { class:‘panel’ }, [el(‘h2’, null, ‘Severity Report’)].concat(sections));
+}
+
+function viewCrossFile(){
+var byPattern = {};
+state.db.findings.forEach(function(f){
+if (!byPattern[f.patternId]) byPattern[f.patternId] = { label:f.label, severity:f.severity, files:{} };
+byPattern[f.patternId].files[f.fileName] = (byPattern[f.patternId].files[f.fileName]||0) + 1;
+});
+var rows = Object.keys(byPattern).map(function(pid){
+var p = byPattern[pid]; var fc = Object.keys(p.files).length;
+return { patternId:pid, label:p.label, severity:p.severity, fileCount:fc, files:Object.keys(p.files).join(’, ’) };
+}).filter(function(r){ return r.fileCount >= 2; }).sort(function(a,b){ return b.fileCount - a.fileCount; });
+return el(‘div’, { class:‘panel’ }, [
+el(‘h2’, null, ‘Cross-File Patterns (’ + rows.length + ‘)’),
+el(‘div’, { class:‘helptext’ }, ‘Patterns matched in 2+ files. High count = correlation across sources.’),
+buildTable([{key:‘severity’,label:‘Sev’,render:function(r){return sevBadge(r.severity);}},{key:‘label’,label:‘Pattern’},{key:‘fileCount’,label:‘Files’},{key:‘files’,label:‘In’,mono:true,render:function(r){return r.files.slice(0,80);}}], rows, ‘No cross-file patterns yet. Ingest 2+ files.’)
+]);
+}
+
+function viewTimeSeries(){
+var byDay = {};
+state.db.findings.forEach(function(f){ var d = (f.createdAt||’’).slice(0,10); if (d) byDay[d] = (byDay[d]||0) + 1; });
+var days = Object.keys(byDay).sort();
+var max = days.reduce(function(m,d){ return Math.max(m, byDay[d]); }, 0);
+var rows = days.map(function(d){
+return el(‘div’, { class:‘trendrow’ }, [
+el(‘div’, { class:‘barlbl’ }, [el(‘span’, null, d), el(‘span’, null, String(byDay[d]))]),
+el(‘div’, { class:‘bar’ }, el(‘div’, { style:{ width: Math.min(100,(byDay[d]/max)*100)+’%’, background:’#c9a961’ } }))
+]);
+});
+return el(‘div’, { class:‘panel’ }, [el(‘h2’, null, ‘Time-Series Trends’), days.length ? el(‘div’, null, rows) : el(‘div’, { class:‘empty’ }, ‘No findings yet.’)]);
+}
+
 function viewQueryBuilder(){
-  state.qb = state.qb || { target:'findings', field:'label', op:'contains', val:'', results:[] };
-  var qb = state.qb;
-  var tSel = el('select', { onchange: function(e){ qb.target = e.target.value; } },
-    ['findings','sources','timeline','actors','iocs','files'].map(function(x){ return el('option',{value:x}, x.charAt(0).toUpperCase()+x.slice(1)); })
-  );
-  tSel.value = qb.target;
-  var opSel = el('select', { onchange: function(e){ qb.op = e.target.value; } }, [
-    el('option', { value:'contains' }, 'contains'),
-    el('option', { value:'equals' }, 'equals'),
-    el('option', { value:'starts' }, 'starts with'),
-    el('option', { value:'regex' }, 'regex')
-  ]);
-  opSel.value = qb.op;
-  return el('div', { class:'panel' }, [
-    el('h2', null, 'Query Builder'),
-    el('div', { class:'formgrid' }, [
-      el('div', { class:'formfield' }, [el('label', null, 'Table'), tSel]),
-      el('div', { class:'formfield' }, [el('label', null, 'Field'),
-        el('input', { type:'text', value: qb.field, oninput: function(e){ qb.field = e.target.value; }, placeholder:'label, category, severity…' })
-      ]),
-      el('div', { class:'formfield' }, [el('label', null, 'Operator'), opSel]),
-      el('div', { class:'formfield' }, [el('label', null, 'Value'),
-        el('input', { type:'text', value: qb.val, oninput: function(e){ qb.val = e.target.value; } })
-      ])
-    ]),
-    el('button', { class:'btn primary', onclick: function(){
-      var data = state.db[qb.target] || [];
-      var s = qb.val.toLowerCase();
-      qb.results = data.filter(function(row){
-        var rv = String(row[qb.field] != null ? row[qb.field] : '').toLowerCase();
-        if (qb.op === 'contains') return rv.indexOf(s) >= 0;
-        if (qb.op === 'equals') return rv === s;
-        if (qb.op === 'starts') return rv.indexOf(s) === 0;
-        if (qb.op === 'regex') { try { return new RegExp(qb.val, 'i').test(String(row[qb.field]||'')); } catch(e){ return false; } }
-        return false;
-      });
-      renderMain();
-    } }, 'Run Query'),
-    el('div', { class:'divider' }),
-    el('div', { class:'helptext' }, qb.results.length + ' result(s)'),
-    el('div', { class:'codebox' }, JSON.stringify(qb.results.slice(0,50), null, 2))
-  ]);
+var qf = state.queryFilter;
+var cats = {}; state.db.findings.forEach(function(f){ cats[f.category] = true; });
+var catSel = el(‘select’,{onchange:function(e){qf.cat=e.target.value;}},[el(‘option’,{value:‘all’},‘All categories’)].concat(Object.keys(cats).map(function(c){return el(‘option’,{value:c},c);}))); catSel.value=qf.cat;
+var sevSel = el(‘select’,{onchange:function(e){qf.sev=e.target.value;}},[el(‘option’,{value:‘all’},‘All severities’),el(‘option’,{value:‘crit’},‘Critical’),el(‘option’,{value:‘high’},‘High’),el(‘option’,{value:‘med’},‘Medium’),el(‘option’,{value:‘low’},‘Low’)]); sevSel.value=qf.sev;
+var fileInput = el(‘input’,{type:‘text’,placeholder:‘Filter by filename\u2026’,value:qf.fileName,oninput:function(e){qf.fileName=e.target.value;}});
+function runQuery(){ state.queryResults = state.db.findings.filter(function(f){ if(qf.sev!==‘all’&&f.severity!==qf.sev)return false; if(qf.cat!==‘all’&&f.category!==qf.cat)return false; if(qf.fileName&&(f.fileName||’’).toLowerCase().indexOf(qf.fileName.toLowerCase())<0)return false; return true; }); renderMain(); }
+return el(‘div’,{class:‘panel’},[el(‘h2’,null,‘Query Builder’),el(‘div’,{class:‘formgrid’},[el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Severity’),sevSel]),el(‘div’,{class:‘formfield’},[el(‘label’,null,‘Category’),catSel]),el(‘div’,{class:‘formfield full’},[el(‘label’,null,‘Filename contains’),fileInput])]),el(‘div’,{class:‘toolbar’},[el(‘button’,{class:‘btn primary’,onclick:runQuery},‘Run Query’),el(‘button’,{class:‘btn’,onclick:function(){qf.sev=‘crit’;qf.cat=‘all’;qf.fileName=’’;runQuery();}},‘Critical Only’),el(‘button’,{class:‘btn ghost’,onclick:function(){setView(‘xfile’);}},‘Cross-File Patterns’)]),el(‘h3’,null,‘Results (’+state.queryResults.length+’)’),buildTable([{key:‘severity’,label:‘Sev’,render:function(r){return sevBadge(r.severity);}},{key:‘label’,label:‘Finding’},{key:‘category’,label:‘Category’},{key:‘fileName’,label:‘Source’,mono:true}],state.queryResults,‘No results. Run a query.’)]);
 }
 
-function viewCriticalOnly(){
-  var crit = state.db.findings.filter(function(f){ return f.severity === 'crit'; })
-    .sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
-  return el('div', { class:'panel' }, [
-    el('h2', null, 'Critical Only (' + crit.length + ')'),
-    buildTable([
-      { key:'label', label:'Finding' },
-      { key:'category', label:'Category' },
-      { key:'fileName', label:'Source', mono:true },
-      { key:'match', label:'Match', mono:true, render: function(r){ return (r.match||'').slice(0,100); } }
-    ], crit, 'No critical findings.')
-  ]);
-}
-
-function viewCrossPatterns(){
-  var pf = {};
-  state.db.findings.forEach(function(f){
-    if (!f.patternId) return;
-    if (!pf[f.patternId]) pf[f.patternId] = { label: f.label, severity: f.severity, files: {}, count: 0 };
-    pf[f.patternId].files[f.fileName || 'unknown'] = true;
-    pf[f.patternId].count++;
-  });
-  var cross = Object.keys(pf).map(function(k){
-    var v = pf[k]; var fk = Object.keys(v.files);
-    return { id:k, label:v.label, severity:v.severity, count:v.count, fileCount: fk.length, fileList: fk.join(', ') };
-  }).filter(function(r){ return r.fileCount > 1; })
-    .sort(function(a,b){ return b.fileCount - a.fileCount || (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
-  return el('div', { class:'panel' }, [
-    el('h2', null, 'Cross-File Patterns (' + cross.length + ')'),
-    el('div', { class:'helptext' }, 'Patterns matched in 2+ source files. Strong correlation candidates.'),
-    buildTable([
-      { key:'severity', label:'Sev', render: function(r){ return sevBadge(r.severity); } },
-      { key:'label', label:'Pattern' },
-      { key:'fileCount', label:'Files' },
-      { key:'count', label:'Hits' },
-      { key:'fileList', label:'Source files', mono:true }
-    ], cross, 'No cross-file patterns yet. Load 2+ files to detect.')
-  ]);
-}
-
-// REPORTS
-function viewDashboard(){
-  var counts = { crit:0, high:0, med:0, low:0 };
-  state.db.findings.forEach(function(f){ if (counts[f.severity] != null) counts[f.severity]++; });
-  var byCat = {};
-  state.db.findings.forEach(function(f){ var c = f.category || 'Uncat'; byCat[c] = (byCat[c]||0)+1; });
-  var cats = Object.keys(byCat).map(function(k){ return [k, byCat[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
-
-  function statBox(lbl, val, color){
-    var v = el('div', { class:'val' }, String(val));
-    if (color) v.style.color = color;
-    return el('div', { class:'stat' }, [el('div', { class:'lbl' }, lbl), v]);
-  }
-  return el('div', null, el('div', { class:'panel' }, [
-    el('h2', null, 'Dashboard'),
-    el('div', { class:'row' }, [
-      statBox('Critical', counts.crit, 'var(--crit)'),
-      statBox('High', counts.high, 'var(--high)'),
-      statBox('Medium', counts.med, 'var(--med)'),
-      statBox('Low', counts.low, 'var(--low)')
-    ]),
-    el('div', { class:'row' }, [
-      statBox('Findings', state.db.findings.length),
-      statBox('Files', state.db.files.length),
-      statBox('IOCs', state.db.iocs.length),
-      statBox('Actors', state.db.actors.length)
-    ]),
-    el('h3', null, 'By Category'),
-    buildTable(
-      [{key:'cat',label:'Category'},{key:'n',label:'Count'}],
-      cats.map(function(c){ return { cat:c[0], n:c[1], id:c[0] }; }),
-      'No findings yet.'
-    )
-  ]));
-}
-
-function viewTrends(){
-  var buckets = {};
-  state.db.findings.forEach(function(f){
-    var d = (f.createdAt || '').slice(0,10) || 'undated';
-    if (!buckets[d]) buckets[d] = { d:d, crit:0, high:0, med:0, low:0, total:0 };
-    if (buckets[d][f.severity] != null) buckets[d][f.severity]++;
-    buckets[d].total++;
-  });
-  var rows = Object.keys(buckets).map(function(k){ return buckets[k]; }).sort(function(a,b){ return a.d.localeCompare(b.d); });
-  var max = 1;
-  rows.forEach(function(r){ if (r.total > max) max = r.total; });
-  var contents = [el('h2', null, 'Time-Series Trends'),
-    el('div', { class:'helptext' }, 'Findings by ingestion date. Bar shows total per day.')];
-  if (!rows.length) contents.push(el('div', { class:'empty' }, 'No data yet.'));
-  else rows.forEach(function(r){
-    var bar = el('div', { class:'bar' }, [
-      (function(){ var d = el('div', null); d.style.width = (r.crit/max*100)+'%'; d.style.background = 'var(--crit)'; return d; })(),
-      (function(){ var d = el('div', null); d.style.width = (r.high/max*100)+'%'; d.style.background = 'var(--high)'; return d; })(),
-      (function(){ var d = el('div', null); d.style.width = (r.med/max*100)+'%'; d.style.background = 'var(--med)'; return d; })(),
-      (function(){ var d = el('div', null); d.style.width = (r.low/max*100)+'%'; d.style.background = 'var(--low)'; return d; })()
-    ]);
-    contents.push(el('div', { class:'trendrow' }, [
-      el('div', { class:'barlbl' }, [el('span', null, r.d), el('span', null, r.total + ' (' + r.crit + 'C / ' + r.high + 'H / ' + r.med + 'M / ' + r.low + 'L)')]),
-      bar
-    ]));
-  });
-  return el('div', { class:'panel' }, contents);
-}
-
-function viewSeverity(){
-  var groups = ['crit','high','med','low'];
-  var defs = el('div', { class:'panel' }, [
-    el('h2', null, 'Severity Report'),
-    el('h3', null, 'Severity Definitions (Plain & Simple)')
-  ].concat(groups.map(function(g){
-    return el('details', { open: true }, [
-      el('summary', null, [sevBadge(g), ' ', SEV_LABEL[g]]),
-      el('div', { style:{ padding:'6px 0 8px', fontSize:'12px' } }, [
-        el('div', { style:{ marginBottom:'6px' } }, [el('span', { class:'pill' }, 'PLAIN'), ' ' + SEV_EXPLAIN[g].plain]),
-        el('div', null, [el('span', { class:'pill' }, 'SIMPLE'), ' ' + SEV_EXPLAIN[g].simple])
-      ])
-    ]);
-  })));
-  var sections = groups.map(function(g){
-    var items = state.db.findings.filter(function(f){ return f.severity === g; });
-    return el('div', { class:'panel' }, [
-      el('h2', null, [sevBadge(g), ' ' + SEV_LABEL[g] + ' (' + items.length + ')']),
-      buildTable(
-        [{key:'label',label:'Finding'},{key:'category',label:'Category'},{key:'fileName',label:'Source',mono:true}],
-        items, 'No ' + SEV_LABEL[g].toLowerCase() + ' findings.'
-      )
-    ]);
-  });
-  return el('div', null, [defs].concat(sections));
-}
-
-function viewCombos(){
-  var fileMap = {};
-  state.db.findings.forEach(function(f){
-    var k = f.fileName || 'unknown';
-    if (!fileMap[k]) fileMap[k] = {};
-    if (f.patternId) fileMap[k][f.patternId] = true;
-  });
-  var combos = {};
-  Object.keys(fileMap).forEach(function(file){
-    var arr = Object.keys(fileMap[file]).sort();
-    for (var i=0;i<arr.length;i++) for (var j=i+1;j<arr.length;j++){
-      var k = arr[i] + ' + ' + arr[j];
-      if (!combos[k]) combos[k] = { combo:k, files:{} };
-      combos[k].files[file] = true;
-    }
-  });
-  var rows = Object.keys(combos).map(function(k){
-    var c = combos[k]; var fk = Object.keys(c.files);
-    return { combo:c.combo, fileCount:fk.length, files:fk.join(', ') };
-  }).filter(function(r){ return r.fileCount >= 2; })
-    .sort(function(a,b){ return b.fileCount - a.fileCount; })
-    .slice(0,50);
-  return el('div', { class:'panel' }, [
-    el('h2', null, 'Cross-File Combos (' + rows.length + ')'),
-    el('div', { class:'helptext' }, 'Pattern pairs that co-occur in 2+ files. Top 50 shown.'),
-    buildTable(
-      [{key:'combo',label:'Pattern Pair',mono:true},{key:'fileCount',label:'Files'},{key:'files',label:'In files',mono:true}],
-      rows, 'No multi-file combos yet.'
-    )
-  ]);
-}
-
-// ============================================================
-// TOPBAR (with hidden file inputs + custom buttons)
-// ============================================================
 function buildTopbar(){
-  var loadInput = el('input', {
-    type:'file', class:'hidden-file', id:'load-input',
-    onchange: function(e){
-      var f = e.target.files && e.target.files[0];
-      if (f) handleLoadFile(f);
-      e.target.value = '';
-    }
-  });
-  var restoreInput = el('input', {
-    type:'file', accept:'.json,application/json', class:'hidden-file', id:'restore-input',
-    onchange: function(e){
-      var f = e.target.files && e.target.files[0];
-      if (f) handleRestore(f);
-      e.target.value = '';
-    }
-  });
-
-  var loadBtn = el('button', {
-    class: 'btn primary',
-    disabled: state.busy ? true : null,
-    onclick: function(){ document.getElementById('load-input').click(); }
-  }, state.busy ? ('Loading ' + state.progress + '%') : 'Load File');
-
-  var saveBtn = el('button', { class:'btn', onclick: handleSaveDB }, 'Save DB');
-  var restoreBtn = el('button', { class:'btn', onclick: function(){ document.getElementById('restore-input').click(); } }, 'Restore');
-  var printBtn = el('button', { class:'btn', onclick: handlePrint }, 'Print PDF');
-  var navBtn = el('button', { class:'btn navtoggle ghost', onclick: toggleNav }, '☰');
-
-  var ribbon = el('div', { class:'ribbon' }, [
-    el('div', { class:'logo' }, [
-      el('span', null, '◆ Truth Finder '),
-      el('small', null, 'v7 · GOLD')
-    ]),
-    navBtn, loadBtn, saveBtn, restoreBtn, printBtn,
-    loadInput, restoreInput
-  ]);
-
-  var fileChildren = [
-    el('span', { class:'pill' }, 'FILE'),
-    el('span', { class:'fname' }, state.currentFile || '(no file loaded — tap Load File to ingest)')
-  ];
-  if (state.busy) {
-    var bar = el('div', null);
-    bar.style.width = state.progress + '%';
-    fileChildren.push(el('div', { class:'progress', id:'progress-bar' }, bar));
-  }
-  var filebar = el('div', { class:'filebar' }, fileChildren);
-  return el('div', { class:'topbar' }, [ribbon, filebar]);
+var fileInput = el(‘input’,{type:‘file’,class:‘hidden-file’,id:‘load-input’,onchange:function(e){if(e.target.files&&e.target.files[0]){handleLoadFile(e.target.files[0]);e.target.value=’’;}}});
+var restoreInput = el(‘input’,{type:‘file’,class:‘hidden-file’,accept:’.json’,id:‘restore-input’,onchange:function(e){if(e.target.files&&e.target.files[0]){handleRestore(e.target.files[0]);e.target.value=’’;}}});
+var ribbon = el(‘div’,{class:‘ribbon’},[
+el(‘button’,{class:‘btn ghost navtoggle’,onclick:toggleNav},’\u2630’),
+el(‘div’,{class:‘logo’},[el(‘span’,null,’\u25C6 Truth Finder’),el(‘small’,null,‘v7 \u00B7 GOLD’)]),
+el(‘button’,{class:‘btn primary’,onclick:function(){document.getElementById(‘load-input’).click();}},‘Load File’),
+el(‘button’,{class:‘btn’,onclick:handleSaveDB},‘Save DB’),
+el(‘button’,{class:‘btn’,onclick:function(){document.getElementById(‘restore-input’).click();}},‘Restore’),
+el(‘button’,{class:‘btn’,onclick:handlePrint},‘Print PDF’),
+fileInput, restoreInput
+]);
+var fileBar = el(‘div’,{class:‘filebar’},[
+el(‘span’,{class:‘pill’},‘FILE’),
+el(‘span’,{class:‘fname’}, state.currentFile || ‘No file loaded’),
+state.busy ? el(‘div’,{class:‘progress’},el(‘div’,{style:{width:state.progress+’%’}})) : null
+]);
+return el(‘div’,{class:‘topbar’},[ribbon, fileBar]);
 }
 
 function updateTopbarProgress(){
-  var btn = document.querySelector('.btn.primary');
-  if (btn && state.busy) btn.textContent = 'Loading ' + state.progress + '%';
-  var pb = document.getElementById('progress-bar');
-  if (pb && pb.firstChild) pb.firstChild.style.width = state.progress + '%';
+var bar = document.querySelector(’.progress > div’);
+if (bar) bar.style.width = state.progress + ‘%’;
 }
 
-// ============================================================
-// NAV
-// ============================================================
 function buildNav(){
-  var groups = [
-    { group:'Tables', items:[['findings','Findings'],['sources','Sources'],['timeline','Timeline'],['actors','Actors'],['iocs','IOCs'],['files','Files']] },
-    { group:'Forms', items:[['new_finding','+ New Finding'],['new_actor','+ New Actor'],['new_ioc','+ New IOC']] },
-    { group:'Queries', items:[['query_builder','Query Builder'],['critical_only','Critical Only'],['cross_patterns','Cross-File Patterns']] },
-    { group:'Reports', items:[['report_dashboard','Dashboard'],['report_trends','Time-Series Trends'],['report_severity','Severity Report'],['report_combos','Cross-File Combos']] }
-  ];
-  var nodes = [];
-  groups.forEach(function(g){
-    nodes.push(el('div', { class:'navgroup' }, g.group));
-    g.items.forEach(function(it){
-      nodes.push(el('div', {
-        class: 'navitem' + (state.view === it[0] ? ' active' : ''),
-        onclick: (function(k){ return function(){ setView(k); }; })(it[0])
-      }, it[1]));
-    });
-  });
-  var nav = document.getElementById('sidenav');
-  nav.className = 'sidenav' + (state.navCollapsed ? ' collapsed' : '');
-  return nodes;
+var groups = [
+{label:‘Tables’,items:[{id:‘findings’,label:‘Findings’},{id:‘sources’,label:‘Sources’},{id:‘timeline’,label:‘Timeline’},{id:‘actors’,label:‘Actors’},{id:‘iocs’,label:‘IOCs’},{id:‘files’,label:‘Files’}]},
+{label:‘Queries’,items:[{id:‘query’,label:‘Query Builder’},{id:‘xfile’,label:‘Cross-File’}]},
+{label:‘Forms’,items:[{id:‘new_finding’,label:’+ Finding’},{id:‘new_actor’,label:’+ Actor’},{id:‘new_ioc’,label:’+ IOC’}]},
+{label:‘Reports’,items:[{id:‘report_dashboard’,label:‘Dashboard’},{id:‘report_trends’,label:‘Time-Series’},{id:‘report_severity’,label:‘Severity’}]}
+];
+var nodes = [];
+groups.forEach(function(g){
+nodes.push(el(‘div’,{class:‘navgroup’},g.label));
+g.items.forEach(function(item){
+nodes.push(el(‘div’,{class:‘navitem’+(state.view===item.id?’ active’:’’),onclick:function(){setView(item.id);}},item.label));
+});
+});
+return nodes;
 }
 
-// ============================================================
-// MAIN VIEW DISPATCH
-// ============================================================
-function buildMain(){
-  switch (state.view) {
-    case 'findings': return viewFindings();
-    case 'sources': return viewSources();
-    case 'timeline': return viewTimeline();
-    case 'actors': return viewActors();
-    case 'iocs': return viewIOCs();
-    case 'files': return viewFiles();
-    case 'new_finding': return viewNewFinding();
-    case 'new_actor': return viewNewActor();
-    case 'new_ioc': return viewNewIOC();
-    case 'query_builder': return viewQueryBuilder();
-    case 'critical_only': return viewCriticalOnly();
-    case 'cross_patterns': return viewCrossPatterns();
-    case 'report_dashboard': return viewDashboard();
-    case 'report_trends': return viewTrends();
-    case 'report_severity': return viewSeverity();
-    case 'report_combos': return viewCombos();
-    default: return viewDashboard();
-  }
-}
+var VIEWS = {
+report_dashboard: viewDashboard,
+findings: viewFindings,
+sources: viewSources,
+timeline: viewTimeline,
+actors: viewActors,
+iocs: viewIOCs,
+files: viewFiles,
+query: viewQueryBuilder,
+xfile: viewCrossFile,
+new_finding: viewNewFinding,
+new_actor: viewNewActor,
+new_ioc: viewNewIOC,
+report_trends: viewTimeSeries,
+report_severity: viewSeverityReport
+};
 
-// ============================================================
-// RENDER
-// ============================================================
 function renderMain(){
-  var main = document.getElementById('main');
-  clear(main);
-  main.appendChild(buildMain());
+var main = document.getElementById(‘main’);
+clear(main);
+var viewFn = VIEWS[state.view] || viewDashboard;
+main.appendChild(viewFn());
+main.appendChild(el(‘div’,{class:‘lockdown-label’},‘Lockdown Enabled’));
 }
+
 function render(){
-  var top = document.getElementById('topbar');
-  clear(top);
-  top.appendChild(buildTopbar());
-
-  var nav = document.getElementById('sidenav');
-  clear(nav);
-  buildNav().forEach(function(n){ nav.appendChild(n); });
-  nav.className = 'sidenav' + (state.navCollapsed ? ' collapsed' : '');
-
-  renderMain();
+var topbar = document.getElementById(‘topbar’);
+clear(topbar);
+topbar.appendChild(buildTopbar());
+var sidenav = document.getElementById(‘sidenav’);
+clear(sidenav);
+sidenav.className = ‘sidenav’ + (state.navCollapsed ? ’ collapsed’ : ‘’);
+buildNav().forEach(function(n){ sidenav.appendChild(n); });
+renderMain();
 }
 
-// Initial render
-try {
-  render();
-} catch (err) {
-  document.body.innerHTML = '<div style="padding:20px;color:#a83232;font-family:monospace;">Boot error: ' + (err && err.message ? err.message : err) + '</div>';
-}
-
+render();
 })();
 </script>
 
