@@ -33,33 +33,25 @@
   }
   #root { min-height: 100vh; }
 
-/* Sticky top */
 .topbar {
 position: sticky; top: 0; z-index: 100;
 background: linear-gradient(180deg, #0e0c08 0%, #0a0907 100%);
 border-bottom: 1px solid var(–border);
 padding: 8px 10px;
 }
-.ribbon {
-display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
-}
+.ribbon { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .logo {
 font-weight: 700; letter-spacing: 0.5px; font-size: 14px;
-color: var(–accent);
-margin-right: auto;
+color: var(–accent); margin-right: auto;
 display: flex; align-items: center; gap: 6px;
 }
 .logo small { color: var(–dim); font-weight: 400; font-size: 10px; letter-spacing: 1px;}
 .btn {
-background: #1a1610;
-color: var(–text);
+background: #1a1610; color: var(–text);
 border: 1px solid var(–border);
-padding: 7px 11px;
-border-radius: 6px;
-font-size: 12px;
-font-weight: 500;
-cursor: pointer;
-white-space: nowrap;
+padding: 7px 11px; border-radius: 6px;
+font-size: 12px; font-weight: 500;
+cursor: pointer; white-space: nowrap;
 -webkit-appearance: none;
 }
 .btn:active { background: #221c12; }
@@ -79,7 +71,6 @@ border-radius: 6px;
 .filebar input[type=file] { display: none; }
 .filebar .fname { font-size: 11px; color: var(–dim); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 
-/* Layout */
 .container { display: flex; min-height: calc(100vh - 110px); }
 .sidenav {
 width: 180px; flex-shrink: 0;
@@ -90,12 +81,9 @@ padding: 8px 6px;
 .sidenav.collapsed { display: none; }
 .navgroup { font-size: 10px; color: var(–dim); text-transform: uppercase; padding: 8px 8px 4px; letter-spacing: 1px; }
 .navitem {
-display: block;
-padding: 8px 10px;
-font-size: 13px;
-color: var(–text);
-cursor: pointer;
-border-radius: 5px;
+display: block; padding: 8px 10px;
+font-size: 13px; color: var(–text);
+cursor: pointer; border-radius: 5px;
 border: 1px solid transparent;
 }
 .navitem.active { background: #1a1510; color: var(–accent); border-color: var(–border); }
@@ -111,13 +99,11 @@ border: 1px solid transparent;
 .main { padding: 10px; }
 }
 
-/* Panels */
 .panel {
 background: var(–panel);
 border: 1px solid var(–border);
 border-radius: 8px;
-padding: 12px;
-margin-bottom: 12px;
+padding: 12px; margin-bottom: 12px;
 }
 .panel h2 { margin: 0 0 10px; font-size: 15px; color: var(–accent); font-weight: 600; letter-spacing: 0.3px;}
 .panel h3 { margin: 12px 0 8px; font-size: 13px; color: var(–accent); font-weight: 600;}
@@ -132,7 +118,6 @@ flex: 1; min-width: 120px;
 .stat .lbl { font-size: 10px; color: var(–dim); text-transform: uppercase; letter-spacing: 1px;}
 .stat .val { font-size: 18px; color: var(–accent); font-weight: 600; margin-top: 2px;}
 
-/* Tables */
 .tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(–border); border-radius: 6px;}
 table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 500px;}
 th, td { padding: 7px 9px; text-align: left; border-bottom: 1px solid var(–border); vertical-align: top;}
@@ -140,14 +125,12 @@ th { background: var(–panel2); color: var(–accent); font-weight: 600; font-s
 tr:last-child td { border-bottom: none; }
 td.mono { font-family: ui-monospace, “SF Mono”, Menlo, monospace; font-size: 11px; color: var(–dim); }
 
-/* Severity badges */
 .sev { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
 .sev.crit { background: var(–crit); color: #fff; }
 .sev.high { background: var(–high); color: #fff; }
 .sev.med { background: var(–med); color: #0a0a0a; }
 .sev.low { background: var(–low); color: #fff; }
 
-/* Forms */
 label { display: block; font-size: 11px; color: var(–dim); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px;}
 input[type=text], input[type=number], input[type=date], textarea, select {
 width: 100%;
@@ -166,15 +149,12 @@ textarea { min-height: 70px; resize: vertical; }
 .formfield { margin-bottom: 8px; }
 .formfield.full { grid-column: 1 / -1; }
 
-/* Toolbar */
 .toolbar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .toolbar input[type=text] { flex: 1; min-width: 150px; }
 
-/* Progress */
 .progress { height: 4px; background: #1a1610; border-radius: 2px; overflow: hidden; margin-top: 6px;}
 .progress > div { height: 100%; background: var(–accent); transition: width 0.2s;}
 
-/* Toast */
 .toast {
 position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
 background: #1a1610; color: var(–accent);
@@ -185,7 +165,6 @@ box-shadow: 0 4px 16px rgba(0,0,0,0.5);
 max-width: 90%;
 }
 
-/* Print */
 @media print {
 .topbar, .sidenav, .toolbar, .btn { display: none !important; }
 .main { padding: 0; }
@@ -211,813 +190,861 @@ summary { cursor: pointer; color: var(–accent); font-size: 12px; padding: 4px 
 background: #0a0807; border: 1px solid var(–border); border-radius: 4px;
 padding: 6px 8px; font-family: ui-monospace, monospace; font-size: 10px;
 color: var(–dim); white-space: pre-wrap; word-break: break-all;
-max-height: 120px; overflow: auto;
+max-height: 240px; overflow: auto;
+}
+.lockdown-notice {
+background: #1a1610; border: 1px solid var(–accent2);
+padding: 10px 12px; border-radius: 6px;
+font-size: 12px; color: var(–accent);
+margin-bottom: 12px;
+display: none;
 }
 </style>
 
 </head>
 <body>
-<div id="root"></div>
+<div id="root">
+  <div style="padding:24px;color:#c9a961;font-family:-apple-system,system-ui,sans-serif;">
+    <div style="font-size:18px;font-weight:600;margin-bottom:8px;">◆ Truth Finder v7</div>
+    <div style="color:#8a8270;font-size:13px;">Loading…</div>
+    <div id="boot-error" style="margin-top:16px;color:#a83232;font-size:12px;font-family:ui-monospace,monospace;"></div>
+  </div>
+</div>
+
+<script>
+  // Boot error visibility for Lockdown / loading failures
+  window.addEventListener('error', function(e) {
+    var n = document.getElementById('boot-error');
+    if (n) n.textContent = 'Boot error: ' + (e.message || e);
+  });
+</script>
+
+<!-- React UMD only — no Babel, no JSX runtime. Lockdown-safe. -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-<script type="text/babel">
-const { useState, useMemo, useEffect, useRef, useCallback } = React;
 
-// ============================================================
-// PATTERN LIBRARY (30+ detections from v4)
-// ============================================================
-const PATTERNS = [
-// Identity / takeover
-{ id: ‘gh_takeover’, re: /password\s+(was\s+)?changed|2FA\s+enabled|recovery\s+codes\s+(downloaded|generated)|security\s+key\s+registered/i, sev: ‘crit’, cat: ‘Account Takeover’, label: ‘GitHub/account takeover indicators’},
-{ id: ‘oauth_revoke’, re: /OAuth\s+token\s+revoked|app\s+access\s+revoked|authorized\s+application\s+removed/i, sev: ‘high’, cat: ‘Account Takeover’, label: ‘OAuth/app access revocation’},
-{ id: ‘unauth_signin’, re: /(unauthorized|suspicious|unrecognized)\s+sign[- ]?in|new\s+device\s+signed\s+in/i, sev: ‘high’, cat: ‘Account Takeover’, label: ‘Unauthorized sign-in event’},
+<script>
+(function(){
+  'use strict';
 
-// CKKS / iCloud
-{ id: ‘bypassPCS’, re: /bypassPCSEncryption[^a-z]*(?:=|:)?\s*(?:1|true|YES)/i, sev: ‘crit’, cat: ‘CKKS/iCloud’, label: ‘bypassPCSEncryption active’},
-{ id: ‘inCircle0’, re: /inCircle[^a-z]*(?:=|:)?\s*0/i, sev: ‘crit’, cat: ‘CKKS/iCloud’, label: ‘Device excluded from iCloud security circle (inCircle:0)’},
-{ id: ‘tlk_shares’, re: /heal-tlk-shares|TLK\s+share|tlkShare/i, sev: ‘high’, cat: ‘CKKS/iCloud’, label: ‘TLK share / heal-tlk-shares activity’},
-{ id: ‘rotating_ckids’, re: /CloudKit.*account.*identifier|ckAccountID/i, sev: ‘med’, cat: ‘CKKS/iCloud’, label: ‘CloudKit account identifier reference’},
-{ id: ‘oqe_drain’, re: /OQE.*items|itemsyncing.*paused/i, sev: ‘high’, cat: ‘CKKS/iCloud’, label: ‘Passwords OQE drain / itemsyncing paused’},
-{ id: ‘userviews_disabled’, re: /userViews.*(?:disabled|DISABLED)/i, sev: ‘high’, cat: ‘CKKS/iCloud’, label: ‘userViews policy disabled’},
-{ id: ‘findmy_mismatch’, re: /FindMy.*(?:mismatch|send.*recv)/i, sev: ‘high’, cat: ‘CKKS/iCloud’, label: ‘FindMy zone send/recv mismatch’},
-{ id: ‘sensitive_visible’, re: /SensitivePropertiesVisible[^a-z]*(?:=|:)?\s*(?:true|YES|1)/i, sev: ‘crit’, cat: ‘CKKS/iCloud’, label: ‘SensitivePropertiesVisible = true’},
-{ id: ‘untrusted_tunnel’, re: /untrusted\s+tunnel|tunnel.*untrusted|CoreDevice.*tunnel/i, sev: ‘high’, cat: ‘CKKS/iCloud’, label: ‘CoreDevice untrusted tunnel service’},
+  if (!window.React || !window.ReactDOM) {
+    document.getElementById('boot-error').textContent =
+      'React failed to load. If Lockdown Mode is on, tap "Reduce Protections" or use a non-Lockdown profile.';
+    return;
+  }
 
-// MDM / Profiles
-{ id: ‘mdm_profile’, re: /MDM\s+profile|managedConfiguration|com.apple.mdm/i, sev: ‘high’, cat: ‘MDM/Profile’, label: ‘MDM profile reference’},
-{ id: ‘tmobile_mdm’, re: /T-?Mobile.*(profile|managed|MDM)|com.tmobile/i, sev: ‘high’, cat: ‘MDM/Profile’, label: ‘T-Mobile managed/MDM reference’},
-{ id: ‘azure_cert’, re: /Microsoft\s+Azure|azure.*cert|Microsoft\s+IT\s+TLS/i, sev: ‘high’, cat: ‘MDM/Profile’, label: ‘Microsoft Azure certificate on iOS’},
-{ id: ‘share_ext_block’, re: /share\s+extension.*(?:block|disabled|suppress)|com.apple.share/i, sev: ‘med’, cat: ‘MDM/Profile’, label: ‘Share extension suppression’},
-{ id: ‘cellular_cap’, re: /cellular.*(?:limit|cap|100\s*MB|transfer\s+limit)/i, sev: ‘med’, cat: ‘MDM/Profile’, label: ‘Cellular transfer cap’},
+  var React = window.React;
+  var ReactDOM = window.ReactDOM;
+  var useState = React.useState;
+  var useEffect = React.useEffect;
+  var useMemo = React.useMemo;
+  var useRef = React.useRef;
+  var useCallback = React.useCallback;
+  var h = React.createElement;
 
-// Network / MAC
-{ id: ‘private_addr_off’, re: /Private\s+(MAC\s+)?Address.*OFF|privateAddress.*false|wifi.privateAddress.*0/i, sev: ‘high’, cat: ‘Network’, label: ‘Private MAC Address OFF’},
-{ id: ‘real_mac’, re: /\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b/, sev: ‘low’, cat: ‘Network’, label: ‘MAC address present’},
-{ id: ‘call_forward’, re: /call\s+forward|forwardingNumber|+1?214[0-9]{7}/i, sev: ‘high’, cat: ‘Network’, label: ‘Call forwarding indicator’},
-{ id: ‘tmobile_ipv6’, re: /2607:fb90:[0-9a-f:]+/i, sev: ‘med’, cat: ‘Network’, label: ‘T-Mobile IPv6 (2607:fb90:) address’},
+  // ============================================================
+  // PATTERN LIBRARY
+  // ============================================================
+  var PATTERNS = [
+    { id:'gh_takeover', re:/password\s+(was\s+)?changed|2FA\s+enabled|recovery\s+codes\s+(downloaded|generated)|security\s+key\s+registered/i, sev:'crit', cat:'Account Takeover', label:'GitHub/account takeover indicators'},
+    { id:'oauth_revoke', re:/OAuth\s+token\s+revoked|app\s+access\s+revoked|authorized\s+application\s+removed/i, sev:'high', cat:'Account Takeover', label:'OAuth/app access revocation'},
+    { id:'unauth_signin', re:/(unauthorized|suspicious|unrecognized)\s+sign[- ]?in|new\s+device\s+signed\s+in/i, sev:'high', cat:'Account Takeover', label:'Unauthorized sign-in event'},
+    { id:'bypassPCS', re:/bypassPCSEncryption[^a-z]*(?:=|:)?\s*(?:1|true|YES)/i, sev:'crit', cat:'CKKS/iCloud', label:'bypassPCSEncryption active'},
+    { id:'inCircle0', re:/inCircle[^a-z]*(?:=|:)?\s*0/i, sev:'crit', cat:'CKKS/iCloud', label:'Device excluded from iCloud security circle (inCircle:0)'},
+    { id:'tlk_shares', re:/heal-tlk-shares|TLK\s+share|tlkShare/i, sev:'high', cat:'CKKS/iCloud', label:'TLK share / heal-tlk-shares activity'},
+    { id:'rotating_ckids', re:/CloudKit.*account.*identifier|ckAccountID/i, sev:'med', cat:'CKKS/iCloud', label:'CloudKit account identifier reference'},
+    { id:'oqe_drain', re:/OQE.*items|itemsyncing.*paused/i, sev:'high', cat:'CKKS/iCloud', label:'Passwords OQE drain / itemsyncing paused'},
+    { id:'userviews_disabled', re:/userViews.*(?:disabled|DISABLED)/i, sev:'high', cat:'CKKS/iCloud', label:'userViews policy disabled'},
+    { id:'findmy_mismatch', re:/FindMy.*(?:mismatch|send.*recv)/i, sev:'high', cat:'CKKS/iCloud', label:'FindMy zone send/recv mismatch'},
+    { id:'sensitive_visible', re:/SensitivePropertiesVisible[^a-z]*(?:=|:)?\s*(?:true|YES|1)/i, sev:'crit', cat:'CKKS/iCloud', label:'SensitivePropertiesVisible = true'},
+    { id:'untrusted_tunnel', re:/untrusted\s+tunnel|tunnel.*untrusted|CoreDevice.*tunnel/i, sev:'high', cat:'CKKS/iCloud', label:'CoreDevice untrusted tunnel service'},
+    { id:'mdm_profile', re:/MDM\s+profile|managedConfiguration|com\.apple\.mdm/i, sev:'high', cat:'MDM/Profile', label:'MDM profile reference'},
+    { id:'tmobile_mdm', re:/T-?Mobile.*(profile|managed|MDM)|com\.tmobile/i, sev:'high', cat:'MDM/Profile', label:'T-Mobile managed/MDM reference'},
+    { id:'azure_cert', re:/Microsoft\s+Azure|azure.*cert|Microsoft\s+IT\s+TLS/i, sev:'high', cat:'MDM/Profile', label:'Microsoft Azure certificate on iOS'},
+    { id:'share_ext_block', re:/share\s+extension.*(?:block|disabled|suppress)|com\.apple\.share/i, sev:'med', cat:'MDM/Profile', label:'Share extension suppression'},
+    { id:'cellular_cap', re:/cellular.*(?:limit|cap|100\s*MB|transfer\s+limit)/i, sev:'med', cat:'MDM/Profile', label:'Cellular transfer cap'},
+    { id:'private_addr_off', re:/Private\s+(MAC\s+)?Address.*OFF|privateAddress.*false|wifi\.privateAddress.*0/i, sev:'high', cat:'Network', label:'Private MAC Address OFF'},
+    { id:'real_mac', re:/\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b/, sev:'low', cat:'Network', label:'MAC address present'},
+    { id:'call_forward', re:/call\s+forward|forwardingNumber|\+1?214[0-9]{7}/i, sev:'high', cat:'Network', label:'Call forwarding indicator'},
+    { id:'tmobile_ipv6', re:/2607:fb90:[0-9a-f:]+/i, sev:'med', cat:'Network', label:'T-Mobile IPv6 (2607:fb90:) address'},
+    { id:'serial_match', re:/CW4XKX9QYM/i, sev:'high', cat:'Device', label:'Target iPhone serial CW4XKX9QYM'},
+    { id:'udid_anon', re:/UDID.*(?:anonymous|no\s+account|unattributed)/i, sev:'high', cat:'Device', label:'Anonymous/unattributed UDID'},
+    { id:'diag_enroll', re:/diagnostic.*enroll|enrolled.*diagnostic|MDMRegistered/i, sev:'high', cat:'Device', label:'Apple diagnostic enrollment'},
+    { id:'clouddocs_noclient', re:/com\.apple\.CloudDocs.*(?:no\s+client|missing)/i, sev:'high', cat:'Files', label:'com.apple.CloudDocs no declared client'},
+    { id:'notes_mislabel', re:/com\.apple\.notes.*Settings|Settings.*com\.apple\.notes/i, sev:'med', cat:'Files', label:'com.apple.notes mislabeled as Settings'},
+    { id:'productkit_b389', re:/productkit.*b389|b389.*productkit/i, sev:'med', cat:'Files', label:'productkit b389 anomaly'},
+    { id:'auth_failure', re:/UserAuthenticationFailure|authentication\s+failed.*retry/i, sev:'med', cat:'Auth', label:'Authentication failure / retry'},
+    { id:'ext_id_mutation', re:/ExternalIdentifierMutated|externalId.*changed/i, sev:'high', cat:'Auth', label:'External identifier mutation'},
+    { id:'no_auth_session', re:/no\s+auth\s+session|without\s+(?:auth|authentication)\s+session/i, sev:'high', cat:'Auth', label:'Action without auth session'},
+    { id:'webkit_sop', re:/CVE-2026-20643|WebKit.*Same\s*Origin|SOP\s+bypass/i, sev:'crit', cat:'CVE', label:'WebKit SOP bypass (CVE-2026-20643)'},
+    { id:'cve_generic', re:/CVE-\d{4}-\d{4,7}/i, sev:'med', cat:'CVE', label:'CVE reference'},
+    { id:'ipv4', re:/\b(?:\d{1,3}\.){3}\d{1,3}\b/, sev:'low', cat:'IOC', label:'IPv4 address'},
+    { id:'ipv6', re:/\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i, sev:'low', cat:'IOC', label:'IPv6 address'},
+    { id:'domain', re:/\b[a-z0-9-]+\.(?:com|net|org|io|co|app|dev|cloud|apple\.com)\b/i, sev:'low', cat:'IOC', label:'Domain reference'},
+    { id:'hash', re:/\b[a-f0-9]{32,64}\b/i, sev:'low', cat:'IOC', label:'Hash (MD5/SHA)'}
+  ];
 
-// Device / hardware
-{ id: ‘serial_match’, re: /CW4XKX9QYM/i, sev: ‘high’, cat: ‘Device’, label: ‘Target iPhone serial CW4XKX9QYM’},
-{ id: ‘udid_anon’, re: /UDID.*(?:anonymous|no\s+account|unattributed)/i, sev: ‘high’, cat: ‘Device’, label: ‘Anonymous/unattributed UDID’},
-{ id: ‘diag_enroll’, re: /diagnostic.*enroll|enrolled.*diagnostic|MDMRegistered/i, sev: ‘high’, cat: ‘Device’, label: ‘Apple diagnostic enrollment’},
+  var SEV_RANK = { crit:4, high:3, med:2, low:1 };
+  var SEV_LABEL = { crit:'CRITICAL', high:'HIGH', med:'MEDIUM', low:'LOW' };
+  var SEV_EXPLAIN = {
+    crit: { plain:'Confirmed indicator of unauthorized access, key compromise, or security-circle exclusion. Treat as primary evidence.', simple:'A red-flag finding. The system is showing signs that someone or something is bypassing normal protections.' },
+    high: { plain:'Strong anomaly with documented attribution patterns. Requires correlation with timeline and actor records.', simple:'A serious finding. Something unusual happened that maps to known attack or surveillance behavior.' },
+    med:  { plain:'Notable anomaly worth tracking. May be benign in isolation but pattern-relevant in aggregate.', simple:'A finding to keep an eye on. Alone it might be nothing — together with others it can mean something.' },
+    low:  { plain:'Indicator-of-compromise candidate (IPs, hashes, MAC addresses). Use for cross-file correlation.', simple:'A piece of raw data — an address, a code — useful for connecting the dots between files.' }
+  };
 
-// Files / iCloud containers
-{ id: ‘clouddocs_noclient’, re: /com.apple.CloudDocs.*(?:no\s+client|missing)/i, sev: ‘high’, cat: ‘Files’, label: ‘com.apple.CloudDocs no declared client’},
-{ id: ‘notes_mislabel’, re: /com.apple.notes.*Settings|Settings.*com.apple.notes/i, sev: ‘med’, cat: ‘Files’, label: ‘com.apple.notes mislabeled as Settings’},
-{ id: ‘productkit_b389’, re: /productkit.*b389|b389.*productkit/i, sev: ‘med’, cat: ‘Files’, label: ‘productkit b389 anomaly’},
+  // ============================================================
+  // HELPERS
+  // ============================================================
+  function uid(p){ p = p || 'id'; return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7); }
+  function nowISO(){ return new Date().toISOString(); }
 
-// Auth / patterns
-{ id: ‘auth_failure’, re: /UserAuthenticationFailure|authentication\s+failed.*retry/i, sev: ‘med’, cat: ‘Auth’, label: ‘Authentication failure / retry’},
-{ id: ‘ext_id_mutation’, re: /ExternalIdentifierMutated|externalId.*changed/i, sev: ‘high’, cat: ‘Auth’, label: ‘External identifier mutation’},
-{ id: ‘no_auth_session’, re: /no\s+auth\s+session|without\s+(?:auth|authentication)\s+session/i, sev: ‘high’, cat: ‘Auth’, label: ‘Action without auth session’},
+  function initialDB(){
+    return {
+      meta: { created: nowISO(), version: 'v7', name: 'Truth Finder Database' },
+      findings: [], sources: [], timeline: [], actors: [], iocs: [], files: []
+    };
+  }
 
-// CVE / WebKit
-{ id: ‘webkit_sop’, re: /CVE-2026-20643|WebKit.*Same\s*Origin|SOP\s+bypass/i, sev: ‘crit’, cat: ‘CVE’, label: ‘WebKit SOP bypass (CVE-2026-20643)’},
-{ id: ‘cve_generic’, re: /CVE-\d{4}-\d{4,7}/i, sev: ‘med’, cat: ‘CVE’, label: ‘CVE reference’},
+  function downloadBlob(data, filename, type){
+    type = type || 'application/json';
+    var blob = new Blob([data], { type: type });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
 
-// IOCs (network/file)
-{ id: ‘ipv4’, re: /\b(?:\d{1,3}.){3}\d{1,3}\b/, sev: ‘low’, cat: ‘IOC’, label: ‘IPv4 address’},
-{ id: ‘ipv6’, re: /\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i, sev: ‘low’, cat: ‘IOC’, label: ‘IPv6 address’},
-{ id: ‘domain’, re: /\b[a-z0-9-]+.(?:com|net|org|io|co|app|dev|cloud|apple.com)\b/i, sev: ‘low’, cat: ‘IOC’, label: ‘Domain reference’},
-{ id: ‘hash’, re: /\b[a-f0-9]{32,64}\b/i, sev: ‘low’, cat: ‘IOC’, label: ‘Hash (MD5/SHA)’},
-];
+  // Streaming ingest using FileReader (Lockdown-safe; avoids file.stream())
+  function ingestFile(file, onProgress, onChunk){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      var chunkSize = 256 * 1024; // 256KB chunks
+      var offset = 0;
+      var buffer = '';
+      var lineNo = 0;
+      var total = file.size || 1;
+      var decoder = (typeof TextDecoder !== 'undefined') ? new TextDecoder('utf-8', { fatal: false }) : null;
 
-const SEV_RANK = { crit: 4, high: 3, med: 2, low: 1 };
-const SEV_LABEL = { crit: ‘CRITICAL’, high: ‘HIGH’, med: ‘MEDIUM’, low: ‘LOW’ };
+      function readNext(){
+        if (offset >= file.size) {
+          if (buffer.length) { lineNo++; onChunk(buffer, lineNo); }
+          onProgress(100);
+          resolve(lineNo);
+          return;
+        }
+        var slice = file.slice(offset, offset + chunkSize);
+        reader.onload = function(e){
+          var text;
+          if (decoder && e.target.result instanceof ArrayBuffer) {
+            text = decoder.decode(e.target.result, { stream: true });
+          } else {
+            text = String(e.target.result || '');
+          }
+          buffer += text;
+          var nl;
+          while ((nl = buffer.indexOf('\n')) >= 0) {
+            var line = buffer.slice(0, nl);
+            buffer = buffer.slice(nl + 1);
+            lineNo++;
+            try { onChunk(line, lineNo); } catch(err) {}
+          }
+          offset += chunkSize;
+          onProgress(Math.min(100, Math.round((offset/total)*100)));
+          setTimeout(readNext, 0);
+        };
+        reader.onerror = function(){ reject(new Error('Read error')); };
+        if (decoder) {
+          reader.readAsArrayBuffer(slice);
+        } else {
+          reader.readAsText(slice);
+        }
+      }
+      readNext();
+    });
+  }
 
-const SEV_EXPLAIN = {
-crit: {
-plain: ‘Confirmed indicator of unauthorized access, key compromise, or security-circle exclusion. Treat as primary evidence.’,
-simple: ‘A red-flag finding. The system is showing signs that someone or something is bypassing normal protections.’
-},
-high: {
-plain: ‘Strong anomaly with documented attribution patterns. Requires correlation with timeline and actor records.’,
-simple: ‘A serious finding. Something unusual happened that maps to known attack or surveillance behavior.’
-},
-med: {
-plain: ‘Notable anomaly worth tracking. May be benign in isolation but pattern-relevant in aggregate.’,
-simple: ‘A finding to keep an eye on. Alone it might be nothing — together with others it can mean something.’
-},
-low: {
-plain: ‘Indicator-of-compromise candidate (IPs, hashes, MAC addresses). Use for cross-file correlation.’,
-simple: ‘A piece of raw data — an address, a code — useful for connecting the dots between files.’
-}
-};
+  function scanLine(line, fileName, fileId){
+    var hits = [];
+    for (var i=0;i<PATTERNS.length;i++){
+      var p = PATTERNS[i];
+      var m = line.match(p.re);
+      if (m) {
+        hits.push({
+          patternId: p.id, label: p.label, category: p.cat, severity: p.sev,
+          match: String(m[0]).slice(0,200), fileName: fileName, fileId: fileId
+        });
+      }
+    }
+    return hits;
+  }
 
-// ============================================================
-// HELPERS
-// ============================================================
-const uid = (p=‘id’) => `${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,7)}`;
-const nowISO = () => new Date().toISOString();
+  // ============================================================
+  // SMALL COMPONENTS
+  // ============================================================
 
-const initialDB = () => ({
-meta: { created: nowISO(), version: ‘v7’, name: ‘Truth Finder Database’ },
-findings: [],
-sources: [],
-timeline: [],
-actors: [],
-iocs: [],
-files: [],
-});
+  function SeverityBadge(props){
+    return h('span', { className: 'sev ' + props.s }, SEV_LABEL[props.s] || props.s);
+  }
 
-const downloadBlob = (data, filename, type=‘application/json’) => {
-const blob = new Blob([data], { type });
-const url = URL.createObjectURL(blob);
-const a = document.createElement(‘a’);
-a.href = url; a.download = filename;
-document.body.appendChild(a); a.click();
-document.body.removeChild(a);
-setTimeout(() => URL.revokeObjectURL(url), 1000);
-};
+  function Table(props){
+    var columns = props.columns, rows = props.rows, empty = props.empty || 'No records';
+    if (!rows.length) return h('div', { className: 'empty' }, empty);
+    return h('div', { className: 'tablewrap' },
+      h('table', null,
+        h('thead', null, h('tr', null, columns.map(function(c){ return h('th', { key: c.key }, c.label); }))),
+        h('tbody', null, rows.map(function(r, i){
+          return h('tr', { key: r.id || i }, columns.map(function(c){
+            var content = c.render ? c.render(r) : (r[c.key] != null ? r[c.key] : '');
+            return h('td', { key: c.key, className: c.mono ? 'mono' : '' }, content);
+          }));
+        }))
+      )
+    );
+  }
 
-// ============================================================
-// STREAMING FILE INGEST
-// ============================================================
-async function ingestFile(file, onProgress, onChunk) {
-const reader = file.stream().getReader();
-const decoder = new TextDecoder(‘utf-8’, { fatal: false });
-let received = 0;
-let buffer = ‘’;
-let lineNo = 0;
-const total = file.size || 1;
+  // ============================================================
+  // VIEW: Findings
+  // ============================================================
+  function FindingsView(props){
+    var db = props.db, setDB = props.setDB;
+    var qs = useState(''), q = qs[0], setQ = qs[1];
+    var ss = useState('all'), sev = ss[0], setSev = ss[1];
+    var filtered = useMemo(function(){
+      return db.findings.filter(function(f){
+        if (sev !== 'all' && f.severity !== sev) return false;
+        if (q) {
+          var s = q.toLowerCase();
+          if ((f.label||'').toLowerCase().indexOf(s) < 0 &&
+              (f.category||'').toLowerCase().indexOf(s) < 0 &&
+              (f.match||'').toLowerCase().indexOf(s) < 0 &&
+              (f.fileName||'').toLowerCase().indexOf(s) < 0) return false;
+        }
+        return true;
+      }).sort(function(a,b){ return (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
+    }, [db.findings, q, sev]);
 
-while (true) {
-const { done, value } = await reader.read();
-if (done) break;
-received += value.length;
-buffer += decoder.decode(value, { stream: true });
-let nl;
-while ((nl = buffer.indexOf(’\n’)) >= 0) {
-const line = buffer.slice(0, nl);
-buffer = buffer.slice(nl + 1);
-lineNo++;
-onChunk(line, lineNo);
-}
-onProgress(Math.min(100, Math.round((received / total) * 100)));
-await new Promise(r => setTimeout(r, 0));
-}
-if (buffer.length) {
-lineNo++;
-onChunk(buffer, lineNo);
-}
-onProgress(100);
-return lineNo;
-}
+    function remove(id){ setDB(function(d){ return Object.assign({}, d, { findings: d.findings.filter(function(f){ return f.id !== id; }) }); }); }
 
-function scanLine(line, fileName, fileId) {
-const hits = [];
-for (const p of PATTERNS) {
-const m = line.match(p.re);
-if (m) {
-hits.push({
-patternId: p.id,
-label: p.label,
-category: p.cat,
-severity: p.sev,
-match: m[0].slice(0, 200),
-fileName,
-fileId,
-});
-}
-}
-return hits;
-}
+    return h('div', { className: 'panel' },
+      h('h2', null, 'Findings (' + filtered.length + ' / ' + db.findings.length + ')'),
+      h('div', { className: 'toolbar' },
+        h('input', { type: 'text', placeholder: 'Search findings…', value: q, onChange: function(e){ setQ(e.target.value); } }),
+        h('select', { value: sev, onChange: function(e){ setSev(e.target.value); } },
+          h('option', { value: 'all' }, 'All severities'),
+          h('option', { value: 'crit' }, 'Critical'),
+          h('option', { value: 'high' }, 'High'),
+          h('option', { value: 'med' }, 'Medium'),
+          h('option', { value: 'low' }, 'Low')
+        )
+      ),
+      h(Table, {
+        columns: [
+          { key: 'severity', label: 'Sev', render: function(r){ return h(SeverityBadge, { s: r.severity }); } },
+          { key: 'label', label: 'Finding' },
+          { key: 'category', label: 'Category' },
+          { key: 'fileName', label: 'Source', mono: true },
+          { key: 'lineNo', label: 'Line', render: function(r){ return r.lineNo || '—'; } },
+          { key: 'match', label: 'Match', mono: true, render: function(r){ return (r.match||'').slice(0,80); } },
+          { key: 'actions', label: '', render: function(r){ return h('button', { className: 'btn danger', onClick: function(){ remove(r.id); } }, '×'); } }
+        ],
+        rows: filtered,
+        empty: 'No findings yet. Load a file or add one manually.'
+      })
+    );
+  }
 
-// ============================================================
-// COMPONENTS
-// ============================================================
+  // ============================================================
+  // VIEW: Generic searchable table
+  // ============================================================
+  function SimpleTableView(props){
+    var qs = useState(''), q = qs[0], setQ = qs[1];
+    var filtered = useMemo(function(){
+      if (!q) return props.rows;
+      var s = q.toLowerCase();
+      return props.rows.filter(function(r){
+        var keys = Object.keys(r);
+        for (var i=0;i<keys.length;i++){
+          if (String(r[keys[i]]||'').toLowerCase().indexOf(s) >= 0) return true;
+        }
+        return false;
+      });
+    }, [props.rows, q]);
+    return h('div', { className: 'panel' },
+      h('h2', null, props.title + ' (' + filtered.length + ')'),
+      h('div', { className: 'toolbar' },
+        h('input', { type: 'text', placeholder: 'Search…', value: q, onChange: function(e){ setQ(e.target.value); } })
+      ),
+      h(Table, { columns: props.columns, rows: filtered, empty: props.empty })
+    );
+  }
 
-function Topbar({ onLoad, onSave, onRestore, onPrint, onToggleNav, fileName, busy, progress }) {
-const fileRef = useRef(null);
-const restoreRef = useRef(null);
-return (
-<div className="topbar">
-<div className="ribbon">
-<div className="logo">
-◆ Truth Finder <small>v7 · GOLD</small>
-</div>
-<button className="btn navtoggle ghost" onClick={onToggleNav}>☰</button>
-<button className=“btn primary” onClick={() => fileRef.current?.click()} disabled={busy}>
-{busy ? `Loading ${progress}%` : ‘Load File’}
-</button>
-<button className="btn" onClick={onSave}>Save DB</button>
-<button className=“btn” onClick={() => restoreRef.current?.click()}>Restore</button>
-<button className="btn" onClick={onPrint}>Print PDF</button>
-<input ref={fileRef} type=“file” accept=”.txt,.log,.json,.csv,.xml,.plist,.ips,.crash,*/*” onChange={(e) => {
-const f = e.target.files?.[0];
-if (f) onLoad(f);
-e.target.value = ‘’;
-}} />
-<input ref={restoreRef} type=“file” accept=”.json,application/json” onChange={(e) => {
-const f = e.target.files?.[0];
-if (f) onRestore(f);
-e.target.value = ‘’;
-}} />
-</div>
-<div className="filebar">
-<span className="pill">FILE</span>
-<span className="fname">{fileName || ‘(no file loaded — tap Load File to ingest)’}</span>
-{busy && <div style={{width:80}}><div className="progress"><div style={{width: progress + ‘%’}} /></div></div>}
-</div>
-</div>
-);
-}
+  // ============================================================
+  // FORMS
+  // ============================================================
+  function NewFindingForm(props){
+    var st = useState({ label:'', category:'Manual', severity:'med', match:'', fileName:'', lineNo:'', notes:'' });
+    var f = st[0], setF = st[1];
+    function submit(){
+      if (!f.label.trim()) { props.toast('Label required'); return; }
+      props.setDB(function(d){
+        return Object.assign({}, d, { findings: d.findings.concat([Object.assign({}, f, { id: uid('find'), createdAt: nowISO(), source: 'manual' })]) });
+      });
+      props.toast('Finding added');
+      setF({ label:'', category:'Manual', severity:'med', match:'', fileName:'', lineNo:'', notes:'' });
+    }
+    function field(key, type){
+      return h('input', { type: type||'text', value: f[key], onChange: function(e){ var v = e.target.value; setF(function(p){ return Object.assign({}, p, (function(){ var o={}; o[key]=v; return o; })()); }); } });
+    }
+    function ta(key){
+      return h('textarea', { value: f[key], onChange: function(e){ var v = e.target.value; setF(function(p){ return Object.assign({}, p, (function(){ var o={}; o[key]=v; return o; })()); }); } });
+    }
+    return h('div', { className: 'panel' },
+      h('h2', null, '+ New Finding'),
+      h('div', { className: 'formgrid' },
+        h('div', { className: 'formfield full' }, h('label', null, 'Label'), field('label')),
+        h('div', { className: 'formfield' }, h('label', null, 'Category'), field('category')),
+        h('div', { className: 'formfield' },
+          h('label', null, 'Severity'),
+          h('select', { value: f.severity, onChange: function(e){ var v = e.target.value; setF(function(p){ return Object.assign({}, p, { severity: v }); }); } },
+            h('option', { value: 'crit' }, 'Critical'),
+            h('option', { value: 'high' }, 'High'),
+            h('option', { value: 'med' }, 'Medium'),
+            h('option', { value: 'low' }, 'Low')
+          )
+        ),
+        h('div', { className: 'formfield' }, h('label', null, 'Source File'), field('fileName')),
+        h('div', { className: 'formfield' }, h('label', null, 'Line / Ref'), field('lineNo')),
+        h('div', { className: 'formfield full' }, h('label', null, 'Match / Excerpt'), ta('match')),
+        h('div', { className: 'formfield full' }, h('label', null, 'Notes'), ta('notes'))
+      ),
+      h('button', { className: 'btn primary', onClick: submit }, 'Save Finding')
+    );
+  }
 
-function Nav({ view, setView, collapsed }) {
-const items = [
-{ group: ‘Tables’, items: [
-[‘findings’,‘Findings’],[‘sources’,‘Sources’],[‘timeline’,‘Timeline’],
-[‘actors’,‘Actors’],[‘iocs’,‘IOCs’],[‘files’,‘Files’]
-]},
-{ group: ‘Forms’, items: [
-[‘new_finding’,’+ New Finding’],[‘new_actor’,’+ New Actor’],[‘new_ioc’,’+ New IOC’]
-]},
-{ group: ‘Queries’, items: [
-[‘query_builder’,‘Query Builder’],[‘critical_only’,‘Critical Only’],[‘cross_patterns’,‘Cross-File Patterns’]
-]},
-{ group: ‘Reports’, items: [
-[‘report_dashboard’,‘Dashboard’],[‘report_trends’,‘Time-Series Trends’],
-[‘report_severity’,‘Severity Report’],[‘report_combos’,‘Cross-File Combos’]
-]},
-];
-return (
-<div className={‘sidenav’ + (collapsed ? ’ collapsed’ : ‘’)}>
-{items.map(g => (
-<div key={g.group}>
-<div className="navgroup">{g.group}</div>
-{g.items.map(([k, l]) => (
-<div key={k} className={’navitem ’ + (view === k ? ‘active’ : ‘’)} onClick={() => setView(k)}>{l}</div>
-))}
-</div>
-))}
-</div>
-);
-}
+  function NewActorForm(props){
+    var st = useState({ name:'', role:'', notes:'', firstSeen:'' });
+    var a = st[0], setA = st[1];
+    function set(k){ return function(e){ var v = e.target.value; setA(function(p){ var o={}; o[k]=v; return Object.assign({}, p, o); }); }; }
+    function submit(){
+      if (!a.name.trim()) { props.toast('Name required'); return; }
+      props.setDB(function(d){ return Object.assign({}, d, { actors: d.actors.concat([Object.assign({}, a, { id: uid('actor'), createdAt: nowISO() })]) }); });
+      props.toast('Actor added');
+      setA({ name:'', role:'', notes:'', firstSeen:'' });
+    }
+    return h('div', { className: 'panel' },
+      h('h2', null, '+ New Actor'),
+      h('div', { className: 'formgrid' },
+        h('div', { className: 'formfield' }, h('label', null, 'Name'), h('input', { type: 'text', value: a.name, onChange: set('name') })),
+        h('div', { className: 'formfield' }, h('label', null, 'Role'), h('input', { type: 'text', value: a.role, onChange: set('role') })),
+        h('div', { className: 'formfield' }, h('label', null, 'First Seen'), h('input', { type: 'date', value: a.firstSeen, onChange: set('firstSeen') })),
+        h('div', { className: 'formfield full' }, h('label', null, 'Notes'), h('textarea', { value: a.notes, onChange: set('notes') }))
+      ),
+      h('button', { className: 'btn primary', onClick: submit }, 'Save Actor')
+    );
+  }
 
-function SeverityBadge({ s }) {
-return <span className={’sev ’ + s}>{SEV_LABEL[s] || s}</span>;
-}
+  function NewIOCForm(props){
+    var st = useState({ type:'ipv4', value:'', context:'', severity:'low' });
+    var i = st[0], setI = st[1];
+    function set(k){ return function(e){ var v = e.target.value; setI(function(p){ var o={}; o[k]=v; return Object.assign({}, p, o); }); }; }
+    function submit(){
+      if (!i.value.trim()) { props.toast('Value required'); return; }
+      props.setDB(function(d){ return Object.assign({}, d, { iocs: d.iocs.concat([Object.assign({}, i, { id: uid('ioc'), createdAt: nowISO() })]) }); });
+      props.toast('IOC added');
+      setI({ type:'ipv4', value:'', context:'', severity:'low' });
+    }
+    return h('div', { className: 'panel' },
+      h('h2', null, '+ New IOC'),
+      h('div', { className: 'formgrid' },
+        h('div', { className: 'formfield' },
+          h('label', null, 'Type'),
+          h('select', { value: i.type, onChange: set('type') },
+            ['ipv4','ipv6','domain','hash','mac','udid','other'].map(function(t){ return h('option', { key: t, value: t }, t.toUpperCase()); })
+          )
+        ),
+        h('div', { className: 'formfield' },
+          h('label', null, 'Severity'),
+          h('select', { value: i.severity, onChange: set('severity') },
+            h('option', { value: 'crit' }, 'Critical'),
+            h('option', { value: 'high' }, 'High'),
+            h('option', { value: 'med' }, 'Medium'),
+            h('option', { value: 'low' }, 'Low')
+          )
+        ),
+        h('div', { className: 'formfield full' }, h('label', null, 'Value'), h('input', { type: 'text', value: i.value, onChange: set('value') })),
+        h('div', { className: 'formfield full' }, h('label', null, 'Context'), h('textarea', { value: i.context, onChange: set('context') }))
+      ),
+      h('button', { className: 'btn primary', onClick: submit }, 'Save IOC')
+    );
+  }
 
-function Table({ columns, rows, empty=‘No records’ }) {
-if (!rows.length) return <div className="empty">{empty}</div>;
-return (
-<div className="tablewrap">
-<table>
-<thead><tr>{columns.map(c => <th key={c.key}>{c.label}</th>)}</tr></thead>
-<tbody>
-{rows.map((r, i) => (
-<tr key={r.id || i}>
-{columns.map(c => <td key={c.key} className={c.mono ? ‘mono’ : ‘’}>{c.render ? c.render(r) : (r[c.key] ?? ‘’)}</td>)}
-</tr>
-))}
-</tbody>
-</table>
-</div>
-);
-}
+  // ============================================================
+  // QUERIES
+  // ============================================================
+  function QueryBuilder(props){
+    var db = props.db;
+    var f = useState('label'); var field = f[0], setField = f[1];
+    var op = useState('contains'); var oper = op[0], setOper = op[1];
+    var v = useState(''); var val = v[0], setVal = v[1];
+    var t = useState('findings'); var target = t[0], setTarget = t[1];
+    var r = useState([]); var results = r[0], setResults = r[1];
+    function run(){
+      var data = db[target] || [];
+      var s = val.toLowerCase();
+      var out = data.filter(function(row){
+        var rv = String(row[field] != null ? row[field] : '').toLowerCase();
+        if (oper === 'contains') return rv.indexOf(s) >= 0;
+        if (oper === 'equals') return rv === s;
+        if (oper === 'starts') return rv.indexOf(s) === 0;
+        if (oper === 'regex') { try { return new RegExp(val, 'i').test(String(row[field]||'')); } catch(e){ return false; } }
+        return false;
+      });
+      setResults(out);
+    }
+    return h('div', { className: 'panel' },
+      h('h2', null, 'Query Builder'),
+      h('div', { className: 'formgrid' },
+        h('div', { className: 'formfield' },
+          h('label', null, 'Table'),
+          h('select', { value: target, onChange: function(e){ setTarget(e.target.value); } },
+            ['findings','sources','timeline','actors','iocs','files'].map(function(x){ return h('option', { key: x, value: x }, x.charAt(0).toUpperCase()+x.slice(1)); })
+          )
+        ),
+        h('div', { className: 'formfield' }, h('label', null, 'Field'), h('input', { type: 'text', value: field, onChange: function(e){ setField(e.target.value); }, placeholder: 'label, category, severity…' })),
+        h('div', { className: 'formfield' },
+          h('label', null, 'Operator'),
+          h('select', { value: oper, onChange: function(e){ setOper(e.target.value); } },
+            h('option', { value: 'contains' }, 'contains'),
+            h('option', { value: 'equals' }, 'equals'),
+            h('option', { value: 'starts' }, 'starts with'),
+            h('option', { value: 'regex' }, 'regex')
+          )
+        ),
+        h('div', { className: 'formfield' }, h('label', null, 'Value'), h('input', { type: 'text', value: val, onChange: function(e){ setVal(e.target.value); } }))
+      ),
+      h('button', { className: 'btn primary', onClick: run }, 'Run Query'),
+      h('div', { className: 'divider' }),
+      h('div', { className: 'helptext' }, results.length + ' result(s)'),
+      h('div', { className: 'codebox' }, JSON.stringify(results.slice(0,50), null, 2))
+    );
+  }
 
-function FindingsView({ db, setDB }) {
-const [q, setQ] = useState(’’);
-const [sev, setSev] = useState(‘all’);
-const filtered = useMemo(() => {
-return db.findings.filter(f => {
-if (sev !== ‘all’ && f.severity !== sev) return false;
-if (q) {
-const s = q.toLowerCase();
-if (!(f.label||’’).toLowerCase().includes(s) &&
-!(f.category||’’).toLowerCase().includes(s) &&
-!(f.match||’’).toLowerCase().includes(s) &&
-!(f.fileName||’’).toLowerCase().includes(s)) return false;
-}
-return true;
-}).sort((a,b) => (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0));
-}, [db.findings, q, sev]);
+  function CriticalOnly(props){
+    var crit = props.db.findings.filter(function(f){ return f.severity === 'crit'; })
+      .sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+    return h('div', { className: 'panel' },
+      h('h2', null, 'Critical Only (' + crit.length + ')'),
+      h(Table, {
+        columns: [
+          { key: 'label', label: 'Finding' },
+          { key: 'category', label: 'Category' },
+          { key: 'fileName', label: 'Source', mono: true },
+          { key: 'match', label: 'Match', mono: true, render: function(r){ return (r.match||'').slice(0,100); } }
+        ],
+        rows: crit, empty: 'No critical findings.'
+      })
+    );
+  }
 
-const remove = (id) => setDB(d => ({…d, findings: d.findings.filter(f => f.id !== id)}));
+  function CrossPatterns(props){
+    var patternFiles = {};
+    props.db.findings.forEach(function(f){
+      if (!f.patternId) return;
+      if (!patternFiles[f.patternId]) patternFiles[f.patternId] = { label: f.label, severity: f.severity, files: {}, count: 0 };
+      patternFiles[f.patternId].files[f.fileName || 'unknown'] = true;
+      patternFiles[f.patternId].count++;
+    });
+    var cross = Object.keys(patternFiles).map(function(k){
+      var v = patternFiles[k];
+      var fk = Object.keys(v.files);
+      return { id: k, label: v.label, severity: v.severity, count: v.count, fileCount: fk.length, fileList: fk.join(', ') };
+    }).filter(function(r){ return r.fileCount > 1; })
+      .sort(function(a,b){ return b.fileCount - a.fileCount || (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
+    return h('div', { className: 'panel' },
+      h('h2', null, 'Cross-File Patterns (' + cross.length + ')'),
+      h('div', { className: 'helptext' }, 'Patterns matched in 2+ source files. Strong correlation candidates.'),
+      h(Table, {
+        columns: [
+          { key: 'severity', label: 'Sev', render: function(r){ return h(SeverityBadge, { s: r.severity }); } },
+          { key: 'label', label: 'Pattern' },
+          { key: 'fileCount', label: 'Files' },
+          { key: 'count', label: 'Hits' },
+          { key: 'fileList', label: 'Source files', mono: true }
+        ],
+        rows: cross, empty: 'No cross-file patterns yet. Load 2+ files to detect.'
+      })
+    );
+  }
 
-return (
-<div className="panel">
-<h2>Findings ({filtered.length} / {db.findings.length})</h2>
-<div className="toolbar">
-<input type=“text” placeholder=“Search findings…” value={q} onChange={e => setQ(e.target.value)} />
-<select value={sev} onChange={e => setSev(e.target.value)}>
-<option value="all">All severities</option>
-<option value="crit">Critical</option><option value="high">High</option>
-<option value="med">Medium</option><option value="low">Low</option>
-</select>
-</div>
-<Table
-columns={[
-{ key: ‘severity’, label: ‘Sev’, render: r => <SeverityBadge s={r.severity}/> },
-{ key: ‘label’, label: ‘Finding’ },
-{ key: ‘category’, label: ‘Category’ },
-{ key: ‘fileName’, label: ‘Source’, mono: true },
-{ key: ‘lineNo’, label: ‘Line’, render: r => r.lineNo || ‘—’ },
-{ key: ‘match’, label: ‘Match’, mono: true, render: r => (r.match||’’).slice(0,80) },
-{ key: ‘actions’, label: ‘’, render: r => <button className=“btn danger” onClick={() => remove(r.id)}>×</button> },
-]}
-rows={filtered}
-empty=“No findings yet. Load a file or add one manually.”
-/>
-</div>
-);
-}
+  // ============================================================
+  // REPORTS
+  // ============================================================
+  function ReportDashboard(props){
+    var db = props.db;
+    var counts = {
+      crit: db.findings.filter(function(f){ return f.severity==='crit'; }).length,
+      high: db.findings.filter(function(f){ return f.severity==='high'; }).length,
+      med:  db.findings.filter(function(f){ return f.severity==='med';  }).length,
+      low:  db.findings.filter(function(f){ return f.severity==='low';  }).length
+    };
+    var byCat = {};
+    db.findings.forEach(function(f){ var k = f.category || 'Uncat'; byCat[k] = (byCat[k]||0)+1; });
+    var cats = Object.keys(byCat).map(function(k){ return [k, byCat[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
 
-function SimpleTableView({ title, rows, columns, empty }) {
-const [q, setQ] = useState(’’);
-const filtered = useMemo(() => {
-if (!q) return rows;
-const s = q.toLowerCase();
-return rows.filter(r => Object.values(r).some(v => String(v||’’).toLowerCase().includes(s)));
-}, [rows, q]);
-return (
-<div className="panel">
-<h2>{title} ({filtered.length})</h2>
-<div className="toolbar">
-<input type=“text” placeholder=“Search…” value={q} onChange={e => setQ(e.target.value)} />
-</div>
-<Table columns={columns} rows={filtered} empty={empty}/>
-</div>
-);
-}
+    function statBox(lbl, val, color){
+      return h('div', { className: 'stat' },
+        h('div', { className: 'lbl' }, lbl),
+        h('div', { className: 'val', style: color ? { color: color } : null }, val)
+      );
+    }
 
-function NewFindingForm({ db, setDB, toast }) {
-const [f, setF] = useState({
-label: ‘’, category: ‘Manual’, severity: ‘med’, match: ‘’,
-fileName: ‘’, lineNo: ‘’, notes: ‘’
-});
-const submit = () => {
-if (!f.label.trim()) { toast(‘Label required’); return; }
-setDB(d => ({…d, findings: […d.findings, { …f, id: uid(‘find’), createdAt: nowISO(), source: ‘manual’ }]}));
-toast(‘Finding added’);
-setF({ label:’’,category:‘Manual’,severity:‘med’,match:’’,fileName:’’,lineNo:’’,notes:’’ });
-};
-return (
-<div className="panel">
-<h2>+ New Finding</h2>
-<div className="formgrid">
-<div className="formfield full"><label>Label</label><input type=“text” value={f.label} onChange={e => setF({…f,label:e.target.value})} /></div>
-<div className="formfield"><label>Category</label><input type=“text” value={f.category} onChange={e => setF({…f,category:e.target.value})} /></div>
-<div className="formfield"><label>Severity</label>
-<select value={f.severity} onChange={e => setF({…f,severity:e.target.value})}>
-<option value="crit">Critical</option><option value="high">High</option>
-<option value="med">Medium</option><option value="low">Low</option>
-</select>
-</div>
-<div className="formfield"><label>Source File</label><input type=“text” value={f.fileName} onChange={e => setF({…f,fileName:e.target.value})} /></div>
-<div className="formfield"><label>Line / Ref</label><input type=“text” value={f.lineNo} onChange={e => setF({…f,lineNo:e.target.value})} /></div>
-<div className="formfield full"><label>Match / Excerpt</label><textarea value={f.match} onChange={e => setF({…f,match:e.target.value})} /></div>
-<div className="formfield full"><label>Notes</label><textarea value={f.notes} onChange={e => setF({…f,notes:e.target.value})} /></div>
-</div>
-<button className="btn primary" onClick={submit}>Save Finding</button>
-</div>
-);
-}
+    return h('div', null,
+      h('div', { className: 'panel' },
+        h('h2', null, 'Dashboard'),
+        h('div', { className: 'row' },
+          statBox('Critical', counts.crit, 'var(--crit)'),
+          statBox('High', counts.high, 'var(--high)'),
+          statBox('Medium', counts.med, 'var(--med)'),
+          statBox('Low', counts.low, 'var(--low)')
+        ),
+        h('div', { className: 'row' },
+          statBox('Findings', db.findings.length),
+          statBox('Files', db.files.length),
+          statBox('IOCs', db.iocs.length),
+          statBox('Actors', db.actors.length)
+        ),
+        h('h3', null, 'By Category'),
+        h(Table, {
+          columns: [{ key:'cat', label:'Category' }, { key:'n', label:'Count' }],
+          rows: cats.map(function(c){ return { cat: c[0], n: c[1], id: c[0] }; }),
+          empty: 'No findings yet.'
+        })
+      )
+    );
+  }
 
-function NewActorForm({ db, setDB, toast }) {
-const [a, setA] = useState({ name:’’, role:’’, notes:’’, firstSeen:’’ });
-const submit = () => {
-if (!a.name.trim()) { toast(‘Name required’); return; }
-setDB(d => ({…d, actors: […d.actors, { …a, id: uid(‘actor’), createdAt: nowISO() }]}));
-toast(‘Actor added’);
-setA({ name:’’,role:’’,notes:’’,firstSeen:’’ });
-};
-return (
-<div className="panel">
-<h2>+ New Actor</h2>
-<div className="formgrid">
-<div className="formfield"><label>Name</label><input type=“text” value={a.name} onChange={e=>setA({…a,name:e.target.value})}/></div>
-<div className="formfield"><label>Role</label><input type=“text” value={a.role} onChange={e=>setA({…a,role:e.target.value})}/></div>
-<div className="formfield"><label>First Seen</label><input type=“date” value={a.firstSeen} onChange={e=>setA({…a,firstSeen:e.target.value})}/></div>
-<div className="formfield full"><label>Notes</label><textarea value={a.notes} onChange={e=>setA({…a,notes:e.target.value})}/></div>
-</div>
-<button className="btn primary" onClick={submit}>Save Actor</button>
-</div>
-);
-}
+  function ReportTrends(props){
+    var buckets = {};
+    props.db.findings.forEach(function(f){
+      var d = (f.createdAt || '').slice(0,10) || 'undated';
+      if (!buckets[d]) buckets[d] = { d: d, crit:0, high:0, med:0, low:0, total:0 };
+      buckets[d][f.severity] = (buckets[d][f.severity]||0) + 1;
+      buckets[d].total++;
+    });
+    var rows = Object.keys(buckets).map(function(k){ return buckets[k]; }).sort(function(a,b){ return a.d.localeCompare(b.d); });
+    var max = Math.max.apply(null, [1].concat(rows.map(function(r){ return r.total; })));
+    return h('div', { className: 'panel' },
+      h('h2', null, 'Time-Series Trends'),
+      h('div', { className: 'helptext' }, 'Findings by ingestion date. Bar shows total per day.'),
+      !rows.length ? h('div', { className: 'empty' }, 'No data yet.') :
+        rows.map(function(r){
+          return h('div', { key: r.d, style: { marginBottom: 6 } },
+            h('div', { style: { display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--dim)' } },
+              h('span', null, r.d),
+              h('span', null, r.total + ' (' + r.crit + 'C / ' + r.high + 'H / ' + r.med + 'M / ' + r.low + 'L)')
+            ),
+            h('div', { style: { height:10, background:'#1a1610', borderRadius:2, overflow:'hidden', display:'flex' } },
+              h('div', { style: { width: (r.crit/max*100)+'%', background:'var(--crit)' } }),
+              h('div', { style: { width: (r.high/max*100)+'%', background:'var(--high)' } }),
+              h('div', { style: { width: (r.med/max*100)+'%', background:'var(--med)' } }),
+              h('div', { style: { width: (r.low/max*100)+'%', background:'var(--low)' } })
+            )
+          );
+        })
+    );
+  }
 
-function NewIOCForm({ db, setDB, toast }) {
-const [i, setI] = useState({ type:‘ipv4’, value:’’, context:’’, severity:‘low’ });
-const submit = () => {
-if (!i.value.trim()) { toast(‘Value required’); return; }
-setDB(d => ({…d, iocs: […d.iocs, { …i, id: uid(‘ioc’), createdAt: nowISO() }]}));
-toast(‘IOC added’);
-setI({ type:‘ipv4’,value:’’,context:’’,severity:‘low’ });
-};
-return (
-<div className="panel">
-<h2>+ New IOC</h2>
-<div className="formgrid">
-<div className="formfield"><label>Type</label>
-<select value={i.type} onChange={e=>setI({…i,type:e.target.value})}>
-<option value="ipv4">IPv4</option><option value="ipv6">IPv6</option>
-<option value="domain">Domain</option><option value="hash">Hash</option>
-<option value="mac">MAC</option><option value="udid">UDID</option><option value="other">Other</option>
-</select>
-</div>
-<div className="formfield"><label>Severity</label>
-<select value={i.severity} onChange={e=>setI({…i,severity:e.target.value})}>
-<option value="crit">Critical</option><option value="high">High</option>
-<option value="med">Medium</option><option value="low">Low</option>
-</select>
-</div>
-<div className="formfield full"><label>Value</label><input type=“text” value={i.value} onChange={e=>setI({…i,value:e.target.value})}/></div>
-<div className="formfield full"><label>Context</label><textarea value={i.context} onChange={e=>setI({…i,context:e.target.value})}/></div>
-</div>
-<button className="btn primary" onClick={submit}>Save IOC</button>
-</div>
-);
-}
+  function ReportSeverity(props){
+    var groups = ['crit','high','med','low'];
+    return h('div', null,
+      h('div', { className: 'panel' },
+        h('h2', null, 'Severity Report'),
+        h('h3', null, 'Severity Definitions (Plain & Simple)'),
+        groups.map(function(g){
+          return h('details', { key: g, open: true },
+            h('summary', null, h(SeverityBadge, { s: g }), ' ', SEV_LABEL[g]),
+            h('div', { style: { padding:'6px 0 8px', fontSize:12 } },
+              h('div', { style: { marginBottom: 6 } }, h('span', { className: 'pill' }, 'PLAIN'), ' ', SEV_EXPLAIN[g].plain),
+              h('div', null, h('span', { className: 'pill' }, 'SIMPLE'), ' ', SEV_EXPLAIN[g].simple)
+            )
+          );
+        })
+      ),
+      groups.map(function(g){
+        var items = props.db.findings.filter(function(f){ return f.severity === g; });
+        return h('div', { className: 'panel', key: g },
+          h('h2', null, h(SeverityBadge, { s: g }), ' ', SEV_LABEL[g] + ' (' + items.length + ')'),
+          h(Table, {
+            columns: [
+              { key:'label', label:'Finding' },
+              { key:'category', label:'Category' },
+              { key:'fileName', label:'Source', mono: true }
+            ],
+            rows: items, empty: 'No ' + SEV_LABEL[g].toLowerCase() + ' findings.'
+          })
+        );
+      })
+    );
+  }
 
-function QueryBuilder({ db }) {
-const [field, setField] = useState(‘label’);
-const [op, setOp] = useState(‘contains’);
-const [val, setVal] = useState(’’);
-const [target, setTarget] = useState(‘findings’);
-const [results, setResults] = useState([]);
-const run = () => {
-const data = db[target] || [];
-const s = val.toLowerCase();
-const out = data.filter(r => {
-const v = String(r[field] ?? ‘’).toLowerCase();
-if (op === ‘contains’) return v.includes(s);
-if (op === ‘equals’) return v === s;
-if (op === ‘starts’) return v.startsWith(s);
-if (op === ‘regex’) { try { return new RegExp(val, ‘i’).test(String(r[field]||’’)); } catch { return false; } }
-return false;
-});
-setResults(out);
-};
-return (
-<div className="panel">
-<h2>Query Builder</h2>
-<div className="formgrid">
-<div className="formfield"><label>Table</label>
-<select value={target} onChange={e=>setTarget(e.target.value)}>
-<option value="findings">Findings</option><option value="sources">Sources</option>
-<option value="timeline">Timeline</option><option value="actors">Actors</option>
-<option value="iocs">IOCs</option><option value="files">Files</option>
-</select>
-</div>
-<div className="formfield"><label>Field</label>
-<input type=“text” value={field} onChange={e=>setField(e.target.value)} placeholder=“label, category, severity…” />
-</div>
-<div className="formfield"><label>Operator</label>
-<select value={op} onChange={e=>setOp(e.target.value)}>
-<option value="contains">contains</option><option value="equals">equals</option>
-<option value="starts">starts with</option><option value="regex">regex</option>
-</select>
-</div>
-<div className="formfield"><label>Value</label><input type=“text” value={val} onChange={e=>setVal(e.target.value)}/></div>
-</div>
-<button className="btn primary" onClick={run}>Run Query</button>
-<div className="divider" />
-<div className="helptext">{results.length} result(s)</div>
-<div className="codebox">{JSON.stringify(results.slice(0,50), null, 2)}</div>
-</div>
-);
-}
+  function ReportCombos(props){
+    var fileMap = {};
+    props.db.findings.forEach(function(f){
+      var k = f.fileName || 'unknown';
+      if (!fileMap[k]) fileMap[k] = {};
+      if (f.patternId) fileMap[k][f.patternId] = true;
+    });
+    var combos = {};
+    Object.keys(fileMap).forEach(function(file){
+      var arr = Object.keys(fileMap[file]).sort();
+      for (var i=0;i<arr.length;i++) for (var j=i+1;j<arr.length;j++){
+        var k = arr[i] + ' + ' + arr[j];
+        if (!combos[k]) combos[k] = { combo: k, files: {} };
+        combos[k].files[file] = true;
+      }
+    });
+    var rows = Object.keys(combos).map(function(k){
+      var c = combos[k];
+      var fk = Object.keys(c.files);
+      return { combo: c.combo, fileCount: fk.length, files: fk.join(', ') };
+    }).filter(function(r){ return r.fileCount >= 2; })
+      .sort(function(a,b){ return b.fileCount - a.fileCount; })
+      .slice(0,50);
+    return h('div', { className: 'panel' },
+      h('h2', null, 'Cross-File Combos (' + rows.length + ')'),
+      h('div', { className: 'helptext' }, 'Pattern pairs that co-occur in 2+ files. Top 50 shown.'),
+      h(Table, {
+        columns: [
+          { key:'combo', label:'Pattern Pair', mono:true },
+          { key:'fileCount', label:'Files' },
+          { key:'files', label:'In files', mono:true }
+        ],
+        rows: rows, empty: 'No multi-file combos yet.'
+      })
+    );
+  }
 
-function CriticalOnly({ db }) {
-const crit = db.findings.filter(f => f.severity === ‘crit’)
-.sort((a,b) => (b.createdAt||’’).localeCompare(a.createdAt||’’));
-return (
-<div className="panel">
-<h2>Critical Only ({crit.length})</h2>
-<Table
-columns={[
-{ key: ‘label’, label: ‘Finding’ },
-{ key: ‘category’, label: ‘Category’ },
-{ key: ‘fileName’, label: ‘Source’, mono: true },
-{ key: ‘match’, label: ‘Match’, mono: true, render: r => (r.match||’’).slice(0,100) },
-]}
-rows={crit}
-empty=“No critical findings.”
-/>
-</div>
-);
-}
+  // ============================================================
+  // TOPBAR + NAV
+  // ============================================================
+  function Topbar(props){
+    var fileRef = useRef(null);
+    var restoreRef = useRef(null);
+    return h('div', { className: 'topbar' },
+      h('div', { className: 'ribbon' },
+        h('div', { className: 'logo' }, '◆ Truth Finder ', h('small', null, 'v7 · GOLD')),
+        h('button', { className: 'btn navtoggle ghost', onClick: props.onToggleNav }, '☰'),
+        h('button', { className: 'btn primary', onClick: function(){ fileRef.current && fileRef.current.click(); }, disabled: props.busy },
+          props.busy ? ('Loading ' + props.progress + '%') : 'Load File'
+        ),
+        h('button', { className: 'btn', onClick: props.onSave }, 'Save DB'),
+        h('button', { className: 'btn', onClick: function(){ restoreRef.current && restoreRef.current.click(); } }, 'Restore'),
+        h('button', { className: 'btn', onClick: props.onPrint }, 'Print PDF'),
+        h('input', { ref: fileRef, type: 'file', onChange: function(e){
+          var f = e.target.files && e.target.files[0]; if (f) props.onLoad(f); e.target.value = '';
+        } }),
+        h('input', { ref: restoreRef, type: 'file', accept: '.json,application/json', onChange: function(e){
+          var f = e.target.files && e.target.files[0]; if (f) props.onRestore(f); e.target.value = '';
+        } })
+      ),
+      h('div', { className: 'filebar' },
+        h('span', { className: 'pill' }, 'FILE'),
+        h('span', { className: 'fname' }, props.fileName || '(no file loaded — tap Load File to ingest)'),
+        props.busy && h('div', { style: { width: 80 } }, h('div', { className: 'progress' }, h('div', { style: { width: props.progress + '%' } })))
+      )
+    );
+  }
 
-function CrossPatterns({ db }) {
-// Find patterns that appear across multiple files
-const patternFiles = {};
-db.findings.forEach(f => {
-if (!f.patternId) return;
-if (!patternFiles[f.patternId]) patternFiles[f.patternId] = { label: f.label, severity: f.severity, files: new Set(), count: 0 };
-patternFiles[f.patternId].files.add(f.fileName || ‘unknown’);
-patternFiles[f.patternId].count++;
-});
-const cross = Object.entries(patternFiles)
-.map(([id, v]) => ({ id, …v, fileCount: v.files.size, fileList: […v.files].join(’, ’) }))
-.filter(r => r.fileCount > 1)
-.sort((a,b) => b.fileCount - a.fileCount || (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0));
-return (
-<div className="panel">
-<h2>Cross-File Patterns ({cross.length})</h2>
-<div className="helptext">Patterns matched in 2+ source files. Strong correlation candidates.</div>
-<Table
-columns={[
-{ key: ‘severity’, label: ‘Sev’, render: r => <SeverityBadge s={r.severity}/> },
-{ key: ‘label’, label: ‘Pattern’ },
-{ key: ‘fileCount’, label: ‘Files’ },
-{ key: ‘count’, label: ‘Hits’ },
-{ key: ‘fileList’, label: ‘Source files’, mono: true },
-]}
-rows={cross}
-empty=“No cross-file patterns yet. Load 2+ files to detect.”
-/>
-</div>
-);
-}
+  function Nav(props){
+    var items = [
+      { group: 'Tables', items: [['findings','Findings'],['sources','Sources'],['timeline','Timeline'],['actors','Actors'],['iocs','IOCs'],['files','Files']] },
+      { group: 'Forms',  items: [['new_finding','+ New Finding'],['new_actor','+ New Actor'],['new_ioc','+ New IOC']] },
+      { group: 'Queries',items: [['query_builder','Query Builder'],['critical_only','Critical Only'],['cross_patterns','Cross-File Patterns']] },
+      { group: 'Reports',items: [['report_dashboard','Dashboard'],['report_trends','Time-Series Trends'],['report_severity','Severity Report'],['report_combos','Cross-File Combos']] }
+    ];
+    return h('div', { className: 'sidenav' + (props.collapsed ? ' collapsed' : '') },
+      items.map(function(g){
+        return h('div', { key: g.group },
+          h('div', { className: 'navgroup' }, g.group),
+          g.items.map(function(it){
+            return h('div', {
+              key: it[0],
+              className: 'navitem ' + (props.view === it[0] ? 'active' : ''),
+              onClick: function(){ props.setView(it[0]); }
+            }, it[1]);
+          })
+        );
+      })
+    );
+  }
 
-function ReportDashboard({ db }) {
-const counts = {
-crit: db.findings.filter(f => f.severity===‘crit’).length,
-high: db.findings.filter(f => f.severity===‘high’).length,
-med: db.findings.filter(f => f.severity===‘med’).length,
-low: db.findings.filter(f => f.severity===‘low’).length,
-};
-const byCat = {};
-db.findings.forEach(f => { byCat[f.category||‘Uncat’] = (byCat[f.category||‘Uncat’]||0)+1; });
-const cats = Object.entries(byCat).sort((a,b) => b[1]-a[1]);
+  // ============================================================
+  // APP
+  // ============================================================
+  function App(){
+    var dbs = useState(initialDB()); var db = dbs[0], setDB = dbs[1];
+    var vs = useState('report_dashboard'); var view = vs[0], setView = vs[1];
+    var ns = useState(window.innerWidth < 720); var navCollapsed = ns[0], setNavCollapsed = ns[1];
+    var bs = useState(false); var busy = bs[0], setBusy = bs[1];
+    var ps = useState(0); var progress = ps[0], setProgress = ps[1];
+    var fs = useState(''); var currentFile = fs[0], setCurrentFile = fs[1];
+    var ts = useState(''); var toastMsg = ts[0], setToastMsg = ts[1];
 
-return (
-<div>
-<div className="panel">
-<h2>Dashboard</h2>
-<div className="row">
-<div className="stat"><div className="lbl">Critical</div><div className=“val” style={{color:‘var(–crit)’}}>{counts.crit}</div></div>
-<div className="stat"><div className="lbl">High</div><div className=“val” style={{color:‘var(–high)’}}>{counts.high}</div></div>
-<div className="stat"><div className="lbl">Medium</div><div className=“val” style={{color:‘var(–med)’}}>{counts.med}</div></div>
-<div className="stat"><div className="lbl">Low</div><div className=“val” style={{color:‘var(–low)’}}>{counts.low}</div></div>
-</div>
-<div className="row">
-<div className="stat"><div className="lbl">Findings</div><div className="val">{db.findings.length}</div></div>
-<div className="stat"><div className="lbl">Files</div><div className="val">{db.files.length}</div></div>
-<div className="stat"><div className="lbl">IOCs</div><div className="val">{db.iocs.length}</div></div>
-<div className="stat"><div className="lbl">Actors</div><div className="val">{db.actors.length}</div></div>
-</div>
-<h3>By Category</h3>
-<Table
-columns={[{key:‘cat’,label:‘Category’},{key:‘n’,label:‘Count’}]}
-rows={cats.map(([cat,n]) => ({cat,n,id:cat}))}
-empty=“No findings yet.”
-/>
-</div>
-</div>
-);
-}
+    var toast = useCallback(function(msg){
+      setToastMsg(msg);
+      setTimeout(function(){ setToastMsg(''); }, 2400);
+    }, []);
 
-function ReportTrends({ db }) {
-// Bucket findings by day (createdAt or timeline date)
-const buckets = {};
-db.findings.forEach(f => {
-const d = (f.createdAt || ‘’).slice(0,10) || ‘undated’;
-buckets[d] = buckets[d] || { d, crit:0, high:0, med:0, low:0, total:0 };
-buckets[d][f.severity] = (buckets[d][f.severity]||0) + 1;
-buckets[d].total++;
-});
-const rows = Object.values(buckets).sort((a,b) => a.d.localeCompare(b.d));
-const max = Math.max(1, …rows.map(r => r.total));
-return (
-<div className="panel">
-<h2>Time-Series Trends</h2>
-<div className="helptext">Findings by ingestion date. Bar shows total per day.</div>
-{!rows.length && <div className="empty">No data yet.</div>}
-{rows.map(r => (
-<div key={r.d} style={{marginBottom:6}}>
-<div style={{display:‘flex’,justifyContent:‘space-between’,fontSize:11,color:‘var(–dim)’}}>
-<span>{r.d}</span>
-<span>{r.total} ({r.crit}C / {r.high}H / {r.med}M / {r.low}L)</span>
-</div>
-<div style={{height:10,background:’#1a1610’,borderRadius:2,overflow:‘hidden’,display:‘flex’}}>
-<div style={{width: (r.crit/max*100)+’%’,background:‘var(–crit)’}}/>
-<div style={{width: (r.high/max*100)+’%’,background:‘var(–high)’}}/>
-<div style={{width: (r.med/max*100)+’%’,background:‘var(–med)’}}/>
-<div style={{width: (r.low/max*100)+’%’,background:‘var(–low)’}}/>
-</div>
-</div>
-))}
-</div>
-);
-}
+    var onLoad = useCallback(function(file){
+      setBusy(true); setProgress(0); setCurrentFile(file.name);
+      var fileId = uid('file');
+      var collected = [];
+      var iocsCollected = [];
+      ingestFile(file,
+        function(p){ setProgress(p); },
+        function(line, lineNo){
+          var hits = scanLine(line, file.name, fileId);
+          for (var i=0;i<hits.length;i++){
+            var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
+            collected.push(hit);
+            if (hit.category === 'IOC') {
+              iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
+            }
+          }
+        }
+      ).then(function(totalLines){
+        setDB(function(d){
+          return Object.assign({}, d, {
+            files:    d.files.concat([{ id: fileId, name: file.name, size: file.size, lines: totalLines, ingestedAt: nowISO(), hits: collected.length }]),
+            findings: d.findings.concat(collected),
+            iocs:     d.iocs.concat(iocsCollected),
+            sources:  d.sources.concat([{ id: uid('src'), name: file.name, type: 'file', addedAt: nowISO(), fileId: fileId }])
+          });
+        });
+        toast('Ingested ' + file.name + ' — ' + collected.length + ' hits across ' + totalLines + ' lines');
+        setView('findings');
+      }).catch(function(e){
+        toast('Ingest error: ' + (e && e.message ? e.message : 'unknown'));
+      }).then(function(){
+        setBusy(false); setProgress(0);
+      });
+    }, [toast]);
 
-function ReportSeverity({ db }) {
-const groups = [‘crit’,‘high’,‘med’,‘low’];
-return (
-<div>
-<div className="panel">
-<h2>Severity Report</h2>
-<h3>Severity Definitions (Plain & Simple)</h3>
-{groups.map(g => (
-<details key={g} open>
-<summary><SeverityBadge s={g}/>   {SEV_LABEL[g]}</summary>
-<div style={{padding:‘6px 0 8px’,fontSize:12}}>
-<div style={{marginBottom:6}}><span className="pill">PLAIN</span> {SEV_EXPLAIN[g].plain}</div>
-<div><span className="pill">SIMPLE</span> {SEV_EXPLAIN[g].simple}</div>
-</div>
-</details>
-))}
-</div>
-{groups.map(g => {
-const items = db.findings.filter(f => f.severity === g);
-return (
-<div className="panel" key={g}>
-<h2><SeverityBadge s={g}/>   {SEV_LABEL[g]} ({items.length})</h2>
-<Table
-columns={[
-{ key:‘label’, label:‘Finding’ },
-{ key:‘category’, label:‘Category’ },
-{ key:‘fileName’, label:‘Source’, mono:true },
-]}
-rows={items}
-empty={`No ${SEV_LABEL[g].toLowerCase()} findings.`}
-/>
-</div>
-);
-})}
-</div>
-);
-}
+    var onSave = useCallback(function(){
+      var data = JSON.stringify(Object.assign({}, db, { exportedAt: nowISO() }), null, 2);
+      downloadBlob(data, 'truthfinder_' + new Date().toISOString().slice(0,10) + '.json');
+      toast('Database saved');
+    }, [db, toast]);
 
-function ReportCombos({ db }) {
-// Find combinations of patterns that co-occur in same file
-const fileMap = {};
-db.findings.forEach(f => {
-const k = f.fileName || ‘unknown’;
-fileMap[k] = fileMap[k] || new Set();
-if (f.patternId) fileMap[k].add(f.patternId);
-});
-const combos = {};
-Object.entries(fileMap).forEach(([file, set]) => {
-const arr = […set].sort();
-for (let i=0;i<arr.length;i++) for (let j=i+1;j<arr.length;j++) {
-const k = arr[i] + ’ + ’ + arr[j];
-combos[k] = combos[k] || { combo: k, files: new Set() };
-combos[k].files.add(file);
-}
-});
-const rows = Object.values(combos)
-.map(c => ({ combo: c.combo, fileCount: c.files.size, files: […c.files].join(’, ’) }))
-.filter(r => r.fileCount >= 2)
-.sort((a,b) => b.fileCount - a.fileCount)
-.slice(0, 50);
-return (
-<div className="panel">
-<h2>Cross-File Combos ({rows.length})</h2>
-<div className="helptext">Pattern pairs that co-occur in 2+ files. Top 50 shown.</div>
-<Table
-columns={[
-{ key:‘combo’, label:‘Pattern Pair’, mono:true },
-{ key:‘fileCount’, label:‘Files’ },
-{ key:‘files’, label:‘In files’, mono:true },
-]}
-rows={rows}
-empty=“No multi-file combos yet.”
-/>
-</div>
-);
-}
+    var onRestore = useCallback(function(file){
+      var reader = new FileReader();
+      reader.onload = function(){
+        try {
+          var parsed = JSON.parse(reader.result);
+          if (!parsed || typeof parsed !== 'object') throw new Error('Invalid JSON');
+          setDB({
+            meta: parsed.meta || initialDB().meta,
+            findings: parsed.findings || [],
+            sources: parsed.sources || [],
+            timeline: parsed.timeline || [],
+            actors: parsed.actors || [],
+            iocs: parsed.iocs || [],
+            files: parsed.files || []
+          });
+          toast('Database restored');
+        } catch(e){
+          toast('Restore failed: ' + (e && e.message ? e.message : 'invalid file'));
+        }
+      };
+      reader.onerror = function(){ toast('Restore failed: read error'); };
+      reader.readAsText(file);
+    }, [toast]);
 
-// ============================================================
-// APP
-// ============================================================
-function App() {
-const [db, setDB] = useState(initialDB);
-const [view, setView] = useState(‘report_dashboard’);
-const [navCollapsed, setNavCollapsed] = useState(window.innerWidth < 720);
-const [busy, setBusy] = useState(false);
-const [progress, setProgress] = useState(0);
-const [currentFile, setCurrentFile] = useState(’’);
-const [toastMsg, setToastMsg] = useState(’’);
+    var onPrint = useCallback(function(){
+      setView('report_dashboard');
+      setTimeout(function(){ window.print(); }, 250);
+    }, []);
 
-const toast = useCallback((msg) => {
-setToastMsg(msg);
-setTimeout(() => setToastMsg(’’), 2400);
-}, []);
+    function renderView(){
+      switch (view) {
+        case 'findings': return h(FindingsView, { db: db, setDB: setDB });
+        case 'sources': return h(SimpleTableView, {
+          title: 'Sources', rows: db.sources,
+          columns: [{key:'name',label:'Name'},{key:'type',label:'Type'},{key:'addedAt',label:'Added',mono:true}],
+          empty: 'No sources.'
+        });
+        case 'timeline': return h(SimpleTableView, {
+          title: 'Timeline', rows: db.timeline,
+          columns: [{key:'when',label:'When'},{key:'event',label:'Event'},{key:'notes',label:'Notes'}],
+          empty: 'No timeline events. Restore a JSON or extend via future form.'
+        });
+        case 'actors': return h(SimpleTableView, {
+          title: 'Actors', rows: db.actors,
+          columns: [{key:'name',label:'Name'},{key:'role',label:'Role'},{key:'firstSeen',label:'First Seen'},{key:'notes',label:'Notes'}],
+          empty: 'No actors yet.'
+        });
+        case 'iocs': return h(SimpleTableView, {
+          title: 'IOCs', rows: db.iocs,
+          columns: [
+            {key:'type',label:'Type'},
+            {key:'value',label:'Value',mono:true},
+            {key:'severity',label:'Sev',render:function(r){ return h(SeverityBadge,{s:r.severity}); }},
+            {key:'context',label:'Context',mono:true}
+          ],
+          empty: 'No IOCs yet.'
+        });
+        case 'files': return h(SimpleTableView, {
+          title: 'Files', rows: db.files,
+          columns: [
+            {key:'name',label:'Name'},{key:'size',label:'Bytes'},{key:'lines',label:'Lines'},
+            {key:'hits',label:'Hits'},{key:'ingestedAt',label:'Ingested',mono:true}
+          ],
+          empty: 'No files ingested.'
+        });
+        case 'new_finding': return h(NewFindingForm, { db: db, setDB: setDB, toast: toast });
+        case 'new_actor':   return h(NewActorForm,   { db: db, setDB: setDB, toast: toast });
+        case 'new_ioc':     return h(NewIOCForm,     { db: db, setDB: setDB, toast: toast });
+        case 'query_builder':  return h(QueryBuilder,  { db: db });
+        case 'critical_only':  return h(CriticalOnly,  { db: db });
+        case 'cross_patterns': return h(CrossPatterns, { db: db });
+        case 'report_dashboard': return h(ReportDashboard, { db: db });
+        case 'report_trends':    return h(ReportTrends,    { db: db });
+        case 'report_severity':  return h(ReportSeverity,  { db: db });
+        case 'report_combos':    return h(ReportCombos,    { db: db });
+        default: return h(ReportDashboard, { db: db });
+      }
+    }
 
-const onLoad = useCallback(async (file) => {
-setBusy(true); setProgress(0); setCurrentFile(file.name);
-const fileId = uid(‘file’);
-const collected = [];
-const iocsCollected = [];
-try {
-const totalLines = await ingestFile(file,
-(p) => setProgress(p),
-(line, lineNo) => {
-const hits = scanLine(line, file.name, fileId);
-for (const h of hits) {
-collected.push({ …h, id: uid(‘find’), lineNo, createdAt: nowISO(), source: ‘auto’ });
-if (h.category === ‘IOC’) {
-iocsCollected.push({
-id: uid(‘ioc’), type: h.patternId.replace(’_’,’’), value: h.match, context: `${file.name}:${lineNo}`, severity: ‘low’, createdAt: nowISO()
-});
-}
-}
-}
-);
-setDB(d => ({
-…d,
-files: […d.files, { id: fileId, name: file.name, size: file.size, lines: totalLines, ingestedAt: nowISO(), hits: collected.length }],
-findings: […d.findings, …collected],
-iocs: […d.iocs, …iocsCollected],
-sources: […d.sources, { id: uid(‘src’), name: file.name, type: ‘file’, addedAt: nowISO(), fileId }],
-}));
-toast(`Ingested ${file.name} — ${collected.length} hits across ${totalLines} lines`);
-setView(‘findings’);
-} catch (e) {
-toast(’Ingest error: ’ + (e?.message || ‘unknown’));
-} finally {
-setBusy(false); setProgress(0);
-}
-}, [toast]);
+    return h('div', null,
+      h(Topbar, {
+        onLoad: onLoad, onSave: onSave, onRestore: onRestore, onPrint: onPrint,
+        onToggleNav: function(){ setNavCollapsed(function(c){ return !c; }); },
+        fileName: currentFile, busy: busy, progress: progress
+      }),
+      h('div', { className: 'container' },
+        h(Nav, {
+          view: view,
+          setView: function(v){ setView(v); if (window.innerWidth < 720) setNavCollapsed(true); },
+          collapsed: navCollapsed
+        }),
+        h('div', { className: 'main' }, renderView())
+      ),
+      toastMsg ? h('div', { className: 'toast' }, toastMsg) : null
+    );
+  }
 
-const onSave = useCallback(() => {
-const data = JSON.stringify({ …db, exportedAt: nowISO() }, null, 2);
-downloadBlob(data, `truthfinder_${new Date().toISOString().slice(0,10)}.json`);
-toast(‘Database saved’);
-}, [db, toast]);
-
-const onRestore = useCallback(async (file) => {
-try {
-const txt = await file.text();
-const parsed = JSON.parse(txt);
-if (!parsed || typeof parsed !== ‘object’) throw new Error(‘Invalid JSON’);
-setDB({
-meta: parsed.meta || initialDB().meta,
-findings: parsed.findings || [],
-sources: parsed.sources || [],
-timeline: parsed.timeline || [],
-actors: parsed.actors || [],
-iocs: parsed.iocs || [],
-files: parsed.files || [],
-});
-toast(‘Database restored’);
-} catch (e) {
-toast(’Restore failed: ’ + (e?.message || ‘invalid file’));
-}
-}, [toast]);
-
-const onPrint = useCallback(() => {
-// Deferred html2pdf (loaded only if user prints) — use native print as primary
-// This avoids breaking iOS Safari + Lockdown Mode
-setView(‘report_dashboard’);
-setTimeout(() => window.print(), 250);
-}, []);
-
-const renderView = () => {
-switch (view) {
-case ‘findings’: return <FindingsView db={db} setDB={setDB} />;
-case ‘sources’: return <SimpleTableView title=“Sources” rows={db.sources} columns={[
-{key:‘name’,label:‘Name’},{key:‘type’,label:‘Type’},{key:‘addedAt’,label:‘Added’,mono:true}
-]} empty=“No sources.” />;
-case ‘timeline’: return <SimpleTableView title=“Timeline” rows={db.timeline} columns={[
-{key:‘when’,label:‘When’},{key:‘event’,label:‘Event’},{key:‘notes’,label:‘Notes’}
-]} empty=“No timeline events. (Add via JSON restore or future form.)” />;
-case ‘actors’: return <SimpleTableView title=“Actors” rows={db.actors} columns={[
-{key:‘name’,label:‘Name’},{key:‘role’,label:‘Role’},{key:‘firstSeen’,label:‘First Seen’},{key:‘notes’,label:‘Notes’}
-]} empty=“No actors yet.” />;
-case ‘iocs’: return <SimpleTableView title=“IOCs” rows={db.iocs} columns={[
-{key:‘type’,label:‘Type’},{key:‘value’,label:‘Value’,mono:true},
-{key:‘severity’,label:‘Sev’,render:r=><SeverityBadge s={r.severity}/>},
-{key:‘context’,label:‘Context’,mono:true}
-]} empty=“No IOCs yet.” />;
-case ‘files’: return <SimpleTableView title=“Files” rows={db.files} columns={[
-{key:‘name’,label:‘Name’},{key:‘size’,label:‘Bytes’},{key:‘lines’,label:‘Lines’},
-{key:‘hits’,label:‘Hits’},{key:‘ingestedAt’,label:‘Ingested’,mono:true}
-]} empty=“No files ingested.” />;
-case ‘new_finding’: return <NewFindingForm db={db} setDB={setDB} toast={toast}/>;
-case ‘new_actor’: return <NewActorForm db={db} setDB={setDB} toast={toast}/>;
-case ‘new_ioc’: return <NewIOCForm db={db} setDB={setDB} toast={toast}/>;
-case ‘query_builder’: return <QueryBuilder db={db}/>;
-case ‘critical_only’: return <CriticalOnly db={db}/>;
-case ‘cross_patterns’: return <CrossPatterns db={db}/>;
-case ‘report_dashboard’: return <ReportDashboard db={db}/>;
-case ‘report_trends’: return <ReportTrends db={db}/>;
-case ‘report_severity’: return <ReportSeverity db={db}/>;
-case ‘report_combos’: return <ReportCombos db={db}/>;
-default: return <ReportDashboard db={db}/>;
-}
-};
-
-return (
-<div>
-<Topbar
-onLoad={onLoad} onSave={onSave} onRestore={onRestore} onPrint={onPrint}
-onToggleNav={() => setNavCollapsed(c => !c)}
-fileName={currentFile} busy={busy} progress={progress}
-/>
-<div className="container">
-<Nav view={view} setView={(v) => { setView(v); if (window.innerWidth < 720) setNavCollapsed(true); }} collapsed={navCollapsed}/>
-<div className="main">{renderView()}</div>
-</div>
-{toastMsg && <div className="toast">{toastMsg}</div>}
-</div>
-);
-}
-
-ReactDOM.createRoot(document.getElementById(‘root’)).render(<App />);
+  try {
+    var root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(h(App));
+  } catch (err) {
+    document.getElementById('boot-error').textContent = 'Render error: ' + (err && err.message ? err.message : err);
+  }
+})();
 </script>
 
 </body>
