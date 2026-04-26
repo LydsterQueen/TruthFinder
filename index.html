@@ -225,7 +225,16 @@ var PATTERNS = [
   { id:'ipv4', re:/\b(?:\d{1,3}\.){3}\d{1,3}\b/, sev:'low', cat:'IOC', label:'IPv4 address'},
   { id:'ipv6', re:/\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i, sev:'low', cat:'IOC', label:'IPv6 address'},
   { id:'domain', re:/\b[a-z0-9-]+\.(?:com|net|org|io|co|app|dev|cloud)\b/i, sev:'low', cat:'IOC', label:'Domain reference'},
-  { id:'hash', re:/\b[a-f0-9]{32,64}\b/i, sev:'low', cat:'IOC', label:'Hash (MD5/SHA)'}
+  { id:'hash', re:/\b[a-f0-9]{32,64}\b/i, sev:'low', cat:'IOC', label:'Hash (MD5/SHA)'},
+  // Apple Intelligence / PrivateCloudCompute / WritingTools
+  { id:'donottrack_marker', re:/DoNotTrack[- ]?ME/i, sev:'crit', cat:'Apple Intelligence', label:'DoNotTrack-ME marker (user-injected canary)'},
+  { id:'span_color_inject', re:/<span\s+style\s*=\s*[\\"']*color:\s*red/i, sev:'high', cat:'Apple Intelligence', label:'HTML <span style="color:red"> injection in model response'},
+  { id:'private_cloud_compute', re:/PrivateCloudCompute|executionEnvironment.*PrivateCloud/i, sev:'high', cat:'Apple Intelligence', label:'PrivateCloudCompute execution environment'},
+  { id:'writing_tools', re:/WritingToolsUIService|com\.apple\.WritingTools/i, sev:'med', cat:'Apple Intelligence', label:'WritingToolsUIService client'},
+  { id:'model_request', re:/modelRequests|PromptTemplateInfo|com\.apple\.fm\.language/i, sev:'med', cat:'Apple Intelligence', label:'On-device/cloud model request'},
+  { id:'open_ended_tone', re:/textComposition\.OpenEndedTone|OpenEndedToneQueryResponse/i, sev:'med', cat:'Apple Intelligence', label:'OpenEndedTone composition template'},
+  { id:'apple_uuid', re:/\b[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\b/, sev:'low', cat:'IOC', label:'Apple UUID identifier'},
+  { id:'unix_ts_recent', re:/"timestamp"\s*:\s*17[0-9]{8}\.[0-9]+/i, sev:'low', cat:'IOC', label:'Unix timestamp (2024-2026 range)'}
 ];
 var SEV_RANK = { crit:4, high:3, med:2, low:1 };
 var SEV_LABEL = { crit:'CRITICAL', high:'HIGH', med:'MEDIUM', low:'LOW' };
@@ -309,19 +318,183 @@ function downloadBlob(data, filename, type){
 }
 
 // ============================================================
+// GZIP DECOMPRESSION (pure JS, Lockdown-safe)
+// Minimal INFLATE implementation for .gz files
+// ============================================================
+function inflate(input) {
+  // Bit reader over Uint8Array
+  var pos = 0, bitBuf = 0, bitCount = 0;
+  function readBits(n) {
+    while (bitCount < n) {
+      bitBuf |= input[pos++] << bitCount;
+      bitCount += 8;
+    }
+    var v = bitBuf & ((1 << n) - 1);
+    bitBuf >>>= n;
+    bitCount -= n;
+    return v;
+  }
+
+  // Build Huffman table from code lengths
+  function buildHuffman(lengths) {
+    var maxLen = 0, i;
+    for (i = 0; i < lengths.length; i++) if (lengths[i] > maxLen) maxLen = lengths[i];
+    var counts = new Array(maxLen + 1); for (i = 0; i <= maxLen; i++) counts[i] = 0;
+    for (i = 0; i < lengths.length; i++) counts[lengths[i]]++;
+    counts[0] = 0;
+    var offsets = new Array(maxLen + 1); offsets[0] = 0;
+    for (i = 1; i <= maxLen; i++) offsets[i] = offsets[i-1] + counts[i-1];
+    var sorted = new Array(lengths.length);
+    for (i = 0; i < lengths.length; i++) {
+      if (lengths[i] !== 0) sorted[offsets[lengths[i]]++] = i;
+    }
+    return { counts: counts, sorted: sorted, maxLen: maxLen };
+  }
+
+  function decodeSymbol(table) {
+    var code = 0, first = 0, idx = 0;
+    for (var len = 1; len <= table.maxLen; len++) {
+      code |= readBits(1);
+      var count = table.counts[len];
+      if (code - count < first) return table.sorted[idx + (code - first)];
+      idx += count;
+      first = (first + count) << 1;
+      code <<= 1;
+    }
+    throw new Error('Huffman decode failed');
+  }
+
+  var output = [];
+  var lengthBase = [3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
+  var lengthExtra = [0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+  var distBase = [1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
+  var distExtra = [0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+  var codeOrder = [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
+
+  // Fixed Huffman tables
+  var fixedLitLens = new Array(288);
+  for (var i = 0; i < 144; i++) fixedLitLens[i] = 8;
+  for (i = 144; i < 256; i++) fixedLitLens[i] = 9;
+  for (i = 256; i < 280; i++) fixedLitLens[i] = 7;
+  for (i = 280; i < 288; i++) fixedLitLens[i] = 8;
+  var fixedDistLens = new Array(30); for (i = 0; i < 30; i++) fixedDistLens[i] = 5;
+  var fixedLitTable = buildHuffman(fixedLitLens);
+  var fixedDistTable = buildHuffman(fixedDistLens);
+
+  var bfinal = 0;
+  while (!bfinal) {
+    bfinal = readBits(1);
+    var btype = readBits(2);
+
+    if (btype === 0) {
+      // Stored block
+      bitBuf = 0; bitCount = 0;
+      var len = input[pos++] | (input[pos++] << 8);
+      pos += 2; // skip nlen
+      for (var k = 0; k < len; k++) output.push(input[pos++]);
+    } else {
+      var litTable, distTable;
+      if (btype === 1) {
+        litTable = fixedLitTable;
+        distTable = fixedDistTable;
+      } else if (btype === 2) {
+        // Dynamic Huffman
+        var hlit = readBits(5) + 257;
+        var hdist = readBits(5) + 1;
+        var hclen = readBits(4) + 4;
+        var codeLengths = new Array(19); for (i = 0; i < 19; i++) codeLengths[i] = 0;
+        for (i = 0; i < hclen; i++) codeLengths[codeOrder[i]] = readBits(3);
+        var codeTable = buildHuffman(codeLengths);
+        var lengths = new Array(hlit + hdist);
+        i = 0;
+        while (i < hlit + hdist) {
+          var sym = decodeSymbol(codeTable);
+          if (sym < 16) { lengths[i++] = sym; }
+          else if (sym === 16) { var rep = readBits(2) + 3; var prev = lengths[i-1]; while (rep--) lengths[i++] = prev; }
+          else if (sym === 17) { rep = readBits(3) + 3; while (rep--) lengths[i++] = 0; }
+          else if (sym === 18) { rep = readBits(7) + 11; while (rep--) lengths[i++] = 0; }
+        }
+        litTable = buildHuffman(lengths.slice(0, hlit));
+        distTable = buildHuffman(lengths.slice(hlit));
+      } else {
+        throw new Error('Invalid block type');
+      }
+
+      while (true) {
+        var lit = decodeSymbol(litTable);
+        if (lit < 256) {
+          output.push(lit);
+        } else if (lit === 256) {
+          break;
+        } else {
+          var lenIdx = lit - 257;
+          var lengthVal = lengthBase[lenIdx] + readBits(lengthExtra[lenIdx]);
+          var dsym = decodeSymbol(distTable);
+          var distVal = distBase[dsym] + readBits(distExtra[dsym]);
+          var start = output.length - distVal;
+          for (var c = 0; c < lengthVal; c++) output.push(output[start + c]);
+        }
+      }
+    }
+  }
+  return new Uint8Array(output);
+}
+
+function isGzip(bytes) {
+  return bytes && bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b;
+}
+
+function decompressGzip(bytes) {
+  // gzip header: 10 bytes minimum
+  // [0x1f, 0x8b, method, flags, mtime(4), xfl, os]
+  if (!isGzip(bytes)) throw new Error('Not a gzip file');
+  var pos = 10;
+  var flags = bytes[3];
+  if (flags & 0x04) { // FEXTRA
+    var xlen = bytes[pos] | (bytes[pos+1] << 8);
+    pos += 2 + xlen;
+  }
+  if (flags & 0x08) { // FNAME
+    while (bytes[pos] !== 0) pos++;
+    pos++;
+  }
+  if (flags & 0x10) { // FCOMMENT
+    while (bytes[pos] !== 0) pos++;
+    pos++;
+  }
+  if (flags & 0x02) { // FHCRC
+    pos += 2;
+  }
+  // Deflate stream starts at pos, ends 8 bytes before end (CRC32 + ISIZE)
+  var deflateStream = bytes.subarray(pos, bytes.length - 8);
+  return inflate(deflateStream);
+}
+
+// ============================================================
 // FILE INGEST (Lockdown-safe: FileReader + slice chunks)
+// Handles both line-delimited logs AND giant single-line JSON
+// AND .gz compressed files
 // ============================================================
 function ingestFile(file, onProgress, onChunk){
   return new Promise(function(resolve, reject){
     var chunkSize = 256 * 1024;
+    var maxBuffer = 64 * 1024; // force-flush if no newline found within 64KB
     var offset = 0;
     var buffer = '';
     var lineNo = 0;
     var total = file.size || 1;
 
+    function flushBufferAsLine(){
+      if (buffer.length) {
+        lineNo++;
+        try { onChunk(buffer, lineNo); } catch(e){}
+        buffer = '';
+      }
+    }
+
     function readNext(){
       if (offset >= file.size) {
-        if (buffer.length) { lineNo++; try { onChunk(buffer, lineNo); } catch(e){} }
+        flushBufferAsLine();
         onProgress(100);
         resolve(lineNo);
         return;
@@ -338,6 +511,16 @@ function ingestFile(file, onProgress, onChunk){
           lineNo++;
           try { onChunk(line, lineNo); } catch(e){}
         }
+        // Force-scan large buffers without newlines (giant JSON case)
+        if (buffer.length > maxBuffer) {
+          // Scan current buffer as a synthetic line, then keep last 1KB
+          // as overlap so patterns spanning chunk boundaries still match
+          var overlap = buffer.slice(-1024);
+          var scanChunk = buffer.slice(0, -1024);
+          lineNo++;
+          try { onChunk(scanChunk, lineNo); } catch(e){}
+          buffer = overlap;
+        }
         offset += chunkSize;
         onProgress(Math.min(100, Math.round((offset/total)*100)));
         setTimeout(readNext, 0);
@@ -353,12 +536,28 @@ function scanLine(line, fileName, fileId){
   var hits = [];
   for (var i=0;i<PATTERNS.length;i++){
     var p = PATTERNS[i];
-    var m = line.match(p.re);
-    if (m) {
-      hits.push({
-        patternId: p.id, label: p.label, category: p.cat, severity: p.sev,
-        match: String(m[0]).slice(0,200), fileName: fileName, fileId: fileId
-      });
+    // Use global flag for IOC and Apple Intelligence patterns to catch all occurrences
+    var useGlobal = p.cat === 'IOC' || p.cat === 'Apple Intelligence';
+    if (useGlobal) {
+      var gre = new RegExp(p.re.source, p.re.flags.indexOf('g') >= 0 ? p.re.flags : p.re.flags + 'g');
+      var m;
+      var matchCount = 0;
+      while ((m = gre.exec(line)) !== null && matchCount < 50) {
+        hits.push({
+          patternId: p.id, label: p.label, category: p.cat, severity: p.sev,
+          match: String(m[0]).slice(0,200), fileName: fileName, fileId: fileId
+        });
+        matchCount++;
+        if (m.index === gre.lastIndex) gre.lastIndex++;
+      }
+    } else {
+      var sm = line.match(p.re);
+      if (sm) {
+        hits.push({
+          patternId: p.id, label: p.label, category: p.cat, severity: p.sev,
+          match: String(sm[0]).slice(0,200), fileName: fileName, fileId: fileId
+        });
+      }
     }
   }
   return hits;
@@ -381,6 +580,7 @@ function handleLoadFile(file){
   var fileId = uid('file');
   var collected = [];
   var iocsCollected = [];
+  var allTimestamps = [];
 
   ingestFile(file,
     function(p){ state.progress = p; updateTopbarProgress(); },
@@ -393,16 +593,59 @@ function handleLoadFile(file){
           iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
         }
       }
+      // Extract timestamps for date-range tracking
+      var ts = extractTimestamps(line);
+      for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
     }
   ).then(function(totalLines){
-    state.db.files.push({ id: fileId, name: file.name, size: file.size, lines: totalLines, ingestedAt: nowISO(), hits: collected.length });
-    state.db.findings = state.db.findings.concat(collected);
+    // Compute timestamp range and detect reporting gaps
+    var earliest = null, latest = null, gapFindings = [];
+    if (allTimestamps.length) {
+      allTimestamps.sort(function(a,b){ return a - b; });
+      earliest = allTimestamps[0];
+      latest = allTimestamps[allTimestamps.length - 1];
+      // Detect gaps > 24h between consecutive timestamps
+      for (var k=1;k<allTimestamps.length;k++){
+        var gapMs = allTimestamps[k] - allTimestamps[k-1];
+        var gapHours = gapMs / (1000*60*60);
+        if (gapHours > 24) {
+          gapFindings.push({
+            id: uid('find'),
+            patternId: 'reporting_gap',
+            label: 'Reporting gap detected: ' + Math.round(gapHours) + 'h silence',
+            category: 'Apple Intelligence',
+            severity: gapHours > 168 ? 'crit' : 'high', // >1 week = critical
+            match: allTimestamps[k-1].toISOString() + ' → ' + allTimestamps[k].toISOString() + ' (' + Math.round(gapHours) + 'h)',
+            fileName: file.name,
+            fileId: fileId,
+            lineNo: null,
+            createdAt: nowISO(),
+            source: 'auto-timestamp-analysis'
+          });
+        }
+      }
+    }
+
+    state.db.files.push({
+      id: fileId, name: file.name, size: file.size, lines: totalLines,
+      ingestedAt: nowISO(), hits: collected.length + gapFindings.length,
+      timestampCount: allTimestamps.length,
+      dataEarliest: earliest ? earliest.toISOString() : null,
+      dataLatest: latest ? latest.toISOString() : null,
+      gaps: gapFindings.length
+    });
+    state.db.findings = state.db.findings.concat(collected).concat(gapFindings);
     state.db.iocs = state.db.iocs.concat(iocsCollected);
     state.db.sources.push({ id: uid('src'), name: file.name, type:'file', addedAt: nowISO(), fileId: fileId });
     state.busy = false; state.progress = 0;
     state.view = 'findings';
     render();
-    toast('Ingested ' + file.name + ' — ' + collected.length + ' hits / ' + totalLines + ' lines');
+    var msg = 'Ingested ' + file.name + ' — ' + collected.length + ' hits';
+    if (allTimestamps.length) {
+      msg += ' · data: ' + earliest.toISOString().slice(0,10) + ' → ' + latest.toISOString().slice(0,10);
+    }
+    if (gapFindings.length) msg += ' · ' + gapFindings.length + ' gap(s)';
+    toast(msg);
   }).catch(function(e){
     state.busy = false; state.progress = 0;
     render();
@@ -548,8 +791,15 @@ function viewIOCs(){ return simpleTableView('IOCs', state.db.iocs,
    {key:'context',label:'Context',mono:true}],
   'No IOCs yet.', 'iocs'); }
 function viewFiles(){ return simpleTableView('Files', state.db.files,
-  [{key:'name',label:'Name'},{key:'size',label:'Bytes'},{key:'lines',label:'Lines'},
-   {key:'hits',label:'Hits'},{key:'ingestedAt',label:'Ingested',mono:true}],
+  [{key:'name',label:'Name'},
+   {key:'size',label:'Bytes'},
+   {key:'lines',label:'Lines'},
+   {key:'hits',label:'Hits'},
+   {key:'timestampCount',label:'Timestamps',render:function(r){ return r.timestampCount != null ? String(r.timestampCount) : '—'; }},
+   {key:'dataEarliest',label:'Data Earliest',mono:true,render:function(r){ return r.dataEarliest ? r.dataEarliest.slice(0,16).replace('T',' ') : '—'; }},
+   {key:'dataLatest',label:'Data Latest',mono:true,render:function(r){ return r.dataLatest ? r.dataLatest.slice(0,16).replace('T',' ') : '—'; }},
+   {key:'gaps',label:'Gaps',render:function(r){ return r.gaps ? String(r.gaps) : '0'; }},
+   {key:'ingestedAt',label:'Ingested',mono:true,render:function(r){ return (r.ingestedAt||'').slice(0,16).replace('T',' '); }}],
   'No files ingested.', 'files'); }
 
 // FORMS
