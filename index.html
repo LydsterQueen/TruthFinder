@@ -7,58 +7,41 @@
 <title>Truth Finder v7 — Gold Edition</title>
 <style>
   :root {
-    --bg: #0a0a0a;
-    --panel: #111111;
-    --panel2: #161616;
-    --border: #2a2418;
-    --accent: #c9a961;
-    --accent2: #8a7234;
-    --text: #e8e3d5;
-    --dim: #8a8270;
-    --crit: #a83232;
-    --high: #b8702a;
-    --med: #a88830;
-    --low: #3a6b8a;
+    --bg:#0a0a0a; --panel:#111111; --panel2:#161616; --border:#2a2418;
+    --accent:#c9a961; --accent2:#8a7234; --text:#e8e3d5; --dim:#8a8270;
+    --crit:#a83232; --high:#b8702a; --med:#a88830; --low:#3a6b8a;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0; padding: 0;
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.45;
+    font-size: 14px; line-height: 1.45;
     -webkit-font-smoothing: antialiased;
-    overscroll-behavior: none;
   }
-  #root { min-height: 100vh; }
-
-.topbar {
-position: sticky; top: 0; z-index: 100;
-background: linear-gradient(180deg, #0e0c08 0%, #0a0907 100%);
-border-bottom: 1px solid var(–border);
-padding: 8px 10px;
-}
-.ribbon { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.logo {
-font-weight: 700; letter-spacing: 0.5px; font-size: 14px;
-color: var(–accent); margin-right: auto;
-display: flex; align-items: center; gap: 6px;
-}
-.logo small { color: var(–dim); font-weight: 400; font-size: 10px; letter-spacing: 1px;}
-.btn {
-background: #1a1610; color: var(–text);
-border: 1px solid var(–border);
-padding: 7px 11px; border-radius: 6px;
-font-size: 12px; font-weight: 500;
-cursor: pointer; white-space: nowrap;
--webkit-appearance: none;
-}
-.btn:active { background: #221c12; }
-.btn.primary { background: var(–accent2); color: #0a0a0a; border-color: var(–accent); font-weight: 600;}
-.btn.ghost { background: transparent; }
-.btn.danger { color: var(–crit); border-color: #4a1818; }
-.btn:disabled { opacity: 0.4; }
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(180deg,#0e0c08,#0a0907);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 10px;
+  }
+  .ribbon { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .logo { font-weight: 700; letter-spacing: 0.5px; font-size: 14px; color: var(--accent); margin-right: auto; display: flex; align-items: center; gap: 6px; }
+  .logo small { color: var(--dim); font-weight: 400; font-size: 10px; letter-spacing: 1px;}
+  .btn {
+    background: #1a1610; color: var(--text);
+    border: 1px solid var(--border);
+    padding: 7px 11px; border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer; white-space: nowrap;
+    -webkit-appearance: none; -moz-appearance: none; appearance: none;
+    font-family: inherit;
+  }
+  .btn:active { background: #221c12; }
+  .btn.primary { background: var(--accent2); color: #0a0a0a; border-color: var(--accent); font-weight: 600;}
+  .btn.ghost { background: transparent; }
+  .btn.danger { color: var(--crit); border-color: #4a1818; }
+  .btn:disabled { opacity: 0.4; }
 
 .filebar {
 margin-top: 8px;
@@ -68,8 +51,8 @@ background: var(–panel2);
 border: 1px solid var(–border);
 border-radius: 6px;
 }
-.filebar input[type=file] { display: none; }
 .filebar .fname { font-size: 11px; color: var(–dim); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.hidden-file { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
 .container { display: flex; min-height: calc(100vh - 110px); }
 .sidenav {
@@ -88,13 +71,11 @@ border: 1px solid transparent;
 }
 .navitem.active { background: #1a1510; color: var(–accent); border-color: var(–border); }
 .navitem:active { background: #221b10; }
-
 .main { flex: 1; padding: 12px; min-width: 0; }
 .navtoggle { display: none; }
 
 @media (max-width: 720px) {
-.sidenav { position: fixed; top: 110px; left: 0; bottom: 0; z-index: 90; width: 220px; }
-.sidenav.collapsed { display: none; }
+.sidenav { position: fixed; top: 110px; left: 0; bottom: 0; z-index: 90; width: 220px; overflow-y: auto;}
 .navtoggle { display: inline-flex; }
 .main { padding: 10px; }
 }
@@ -105,7 +86,7 @@ border: 1px solid var(–border);
 border-radius: 8px;
 padding: 12px; margin-bottom: 12px;
 }
-.panel h2 { margin: 0 0 10px; font-size: 15px; color: var(–accent); font-weight: 600; letter-spacing: 0.3px;}
+.panel h2 { margin: 0 0 10px; font-size: 15px; color: var(–accent); font-weight: 600;}
 .panel h3 { margin: 12px 0 8px; font-size: 13px; color: var(–accent); font-weight: 600;}
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
 .stat {
@@ -121,15 +102,15 @@ flex: 1; min-width: 120px;
 .tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(–border); border-radius: 6px;}
 table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 500px;}
 th, td { padding: 7px 9px; text-align: left; border-bottom: 1px solid var(–border); vertical-align: top;}
-th { background: var(–panel2); color: var(–accent); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0;}
+th { background: var(–panel2); color: var(–accent); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;}
 tr:last-child td { border-bottom: none; }
-td.mono { font-family: ui-monospace, “SF Mono”, Menlo, monospace; font-size: 11px; color: var(–dim); }
+td.mono, .mono { font-family: ui-monospace, “SF Mono”, Menlo, monospace; font-size: 11px; color: var(–dim); }
 
 .sev { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
 .sev.crit { background: var(–crit); color: #fff; }
 .sev.high { background: var(–high); color: #fff; }
-.sev.med { background: var(–med); color: #0a0a0a; }
-.sev.low { background: var(–low); color: #fff; }
+.sev.med  { background: var(–med);  color: #0a0a0a; }
+.sev.low  { background: var(–low);  color: #fff; }
 
 label { display: block; font-size: 11px; color: var(–dim); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px;}
 input[type=text], input[type=number], input[type=date], textarea, select {
@@ -148,11 +129,10 @@ textarea { min-height: 70px; resize: vertical; }
 @media (max-width: 600px) { .formgrid { grid-template-columns: 1fr; } }
 .formfield { margin-bottom: 8px; }
 .formfield.full { grid-column: 1 / -1; }
-
 .toolbar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .toolbar input[type=text] { flex: 1; min-width: 150px; }
 
-.progress { height: 4px; background: #1a1610; border-radius: 2px; overflow: hidden; margin-top: 6px;}
+.progress { height: 4px; background: #1a1610; border-radius: 2px; overflow: hidden; margin-top: 6px; width: 80px;}
 .progress > div { height: 100%; background: var(–accent); transition: width 0.2s;}
 
 .toast {
@@ -164,22 +144,6 @@ z-index: 200; font-size: 13px;
 box-shadow: 0 4px 16px rgba(0,0,0,0.5);
 max-width: 90%;
 }
-
-@media print {
-.topbar, .sidenav, .toolbar, .btn { display: none !important; }
-.main { padding: 0; }
-body { background: #fff; color: #000; }
-.panel { border: 1px solid #999; background: #fff; page-break-inside: avoid; }
-.panel h2, .panel h3 { color: #000; }
-th { background: #eee; color: #000; }
-.stat { background: #f5f5f5; }
-.stat .val { color: #000; }
-.sev.crit { background: #a83232; }
-.sev.high { background: #b8702a; }
-.sev.med { background: #a88830; color: #000; }
-.sev.low { background: #3a6b8a; }
-}
-
 .empty { color: var(–dim); text-align: center; padding: 24px; font-style: italic;}
 .pill { display: inline-block; padding: 1px 6px; border-radius: 3px; background: var(–panel2); border: 1px solid var(–border); font-size: 10px; color: var(–dim); margin-right: 4px;}
 .helptext { font-size: 11px; color: var(–dim); margin-top: 4px; }
@@ -192,858 +156,847 @@ padding: 6px 8px; font-family: ui-monospace, monospace; font-size: 10px;
 color: var(–dim); white-space: pre-wrap; word-break: break-all;
 max-height: 240px; overflow: auto;
 }
-.lockdown-notice {
-background: #1a1610; border: 1px solid var(–accent2);
-padding: 10px 12px; border-radius: 6px;
-font-size: 12px; color: var(–accent);
-margin-bottom: 12px;
-display: none;
+.bar { display: flex; height: 10px; background:#1a1610; border-radius:2px; overflow:hidden; }
+.bar > div { height: 100%; }
+.barlbl { display:flex; justify-content:space-between; font-size:11px; color:var(–dim); margin-bottom:2px; }
+.trendrow { margin-bottom: 6px; }
+
+@media print {
+.topbar, .sidenav, .toolbar, .btn, .navtoggle { display: none !important; }
+.main { padding: 0; }
+body { background: #fff; color: #000; }
+.panel { border: 1px solid #999; background: #fff; page-break-inside: avoid; }
+.panel h2, .panel h3 { color: #000; }
+th { background: #eee; color: #000; }
+.stat { background: #f5f5f5; }
+.stat .val { color: #000; }
 }
 </style>
 
 </head>
 <body>
-<div id="root">
-  <div style="padding:24px;color:#c9a961;font-family:-apple-system,system-ui,sans-serif;">
-    <div style="font-size:18px;font-weight:600;margin-bottom:8px;">◆ Truth Finder v7</div>
-    <div style="color:#8a8270;font-size:13px;">Loading…</div>
-    <div id="boot-error" style="margin-top:16px;color:#a83232;font-size:12px;font-family:ui-monospace,monospace;"></div>
-  </div>
+<div id="topbar"></div>
+<div class="container">
+  <div id="sidenav" class="sidenav"></div>
+  <div id="main" class="main"></div>
 </div>
+<div id="toast-host"></div>
 
 <script>
-  // Boot error visibility for Lockdown / loading failures
-  window.addEventListener('error', function(e) {
-    var n = document.getElementById('boot-error');
-    if (n) n.textContent = 'Boot error: ' + (e.message || e);
-  });
-</script>
-
-<!-- React UMD only — no Babel, no JSX runtime. Lockdown-safe. -->
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-
-<script>
+"use strict";
 (function(){
-  'use strict';
 
-  if (!window.React || !window.ReactDOM) {
-    document.getElementById('boot-error').textContent =
-      'React failed to load. If Lockdown Mode is on, tap "Reduce Protections" or use a non-Lockdown profile.';
-    return;
-  }
+// ============================================================
+// PATTERN LIBRARY
+// ============================================================
+var PATTERNS = [
+  { id:'gh_takeover', re:/password\s+(was\s+)?changed|2FA\s+enabled|recovery\s+codes\s+(downloaded|generated)|security\s+key\s+registered/i, sev:'crit', cat:'Account Takeover', label:'GitHub/account takeover indicators'},
+  { id:'oauth_revoke', re:/OAuth\s+token\s+revoked|app\s+access\s+revoked|authorized\s+application\s+removed/i, sev:'high', cat:'Account Takeover', label:'OAuth/app access revocation'},
+  { id:'unauth_signin', re:/(unauthorized|suspicious|unrecognized)\s+sign[- ]?in|new\s+device\s+signed\s+in/i, sev:'high', cat:'Account Takeover', label:'Unauthorized sign-in event'},
+  { id:'bypassPCS', re:/bypassPCSEncryption[^a-z]*(?:=|:)?\s*(?:1|true|YES)/i, sev:'crit', cat:'CKKS/iCloud', label:'bypassPCSEncryption active'},
+  { id:'inCircle0', re:/inCircle[^a-z]*(?:=|:)?\s*0/i, sev:'crit', cat:'CKKS/iCloud', label:'Device excluded from iCloud security circle (inCircle:0)'},
+  { id:'tlk_shares', re:/heal-tlk-shares|TLK\s+share|tlkShare/i, sev:'high', cat:'CKKS/iCloud', label:'TLK share / heal-tlk-shares activity'},
+  { id:'rotating_ckids', re:/CloudKit.*account.*identifier|ckAccountID/i, sev:'med', cat:'CKKS/iCloud', label:'CloudKit account identifier reference'},
+  { id:'oqe_drain', re:/OQE.*items|itemsyncing.*paused/i, sev:'high', cat:'CKKS/iCloud', label:'Passwords OQE drain / itemsyncing paused'},
+  { id:'userviews_disabled', re:/userViews.*(?:disabled|DISABLED)/i, sev:'high', cat:'CKKS/iCloud', label:'userViews policy disabled'},
+  { id:'findmy_mismatch', re:/FindMy.*(?:mismatch|send.*recv)/i, sev:'high', cat:'CKKS/iCloud', label:'FindMy zone send/recv mismatch'},
+  { id:'sensitive_visible', re:/SensitivePropertiesVisible[^a-z]*(?:=|:)?\s*(?:true|YES|1)/i, sev:'crit', cat:'CKKS/iCloud', label:'SensitivePropertiesVisible = true'},
+  { id:'untrusted_tunnel', re:/untrusted\s+tunnel|tunnel.*untrusted|CoreDevice.*tunnel/i, sev:'high', cat:'CKKS/iCloud', label:'CoreDevice untrusted tunnel service'},
+  { id:'mdm_profile', re:/MDM\s+profile|managedConfiguration|com\.apple\.mdm/i, sev:'high', cat:'MDM/Profile', label:'MDM profile reference'},
+  { id:'tmobile_mdm', re:/T-?Mobile.*(profile|managed|MDM)|com\.tmobile/i, sev:'high', cat:'MDM/Profile', label:'T-Mobile managed/MDM reference'},
+  { id:'azure_cert', re:/Microsoft\s+Azure|azure.*cert|Microsoft\s+IT\s+TLS/i, sev:'high', cat:'MDM/Profile', label:'Microsoft Azure certificate on iOS'},
+  { id:'share_ext_block', re:/share\s+extension.*(?:block|disabled|suppress)|com\.apple\.share/i, sev:'med', cat:'MDM/Profile', label:'Share extension suppression'},
+  { id:'cellular_cap', re:/cellular.*(?:limit|cap|100\s*MB|transfer\s+limit)/i, sev:'med', cat:'MDM/Profile', label:'Cellular transfer cap'},
+  { id:'private_addr_off', re:/Private\s+(MAC\s+)?Address.*OFF|privateAddress.*false|wifi\.privateAddress.*0/i, sev:'high', cat:'Network', label:'Private MAC Address OFF'},
+  { id:'real_mac', re:/\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b/, sev:'low', cat:'Network', label:'MAC address present'},
+  { id:'call_forward', re:/call\s+forward|forwardingNumber|\+1?214[0-9]{7}/i, sev:'high', cat:'Network', label:'Call forwarding indicator'},
+  { id:'tmobile_ipv6', re:/2607:fb90:[0-9a-f:]+/i, sev:'med', cat:'Network', label:'T-Mobile IPv6 (2607:fb90:) address'},
+  { id:'serial_match', re:/CW4XKX9QYM/i, sev:'high', cat:'Device', label:'Target iPhone serial CW4XKX9QYM'},
+  { id:'udid_anon', re:/UDID.*(?:anonymous|no\s+account|unattributed)/i, sev:'high', cat:'Device', label:'Anonymous/unattributed UDID'},
+  { id:'diag_enroll', re:/diagnostic.*enroll|enrolled.*diagnostic|MDMRegistered/i, sev:'high', cat:'Device', label:'Apple diagnostic enrollment'},
+  { id:'clouddocs_noclient', re:/com\.apple\.CloudDocs.*(?:no\s+client|missing)/i, sev:'high', cat:'Files', label:'com.apple.CloudDocs no declared client'},
+  { id:'notes_mislabel', re:/com\.apple\.notes.*Settings|Settings.*com\.apple\.notes/i, sev:'med', cat:'Files', label:'com.apple.notes mislabeled as Settings'},
+  { id:'productkit_b389', re:/productkit.*b389|b389.*productkit/i, sev:'med', cat:'Files', label:'productkit b389 anomaly'},
+  { id:'auth_failure', re:/UserAuthenticationFailure|authentication\s+failed.*retry/i, sev:'med', cat:'Auth', label:'Authentication failure / retry'},
+  { id:'ext_id_mutation', re:/ExternalIdentifierMutated|externalId.*changed/i, sev:'high', cat:'Auth', label:'External identifier mutation'},
+  { id:'no_auth_session', re:/no\s+auth\s+session|without\s+(?:auth|authentication)\s+session/i, sev:'high', cat:'Auth', label:'Action without auth session'},
+  { id:'webkit_sop', re:/CVE-2026-20643|WebKit.*Same\s*Origin|SOP\s+bypass/i, sev:'crit', cat:'CVE', label:'WebKit SOP bypass (CVE-2026-20643)'},
+  { id:'cve_generic', re:/CVE-\d{4}-\d{4,7}/i, sev:'med', cat:'CVE', label:'CVE reference'},
+  { id:'ipv4', re:/\b(?:\d{1,3}\.){3}\d{1,3}\b/, sev:'low', cat:'IOC', label:'IPv4 address'},
+  { id:'ipv6', re:/\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i, sev:'low', cat:'IOC', label:'IPv6 address'},
+  { id:'domain', re:/\b[a-z0-9-]+\.(?:com|net|org|io|co|app|dev|cloud)\b/i, sev:'low', cat:'IOC', label:'Domain reference'},
+  { id:'hash', re:/\b[a-f0-9]{32,64}\b/i, sev:'low', cat:'IOC', label:'Hash (MD5/SHA)'}
+];
+var SEV_RANK = { crit:4, high:3, med:2, low:1 };
+var SEV_LABEL = { crit:'CRITICAL', high:'HIGH', med:'MEDIUM', low:'LOW' };
+var SEV_EXPLAIN = {
+  crit: { plain:'Confirmed indicator of unauthorized access, key compromise, or security-circle exclusion. Treat as primary evidence.', simple:'A red-flag finding. The system is showing signs that someone or something is bypassing normal protections.' },
+  high: { plain:'Strong anomaly with documented attribution patterns. Requires correlation with timeline and actor records.', simple:'A serious finding. Something unusual happened that maps to known attack or surveillance behavior.' },
+  med:  { plain:'Notable anomaly worth tracking. May be benign in isolation but pattern-relevant in aggregate.', simple:'A finding to keep an eye on. Alone it might be nothing — together with others it can mean something.' },
+  low:  { plain:'Indicator-of-compromise candidate (IPs, hashes, MAC addresses). Use for cross-file correlation.', simple:'A piece of raw data — an address, a code — useful for connecting the dots between files.' }
+};
 
-  var React = window.React;
-  var ReactDOM = window.ReactDOM;
-  var useState = React.useState;
-  var useEffect = React.useEffect;
-  var useMemo = React.useMemo;
-  var useRef = React.useRef;
-  var useCallback = React.useCallback;
-  var h = React.createElement;
-
-  // ============================================================
-  // PATTERN LIBRARY
-  // ============================================================
-  var PATTERNS = [
-    { id:'gh_takeover', re:/password\s+(was\s+)?changed|2FA\s+enabled|recovery\s+codes\s+(downloaded|generated)|security\s+key\s+registered/i, sev:'crit', cat:'Account Takeover', label:'GitHub/account takeover indicators'},
-    { id:'oauth_revoke', re:/OAuth\s+token\s+revoked|app\s+access\s+revoked|authorized\s+application\s+removed/i, sev:'high', cat:'Account Takeover', label:'OAuth/app access revocation'},
-    { id:'unauth_signin', re:/(unauthorized|suspicious|unrecognized)\s+sign[- ]?in|new\s+device\s+signed\s+in/i, sev:'high', cat:'Account Takeover', label:'Unauthorized sign-in event'},
-    { id:'bypassPCS', re:/bypassPCSEncryption[^a-z]*(?:=|:)?\s*(?:1|true|YES)/i, sev:'crit', cat:'CKKS/iCloud', label:'bypassPCSEncryption active'},
-    { id:'inCircle0', re:/inCircle[^a-z]*(?:=|:)?\s*0/i, sev:'crit', cat:'CKKS/iCloud', label:'Device excluded from iCloud security circle (inCircle:0)'},
-    { id:'tlk_shares', re:/heal-tlk-shares|TLK\s+share|tlkShare/i, sev:'high', cat:'CKKS/iCloud', label:'TLK share / heal-tlk-shares activity'},
-    { id:'rotating_ckids', re:/CloudKit.*account.*identifier|ckAccountID/i, sev:'med', cat:'CKKS/iCloud', label:'CloudKit account identifier reference'},
-    { id:'oqe_drain', re:/OQE.*items|itemsyncing.*paused/i, sev:'high', cat:'CKKS/iCloud', label:'Passwords OQE drain / itemsyncing paused'},
-    { id:'userviews_disabled', re:/userViews.*(?:disabled|DISABLED)/i, sev:'high', cat:'CKKS/iCloud', label:'userViews policy disabled'},
-    { id:'findmy_mismatch', re:/FindMy.*(?:mismatch|send.*recv)/i, sev:'high', cat:'CKKS/iCloud', label:'FindMy zone send/recv mismatch'},
-    { id:'sensitive_visible', re:/SensitivePropertiesVisible[^a-z]*(?:=|:)?\s*(?:true|YES|1)/i, sev:'crit', cat:'CKKS/iCloud', label:'SensitivePropertiesVisible = true'},
-    { id:'untrusted_tunnel', re:/untrusted\s+tunnel|tunnel.*untrusted|CoreDevice.*tunnel/i, sev:'high', cat:'CKKS/iCloud', label:'CoreDevice untrusted tunnel service'},
-    { id:'mdm_profile', re:/MDM\s+profile|managedConfiguration|com\.apple\.mdm/i, sev:'high', cat:'MDM/Profile', label:'MDM profile reference'},
-    { id:'tmobile_mdm', re:/T-?Mobile.*(profile|managed|MDM)|com\.tmobile/i, sev:'high', cat:'MDM/Profile', label:'T-Mobile managed/MDM reference'},
-    { id:'azure_cert', re:/Microsoft\s+Azure|azure.*cert|Microsoft\s+IT\s+TLS/i, sev:'high', cat:'MDM/Profile', label:'Microsoft Azure certificate on iOS'},
-    { id:'share_ext_block', re:/share\s+extension.*(?:block|disabled|suppress)|com\.apple\.share/i, sev:'med', cat:'MDM/Profile', label:'Share extension suppression'},
-    { id:'cellular_cap', re:/cellular.*(?:limit|cap|100\s*MB|transfer\s+limit)/i, sev:'med', cat:'MDM/Profile', label:'Cellular transfer cap'},
-    { id:'private_addr_off', re:/Private\s+(MAC\s+)?Address.*OFF|privateAddress.*false|wifi\.privateAddress.*0/i, sev:'high', cat:'Network', label:'Private MAC Address OFF'},
-    { id:'real_mac', re:/\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b/, sev:'low', cat:'Network', label:'MAC address present'},
-    { id:'call_forward', re:/call\s+forward|forwardingNumber|\+1?214[0-9]{7}/i, sev:'high', cat:'Network', label:'Call forwarding indicator'},
-    { id:'tmobile_ipv6', re:/2607:fb90:[0-9a-f:]+/i, sev:'med', cat:'Network', label:'T-Mobile IPv6 (2607:fb90:) address'},
-    { id:'serial_match', re:/CW4XKX9QYM/i, sev:'high', cat:'Device', label:'Target iPhone serial CW4XKX9QYM'},
-    { id:'udid_anon', re:/UDID.*(?:anonymous|no\s+account|unattributed)/i, sev:'high', cat:'Device', label:'Anonymous/unattributed UDID'},
-    { id:'diag_enroll', re:/diagnostic.*enroll|enrolled.*diagnostic|MDMRegistered/i, sev:'high', cat:'Device', label:'Apple diagnostic enrollment'},
-    { id:'clouddocs_noclient', re:/com\.apple\.CloudDocs.*(?:no\s+client|missing)/i, sev:'high', cat:'Files', label:'com.apple.CloudDocs no declared client'},
-    { id:'notes_mislabel', re:/com\.apple\.notes.*Settings|Settings.*com\.apple\.notes/i, sev:'med', cat:'Files', label:'com.apple.notes mislabeled as Settings'},
-    { id:'productkit_b389', re:/productkit.*b389|b389.*productkit/i, sev:'med', cat:'Files', label:'productkit b389 anomaly'},
-    { id:'auth_failure', re:/UserAuthenticationFailure|authentication\s+failed.*retry/i, sev:'med', cat:'Auth', label:'Authentication failure / retry'},
-    { id:'ext_id_mutation', re:/ExternalIdentifierMutated|externalId.*changed/i, sev:'high', cat:'Auth', label:'External identifier mutation'},
-    { id:'no_auth_session', re:/no\s+auth\s+session|without\s+(?:auth|authentication)\s+session/i, sev:'high', cat:'Auth', label:'Action without auth session'},
-    { id:'webkit_sop', re:/CVE-2026-20643|WebKit.*Same\s*Origin|SOP\s+bypass/i, sev:'crit', cat:'CVE', label:'WebKit SOP bypass (CVE-2026-20643)'},
-    { id:'cve_generic', re:/CVE-\d{4}-\d{4,7}/i, sev:'med', cat:'CVE', label:'CVE reference'},
-    { id:'ipv4', re:/\b(?:\d{1,3}\.){3}\d{1,3}\b/, sev:'low', cat:'IOC', label:'IPv4 address'},
-    { id:'ipv6', re:/\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i, sev:'low', cat:'IOC', label:'IPv6 address'},
-    { id:'domain', re:/\b[a-z0-9-]+\.(?:com|net|org|io|co|app|dev|cloud|apple\.com)\b/i, sev:'low', cat:'IOC', label:'Domain reference'},
-    { id:'hash', re:/\b[a-f0-9]{32,64}\b/i, sev:'low', cat:'IOC', label:'Hash (MD5/SHA)'}
-  ];
-
-  var SEV_RANK = { crit:4, high:3, med:2, low:1 };
-  var SEV_LABEL = { crit:'CRITICAL', high:'HIGH', med:'MEDIUM', low:'LOW' };
-  var SEV_EXPLAIN = {
-    crit: { plain:'Confirmed indicator of unauthorized access, key compromise, or security-circle exclusion. Treat as primary evidence.', simple:'A red-flag finding. The system is showing signs that someone or something is bypassing normal protections.' },
-    high: { plain:'Strong anomaly with documented attribution patterns. Requires correlation with timeline and actor records.', simple:'A serious finding. Something unusual happened that maps to known attack or surveillance behavior.' },
-    med:  { plain:'Notable anomaly worth tracking. May be benign in isolation but pattern-relevant in aggregate.', simple:'A finding to keep an eye on. Alone it might be nothing — together with others it can mean something.' },
-    low:  { plain:'Indicator-of-compromise candidate (IPs, hashes, MAC addresses). Use for cross-file correlation.', simple:'A piece of raw data — an address, a code — useful for connecting the dots between files.' }
+// ============================================================
+// STATE
+// ============================================================
+function initialDB(){
+  return {
+    meta: { created: new Date().toISOString(), version:'v7', name:'Truth Finder Database' },
+    findings: [], sources: [], timeline: [], actors: [], iocs: [], files: []
   };
+}
+var state = {
+  db: initialDB(),
+  view: 'report_dashboard',
+  navCollapsed: window.innerWidth < 720,
+  busy: false,
+  progress: 0,
+  currentFile: '',
+  findingsQ: '',
+  findingsSev: 'all',
+  searches: {} // per-table search state
+};
 
-  // ============================================================
-  // HELPERS
-  // ============================================================
-  function uid(p){ p = p || 'id'; return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7); }
-  function nowISO(){ return new Date().toISOString(); }
-
-  function initialDB(){
-    return {
-      meta: { created: nowISO(), version: 'v7', name: 'Truth Finder Database' },
-      findings: [], sources: [], timeline: [], actors: [], iocs: [], files: []
-    };
+// ============================================================
+// DOM HELPERS
+// ============================================================
+function el(tag, attrs, children) {
+  var n = document.createElement(tag);
+  if (attrs) {
+    for (var k in attrs) {
+      var v = attrs[k];
+      if (k === 'class') n.className = v;
+      else if (k === 'style' && typeof v === 'object') { for (var s in v) n.style[s] = v[s]; }
+      else if (k.indexOf('on') === 0 && typeof v === 'function') n.addEventListener(k.slice(2).toLowerCase(), v);
+      else if (k === 'value') n.value = v;
+      else if (k === 'checked') n.checked = !!v;
+      else if (k === 'html') n.innerHTML = v;
+      else if (v != null) n.setAttribute(k, v);
+    }
   }
-
-  function downloadBlob(data, filename, type){
-    type = type || 'application/json';
-    var blob = new Blob([data], { type: type });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  if (children != null) {
+    if (!Array.isArray(children)) children = [children];
+    for (var i=0;i<children.length;i++){
+      var c = children[i];
+      if (c == null || c === false) continue;
+      if (typeof c === 'string' || typeof c === 'number') n.appendChild(document.createTextNode(String(c)));
+      else if (Array.isArray(c)) { for (var j=0;j<c.length;j++){ if (c[j]) n.appendChild(c[j]); } }
+      else n.appendChild(c);
+    }
   }
+  return n;
+}
+function clear(node){ while (node.firstChild) node.removeChild(node.firstChild); }
+function uid(p){ p = p || 'id'; return p+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7); }
+function nowISO(){ return new Date().toISOString(); }
 
-  // Streaming ingest using FileReader (Lockdown-safe; avoids file.stream())
-  function ingestFile(file, onProgress, onChunk){
-    return new Promise(function(resolve, reject){
+function toast(msg) {
+  var host = document.getElementById('toast-host');
+  clear(host);
+  host.appendChild(el('div', { class: 'toast' }, msg));
+  setTimeout(function(){ clear(host); }, 2400);
+}
+
+function downloadBlob(data, filename, type){
+  type = type || 'application/json';
+  var blob = new Blob([data], { type: type });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+
+// ============================================================
+// FILE INGEST (Lockdown-safe: FileReader + slice chunks)
+// ============================================================
+function ingestFile(file, onProgress, onChunk){
+  return new Promise(function(resolve, reject){
+    var chunkSize = 256 * 1024;
+    var offset = 0;
+    var buffer = '';
+    var lineNo = 0;
+    var total = file.size || 1;
+
+    function readNext(){
+      if (offset >= file.size) {
+        if (buffer.length) { lineNo++; try { onChunk(buffer, lineNo); } catch(e){} }
+        onProgress(100);
+        resolve(lineNo);
+        return;
+      }
+      var slice = file.slice(offset, offset + chunkSize);
       var reader = new FileReader();
-      var chunkSize = 256 * 1024; // 256KB chunks
-      var offset = 0;
-      var buffer = '';
-      var lineNo = 0;
-      var total = file.size || 1;
-      var decoder = (typeof TextDecoder !== 'undefined') ? new TextDecoder('utf-8', { fatal: false }) : null;
-
-      function readNext(){
-        if (offset >= file.size) {
-          if (buffer.length) { lineNo++; onChunk(buffer, lineNo); }
-          onProgress(100);
-          resolve(lineNo);
-          return;
+      reader.onload = function(ev){
+        var text = String(ev.target.result || '');
+        buffer += text;
+        var nl;
+        while ((nl = buffer.indexOf('\n')) >= 0) {
+          var line = buffer.slice(0, nl);
+          buffer = buffer.slice(nl + 1);
+          lineNo++;
+          try { onChunk(line, lineNo); } catch(e){}
         }
-        var slice = file.slice(offset, offset + chunkSize);
-        reader.onload = function(e){
-          var text;
-          if (decoder && e.target.result instanceof ArrayBuffer) {
-            text = decoder.decode(e.target.result, { stream: true });
-          } else {
-            text = String(e.target.result || '');
-          }
-          buffer += text;
-          var nl;
-          while ((nl = buffer.indexOf('\n')) >= 0) {
-            var line = buffer.slice(0, nl);
-            buffer = buffer.slice(nl + 1);
-            lineNo++;
-            try { onChunk(line, lineNo); } catch(err) {}
-          }
-          offset += chunkSize;
-          onProgress(Math.min(100, Math.round((offset/total)*100)));
-          setTimeout(readNext, 0);
-        };
-        reader.onerror = function(){ reject(new Error('Read error')); };
-        if (decoder) {
-          reader.readAsArrayBuffer(slice);
-        } else {
-          reader.readAsText(slice);
-        }
-      }
-      readNext();
-    });
-  }
-
-  function scanLine(line, fileName, fileId){
-    var hits = [];
-    for (var i=0;i<PATTERNS.length;i++){
-      var p = PATTERNS[i];
-      var m = line.match(p.re);
-      if (m) {
-        hits.push({
-          patternId: p.id, label: p.label, category: p.cat, severity: p.sev,
-          match: String(m[0]).slice(0,200), fileName: fileName, fileId: fileId
-        });
-      }
-    }
-    return hits;
-  }
-
-  // ============================================================
-  // SMALL COMPONENTS
-  // ============================================================
-
-  function SeverityBadge(props){
-    return h('span', { className: 'sev ' + props.s }, SEV_LABEL[props.s] || props.s);
-  }
-
-  function Table(props){
-    var columns = props.columns, rows = props.rows, empty = props.empty || 'No records';
-    if (!rows.length) return h('div', { className: 'empty' }, empty);
-    return h('div', { className: 'tablewrap' },
-      h('table', null,
-        h('thead', null, h('tr', null, columns.map(function(c){ return h('th', { key: c.key }, c.label); }))),
-        h('tbody', null, rows.map(function(r, i){
-          return h('tr', { key: r.id || i }, columns.map(function(c){
-            var content = c.render ? c.render(r) : (r[c.key] != null ? r[c.key] : '');
-            return h('td', { key: c.key, className: c.mono ? 'mono' : '' }, content);
-          }));
-        }))
-      )
-    );
-  }
-
-  // ============================================================
-  // VIEW: Findings
-  // ============================================================
-  function FindingsView(props){
-    var db = props.db, setDB = props.setDB;
-    var qs = useState(''), q = qs[0], setQ = qs[1];
-    var ss = useState('all'), sev = ss[0], setSev = ss[1];
-    var filtered = useMemo(function(){
-      return db.findings.filter(function(f){
-        if (sev !== 'all' && f.severity !== sev) return false;
-        if (q) {
-          var s = q.toLowerCase();
-          if ((f.label||'').toLowerCase().indexOf(s) < 0 &&
-              (f.category||'').toLowerCase().indexOf(s) < 0 &&
-              (f.match||'').toLowerCase().indexOf(s) < 0 &&
-              (f.fileName||'').toLowerCase().indexOf(s) < 0) return false;
-        }
-        return true;
-      }).sort(function(a,b){ return (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
-    }, [db.findings, q, sev]);
-
-    function remove(id){ setDB(function(d){ return Object.assign({}, d, { findings: d.findings.filter(function(f){ return f.id !== id; }) }); }); }
-
-    return h('div', { className: 'panel' },
-      h('h2', null, 'Findings (' + filtered.length + ' / ' + db.findings.length + ')'),
-      h('div', { className: 'toolbar' },
-        h('input', { type: 'text', placeholder: 'Search findings…', value: q, onChange: function(e){ setQ(e.target.value); } }),
-        h('select', { value: sev, onChange: function(e){ setSev(e.target.value); } },
-          h('option', { value: 'all' }, 'All severities'),
-          h('option', { value: 'crit' }, 'Critical'),
-          h('option', { value: 'high' }, 'High'),
-          h('option', { value: 'med' }, 'Medium'),
-          h('option', { value: 'low' }, 'Low')
-        )
-      ),
-      h(Table, {
-        columns: [
-          { key: 'severity', label: 'Sev', render: function(r){ return h(SeverityBadge, { s: r.severity }); } },
-          { key: 'label', label: 'Finding' },
-          { key: 'category', label: 'Category' },
-          { key: 'fileName', label: 'Source', mono: true },
-          { key: 'lineNo', label: 'Line', render: function(r){ return r.lineNo || '—'; } },
-          { key: 'match', label: 'Match', mono: true, render: function(r){ return (r.match||'').slice(0,80); } },
-          { key: 'actions', label: '', render: function(r){ return h('button', { className: 'btn danger', onClick: function(){ remove(r.id); } }, '×'); } }
-        ],
-        rows: filtered,
-        empty: 'No findings yet. Load a file or add one manually.'
-      })
-    );
-  }
-
-  // ============================================================
-  // VIEW: Generic searchable table
-  // ============================================================
-  function SimpleTableView(props){
-    var qs = useState(''), q = qs[0], setQ = qs[1];
-    var filtered = useMemo(function(){
-      if (!q) return props.rows;
-      var s = q.toLowerCase();
-      return props.rows.filter(function(r){
-        var keys = Object.keys(r);
-        for (var i=0;i<keys.length;i++){
-          if (String(r[keys[i]]||'').toLowerCase().indexOf(s) >= 0) return true;
-        }
-        return false;
-      });
-    }, [props.rows, q]);
-    return h('div', { className: 'panel' },
-      h('h2', null, props.title + ' (' + filtered.length + ')'),
-      h('div', { className: 'toolbar' },
-        h('input', { type: 'text', placeholder: 'Search…', value: q, onChange: function(e){ setQ(e.target.value); } })
-      ),
-      h(Table, { columns: props.columns, rows: filtered, empty: props.empty })
-    );
-  }
-
-  // ============================================================
-  // FORMS
-  // ============================================================
-  function NewFindingForm(props){
-    var st = useState({ label:'', category:'Manual', severity:'med', match:'', fileName:'', lineNo:'', notes:'' });
-    var f = st[0], setF = st[1];
-    function submit(){
-      if (!f.label.trim()) { props.toast('Label required'); return; }
-      props.setDB(function(d){
-        return Object.assign({}, d, { findings: d.findings.concat([Object.assign({}, f, { id: uid('find'), createdAt: nowISO(), source: 'manual' })]) });
-      });
-      props.toast('Finding added');
-      setF({ label:'', category:'Manual', severity:'med', match:'', fileName:'', lineNo:'', notes:'' });
-    }
-    function field(key, type){
-      return h('input', { type: type||'text', value: f[key], onChange: function(e){ var v = e.target.value; setF(function(p){ return Object.assign({}, p, (function(){ var o={}; o[key]=v; return o; })()); }); } });
-    }
-    function ta(key){
-      return h('textarea', { value: f[key], onChange: function(e){ var v = e.target.value; setF(function(p){ return Object.assign({}, p, (function(){ var o={}; o[key]=v; return o; })()); }); } });
-    }
-    return h('div', { className: 'panel' },
-      h('h2', null, '+ New Finding'),
-      h('div', { className: 'formgrid' },
-        h('div', { className: 'formfield full' }, h('label', null, 'Label'), field('label')),
-        h('div', { className: 'formfield' }, h('label', null, 'Category'), field('category')),
-        h('div', { className: 'formfield' },
-          h('label', null, 'Severity'),
-          h('select', { value: f.severity, onChange: function(e){ var v = e.target.value; setF(function(p){ return Object.assign({}, p, { severity: v }); }); } },
-            h('option', { value: 'crit' }, 'Critical'),
-            h('option', { value: 'high' }, 'High'),
-            h('option', { value: 'med' }, 'Medium'),
-            h('option', { value: 'low' }, 'Low')
-          )
-        ),
-        h('div', { className: 'formfield' }, h('label', null, 'Source File'), field('fileName')),
-        h('div', { className: 'formfield' }, h('label', null, 'Line / Ref'), field('lineNo')),
-        h('div', { className: 'formfield full' }, h('label', null, 'Match / Excerpt'), ta('match')),
-        h('div', { className: 'formfield full' }, h('label', null, 'Notes'), ta('notes'))
-      ),
-      h('button', { className: 'btn primary', onClick: submit }, 'Save Finding')
-    );
-  }
-
-  function NewActorForm(props){
-    var st = useState({ name:'', role:'', notes:'', firstSeen:'' });
-    var a = st[0], setA = st[1];
-    function set(k){ return function(e){ var v = e.target.value; setA(function(p){ var o={}; o[k]=v; return Object.assign({}, p, o); }); }; }
-    function submit(){
-      if (!a.name.trim()) { props.toast('Name required'); return; }
-      props.setDB(function(d){ return Object.assign({}, d, { actors: d.actors.concat([Object.assign({}, a, { id: uid('actor'), createdAt: nowISO() })]) }); });
-      props.toast('Actor added');
-      setA({ name:'', role:'', notes:'', firstSeen:'' });
-    }
-    return h('div', { className: 'panel' },
-      h('h2', null, '+ New Actor'),
-      h('div', { className: 'formgrid' },
-        h('div', { className: 'formfield' }, h('label', null, 'Name'), h('input', { type: 'text', value: a.name, onChange: set('name') })),
-        h('div', { className: 'formfield' }, h('label', null, 'Role'), h('input', { type: 'text', value: a.role, onChange: set('role') })),
-        h('div', { className: 'formfield' }, h('label', null, 'First Seen'), h('input', { type: 'date', value: a.firstSeen, onChange: set('firstSeen') })),
-        h('div', { className: 'formfield full' }, h('label', null, 'Notes'), h('textarea', { value: a.notes, onChange: set('notes') }))
-      ),
-      h('button', { className: 'btn primary', onClick: submit }, 'Save Actor')
-    );
-  }
-
-  function NewIOCForm(props){
-    var st = useState({ type:'ipv4', value:'', context:'', severity:'low' });
-    var i = st[0], setI = st[1];
-    function set(k){ return function(e){ var v = e.target.value; setI(function(p){ var o={}; o[k]=v; return Object.assign({}, p, o); }); }; }
-    function submit(){
-      if (!i.value.trim()) { props.toast('Value required'); return; }
-      props.setDB(function(d){ return Object.assign({}, d, { iocs: d.iocs.concat([Object.assign({}, i, { id: uid('ioc'), createdAt: nowISO() })]) }); });
-      props.toast('IOC added');
-      setI({ type:'ipv4', value:'', context:'', severity:'low' });
-    }
-    return h('div', { className: 'panel' },
-      h('h2', null, '+ New IOC'),
-      h('div', { className: 'formgrid' },
-        h('div', { className: 'formfield' },
-          h('label', null, 'Type'),
-          h('select', { value: i.type, onChange: set('type') },
-            ['ipv4','ipv6','domain','hash','mac','udid','other'].map(function(t){ return h('option', { key: t, value: t }, t.toUpperCase()); })
-          )
-        ),
-        h('div', { className: 'formfield' },
-          h('label', null, 'Severity'),
-          h('select', { value: i.severity, onChange: set('severity') },
-            h('option', { value: 'crit' }, 'Critical'),
-            h('option', { value: 'high' }, 'High'),
-            h('option', { value: 'med' }, 'Medium'),
-            h('option', { value: 'low' }, 'Low')
-          )
-        ),
-        h('div', { className: 'formfield full' }, h('label', null, 'Value'), h('input', { type: 'text', value: i.value, onChange: set('value') })),
-        h('div', { className: 'formfield full' }, h('label', null, 'Context'), h('textarea', { value: i.context, onChange: set('context') }))
-      ),
-      h('button', { className: 'btn primary', onClick: submit }, 'Save IOC')
-    );
-  }
-
-  // ============================================================
-  // QUERIES
-  // ============================================================
-  function QueryBuilder(props){
-    var db = props.db;
-    var f = useState('label'); var field = f[0], setField = f[1];
-    var op = useState('contains'); var oper = op[0], setOper = op[1];
-    var v = useState(''); var val = v[0], setVal = v[1];
-    var t = useState('findings'); var target = t[0], setTarget = t[1];
-    var r = useState([]); var results = r[0], setResults = r[1];
-    function run(){
-      var data = db[target] || [];
-      var s = val.toLowerCase();
-      var out = data.filter(function(row){
-        var rv = String(row[field] != null ? row[field] : '').toLowerCase();
-        if (oper === 'contains') return rv.indexOf(s) >= 0;
-        if (oper === 'equals') return rv === s;
-        if (oper === 'starts') return rv.indexOf(s) === 0;
-        if (oper === 'regex') { try { return new RegExp(val, 'i').test(String(row[field]||'')); } catch(e){ return false; } }
-        return false;
-      });
-      setResults(out);
-    }
-    return h('div', { className: 'panel' },
-      h('h2', null, 'Query Builder'),
-      h('div', { className: 'formgrid' },
-        h('div', { className: 'formfield' },
-          h('label', null, 'Table'),
-          h('select', { value: target, onChange: function(e){ setTarget(e.target.value); } },
-            ['findings','sources','timeline','actors','iocs','files'].map(function(x){ return h('option', { key: x, value: x }, x.charAt(0).toUpperCase()+x.slice(1)); })
-          )
-        ),
-        h('div', { className: 'formfield' }, h('label', null, 'Field'), h('input', { type: 'text', value: field, onChange: function(e){ setField(e.target.value); }, placeholder: 'label, category, severity…' })),
-        h('div', { className: 'formfield' },
-          h('label', null, 'Operator'),
-          h('select', { value: oper, onChange: function(e){ setOper(e.target.value); } },
-            h('option', { value: 'contains' }, 'contains'),
-            h('option', { value: 'equals' }, 'equals'),
-            h('option', { value: 'starts' }, 'starts with'),
-            h('option', { value: 'regex' }, 'regex')
-          )
-        ),
-        h('div', { className: 'formfield' }, h('label', null, 'Value'), h('input', { type: 'text', value: val, onChange: function(e){ setVal(e.target.value); } }))
-      ),
-      h('button', { className: 'btn primary', onClick: run }, 'Run Query'),
-      h('div', { className: 'divider' }),
-      h('div', { className: 'helptext' }, results.length + ' result(s)'),
-      h('div', { className: 'codebox' }, JSON.stringify(results.slice(0,50), null, 2))
-    );
-  }
-
-  function CriticalOnly(props){
-    var crit = props.db.findings.filter(function(f){ return f.severity === 'crit'; })
-      .sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
-    return h('div', { className: 'panel' },
-      h('h2', null, 'Critical Only (' + crit.length + ')'),
-      h(Table, {
-        columns: [
-          { key: 'label', label: 'Finding' },
-          { key: 'category', label: 'Category' },
-          { key: 'fileName', label: 'Source', mono: true },
-          { key: 'match', label: 'Match', mono: true, render: function(r){ return (r.match||'').slice(0,100); } }
-        ],
-        rows: crit, empty: 'No critical findings.'
-      })
-    );
-  }
-
-  function CrossPatterns(props){
-    var patternFiles = {};
-    props.db.findings.forEach(function(f){
-      if (!f.patternId) return;
-      if (!patternFiles[f.patternId]) patternFiles[f.patternId] = { label: f.label, severity: f.severity, files: {}, count: 0 };
-      patternFiles[f.patternId].files[f.fileName || 'unknown'] = true;
-      patternFiles[f.patternId].count++;
-    });
-    var cross = Object.keys(patternFiles).map(function(k){
-      var v = patternFiles[k];
-      var fk = Object.keys(v.files);
-      return { id: k, label: v.label, severity: v.severity, count: v.count, fileCount: fk.length, fileList: fk.join(', ') };
-    }).filter(function(r){ return r.fileCount > 1; })
-      .sort(function(a,b){ return b.fileCount - a.fileCount || (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
-    return h('div', { className: 'panel' },
-      h('h2', null, 'Cross-File Patterns (' + cross.length + ')'),
-      h('div', { className: 'helptext' }, 'Patterns matched in 2+ source files. Strong correlation candidates.'),
-      h(Table, {
-        columns: [
-          { key: 'severity', label: 'Sev', render: function(r){ return h(SeverityBadge, { s: r.severity }); } },
-          { key: 'label', label: 'Pattern' },
-          { key: 'fileCount', label: 'Files' },
-          { key: 'count', label: 'Hits' },
-          { key: 'fileList', label: 'Source files', mono: true }
-        ],
-        rows: cross, empty: 'No cross-file patterns yet. Load 2+ files to detect.'
-      })
-    );
-  }
-
-  // ============================================================
-  // REPORTS
-  // ============================================================
-  function ReportDashboard(props){
-    var db = props.db;
-    var counts = {
-      crit: db.findings.filter(function(f){ return f.severity==='crit'; }).length,
-      high: db.findings.filter(function(f){ return f.severity==='high'; }).length,
-      med:  db.findings.filter(function(f){ return f.severity==='med';  }).length,
-      low:  db.findings.filter(function(f){ return f.severity==='low';  }).length
-    };
-    var byCat = {};
-    db.findings.forEach(function(f){ var k = f.category || 'Uncat'; byCat[k] = (byCat[k]||0)+1; });
-    var cats = Object.keys(byCat).map(function(k){ return [k, byCat[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
-
-    function statBox(lbl, val, color){
-      return h('div', { className: 'stat' },
-        h('div', { className: 'lbl' }, lbl),
-        h('div', { className: 'val', style: color ? { color: color } : null }, val)
-      );
-    }
-
-    return h('div', null,
-      h('div', { className: 'panel' },
-        h('h2', null, 'Dashboard'),
-        h('div', { className: 'row' },
-          statBox('Critical', counts.crit, 'var(--crit)'),
-          statBox('High', counts.high, 'var(--high)'),
-          statBox('Medium', counts.med, 'var(--med)'),
-          statBox('Low', counts.low, 'var(--low)')
-        ),
-        h('div', { className: 'row' },
-          statBox('Findings', db.findings.length),
-          statBox('Files', db.files.length),
-          statBox('IOCs', db.iocs.length),
-          statBox('Actors', db.actors.length)
-        ),
-        h('h3', null, 'By Category'),
-        h(Table, {
-          columns: [{ key:'cat', label:'Category' }, { key:'n', label:'Count' }],
-          rows: cats.map(function(c){ return { cat: c[0], n: c[1], id: c[0] }; }),
-          empty: 'No findings yet.'
-        })
-      )
-    );
-  }
-
-  function ReportTrends(props){
-    var buckets = {};
-    props.db.findings.forEach(function(f){
-      var d = (f.createdAt || '').slice(0,10) || 'undated';
-      if (!buckets[d]) buckets[d] = { d: d, crit:0, high:0, med:0, low:0, total:0 };
-      buckets[d][f.severity] = (buckets[d][f.severity]||0) + 1;
-      buckets[d].total++;
-    });
-    var rows = Object.keys(buckets).map(function(k){ return buckets[k]; }).sort(function(a,b){ return a.d.localeCompare(b.d); });
-    var max = Math.max.apply(null, [1].concat(rows.map(function(r){ return r.total; })));
-    return h('div', { className: 'panel' },
-      h('h2', null, 'Time-Series Trends'),
-      h('div', { className: 'helptext' }, 'Findings by ingestion date. Bar shows total per day.'),
-      !rows.length ? h('div', { className: 'empty' }, 'No data yet.') :
-        rows.map(function(r){
-          return h('div', { key: r.d, style: { marginBottom: 6 } },
-            h('div', { style: { display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--dim)' } },
-              h('span', null, r.d),
-              h('span', null, r.total + ' (' + r.crit + 'C / ' + r.high + 'H / ' + r.med + 'M / ' + r.low + 'L)')
-            ),
-            h('div', { style: { height:10, background:'#1a1610', borderRadius:2, overflow:'hidden', display:'flex' } },
-              h('div', { style: { width: (r.crit/max*100)+'%', background:'var(--crit)' } }),
-              h('div', { style: { width: (r.high/max*100)+'%', background:'var(--high)' } }),
-              h('div', { style: { width: (r.med/max*100)+'%', background:'var(--med)' } }),
-              h('div', { style: { width: (r.low/max*100)+'%', background:'var(--low)' } })
-            )
-          );
-        })
-    );
-  }
-
-  function ReportSeverity(props){
-    var groups = ['crit','high','med','low'];
-    return h('div', null,
-      h('div', { className: 'panel' },
-        h('h2', null, 'Severity Report'),
-        h('h3', null, 'Severity Definitions (Plain & Simple)'),
-        groups.map(function(g){
-          return h('details', { key: g, open: true },
-            h('summary', null, h(SeverityBadge, { s: g }), ' ', SEV_LABEL[g]),
-            h('div', { style: { padding:'6px 0 8px', fontSize:12 } },
-              h('div', { style: { marginBottom: 6 } }, h('span', { className: 'pill' }, 'PLAIN'), ' ', SEV_EXPLAIN[g].plain),
-              h('div', null, h('span', { className: 'pill' }, 'SIMPLE'), ' ', SEV_EXPLAIN[g].simple)
-            )
-          );
-        })
-      ),
-      groups.map(function(g){
-        var items = props.db.findings.filter(function(f){ return f.severity === g; });
-        return h('div', { className: 'panel', key: g },
-          h('h2', null, h(SeverityBadge, { s: g }), ' ', SEV_LABEL[g] + ' (' + items.length + ')'),
-          h(Table, {
-            columns: [
-              { key:'label', label:'Finding' },
-              { key:'category', label:'Category' },
-              { key:'fileName', label:'Source', mono: true }
-            ],
-            rows: items, empty: 'No ' + SEV_LABEL[g].toLowerCase() + ' findings.'
-          })
-        );
-      })
-    );
-  }
-
-  function ReportCombos(props){
-    var fileMap = {};
-    props.db.findings.forEach(function(f){
-      var k = f.fileName || 'unknown';
-      if (!fileMap[k]) fileMap[k] = {};
-      if (f.patternId) fileMap[k][f.patternId] = true;
-    });
-    var combos = {};
-    Object.keys(fileMap).forEach(function(file){
-      var arr = Object.keys(fileMap[file]).sort();
-      for (var i=0;i<arr.length;i++) for (var j=i+1;j<arr.length;j++){
-        var k = arr[i] + ' + ' + arr[j];
-        if (!combos[k]) combos[k] = { combo: k, files: {} };
-        combos[k].files[file] = true;
-      }
-    });
-    var rows = Object.keys(combos).map(function(k){
-      var c = combos[k];
-      var fk = Object.keys(c.files);
-      return { combo: c.combo, fileCount: fk.length, files: fk.join(', ') };
-    }).filter(function(r){ return r.fileCount >= 2; })
-      .sort(function(a,b){ return b.fileCount - a.fileCount; })
-      .slice(0,50);
-    return h('div', { className: 'panel' },
-      h('h2', null, 'Cross-File Combos (' + rows.length + ')'),
-      h('div', { className: 'helptext' }, 'Pattern pairs that co-occur in 2+ files. Top 50 shown.'),
-      h(Table, {
-        columns: [
-          { key:'combo', label:'Pattern Pair', mono:true },
-          { key:'fileCount', label:'Files' },
-          { key:'files', label:'In files', mono:true }
-        ],
-        rows: rows, empty: 'No multi-file combos yet.'
-      })
-    );
-  }
-
-  // ============================================================
-  // TOPBAR + NAV
-  // ============================================================
-  function Topbar(props){
-    var fileRef = useRef(null);
-    var restoreRef = useRef(null);
-    return h('div', { className: 'topbar' },
-      h('div', { className: 'ribbon' },
-        h('div', { className: 'logo' }, '◆ Truth Finder ', h('small', null, 'v7 · GOLD')),
-        h('button', { className: 'btn navtoggle ghost', onClick: props.onToggleNav }, '☰'),
-        h('button', { className: 'btn primary', onClick: function(){ fileRef.current && fileRef.current.click(); }, disabled: props.busy },
-          props.busy ? ('Loading ' + props.progress + '%') : 'Load File'
-        ),
-        h('button', { className: 'btn', onClick: props.onSave }, 'Save DB'),
-        h('button', { className: 'btn', onClick: function(){ restoreRef.current && restoreRef.current.click(); } }, 'Restore'),
-        h('button', { className: 'btn', onClick: props.onPrint }, 'Print PDF'),
-        h('input', { ref: fileRef, type: 'file', onChange: function(e){
-          var f = e.target.files && e.target.files[0]; if (f) props.onLoad(f); e.target.value = '';
-        } }),
-        h('input', { ref: restoreRef, type: 'file', accept: '.json,application/json', onChange: function(e){
-          var f = e.target.files && e.target.files[0]; if (f) props.onRestore(f); e.target.value = '';
-        } })
-      ),
-      h('div', { className: 'filebar' },
-        h('span', { className: 'pill' }, 'FILE'),
-        h('span', { className: 'fname' }, props.fileName || '(no file loaded — tap Load File to ingest)'),
-        props.busy && h('div', { style: { width: 80 } }, h('div', { className: 'progress' }, h('div', { style: { width: props.progress + '%' } })))
-      )
-    );
-  }
-
-  function Nav(props){
-    var items = [
-      { group: 'Tables', items: [['findings','Findings'],['sources','Sources'],['timeline','Timeline'],['actors','Actors'],['iocs','IOCs'],['files','Files']] },
-      { group: 'Forms',  items: [['new_finding','+ New Finding'],['new_actor','+ New Actor'],['new_ioc','+ New IOC']] },
-      { group: 'Queries',items: [['query_builder','Query Builder'],['critical_only','Critical Only'],['cross_patterns','Cross-File Patterns']] },
-      { group: 'Reports',items: [['report_dashboard','Dashboard'],['report_trends','Time-Series Trends'],['report_severity','Severity Report'],['report_combos','Cross-File Combos']] }
-    ];
-    return h('div', { className: 'sidenav' + (props.collapsed ? ' collapsed' : '') },
-      items.map(function(g){
-        return h('div', { key: g.group },
-          h('div', { className: 'navgroup' }, g.group),
-          g.items.map(function(it){
-            return h('div', {
-              key: it[0],
-              className: 'navitem ' + (props.view === it[0] ? 'active' : ''),
-              onClick: function(){ props.setView(it[0]); }
-            }, it[1]);
-          })
-        );
-      })
-    );
-  }
-
-  // ============================================================
-  // APP
-  // ============================================================
-  function App(){
-    var dbs = useState(initialDB()); var db = dbs[0], setDB = dbs[1];
-    var vs = useState('report_dashboard'); var view = vs[0], setView = vs[1];
-    var ns = useState(window.innerWidth < 720); var navCollapsed = ns[0], setNavCollapsed = ns[1];
-    var bs = useState(false); var busy = bs[0], setBusy = bs[1];
-    var ps = useState(0); var progress = ps[0], setProgress = ps[1];
-    var fs = useState(''); var currentFile = fs[0], setCurrentFile = fs[1];
-    var ts = useState(''); var toastMsg = ts[0], setToastMsg = ts[1];
-
-    var toast = useCallback(function(msg){
-      setToastMsg(msg);
-      setTimeout(function(){ setToastMsg(''); }, 2400);
-    }, []);
-
-    var onLoad = useCallback(function(file){
-      setBusy(true); setProgress(0); setCurrentFile(file.name);
-      var fileId = uid('file');
-      var collected = [];
-      var iocsCollected = [];
-      ingestFile(file,
-        function(p){ setProgress(p); },
-        function(line, lineNo){
-          var hits = scanLine(line, file.name, fileId);
-          for (var i=0;i<hits.length;i++){
-            var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
-            collected.push(hit);
-            if (hit.category === 'IOC') {
-              iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
-            }
-          }
-        }
-      ).then(function(totalLines){
-        setDB(function(d){
-          return Object.assign({}, d, {
-            files:    d.files.concat([{ id: fileId, name: file.name, size: file.size, lines: totalLines, ingestedAt: nowISO(), hits: collected.length }]),
-            findings: d.findings.concat(collected),
-            iocs:     d.iocs.concat(iocsCollected),
-            sources:  d.sources.concat([{ id: uid('src'), name: file.name, type: 'file', addedAt: nowISO(), fileId: fileId }])
-          });
-        });
-        toast('Ingested ' + file.name + ' — ' + collected.length + ' hits across ' + totalLines + ' lines');
-        setView('findings');
-      }).catch(function(e){
-        toast('Ingest error: ' + (e && e.message ? e.message : 'unknown'));
-      }).then(function(){
-        setBusy(false); setProgress(0);
-      });
-    }, [toast]);
-
-    var onSave = useCallback(function(){
-      var data = JSON.stringify(Object.assign({}, db, { exportedAt: nowISO() }), null, 2);
-      downloadBlob(data, 'truthfinder_' + new Date().toISOString().slice(0,10) + '.json');
-      toast('Database saved');
-    }, [db, toast]);
-
-    var onRestore = useCallback(function(file){
-      var reader = new FileReader();
-      reader.onload = function(){
-        try {
-          var parsed = JSON.parse(reader.result);
-          if (!parsed || typeof parsed !== 'object') throw new Error('Invalid JSON');
-          setDB({
-            meta: parsed.meta || initialDB().meta,
-            findings: parsed.findings || [],
-            sources: parsed.sources || [],
-            timeline: parsed.timeline || [],
-            actors: parsed.actors || [],
-            iocs: parsed.iocs || [],
-            files: parsed.files || []
-          });
-          toast('Database restored');
-        } catch(e){
-          toast('Restore failed: ' + (e && e.message ? e.message : 'invalid file'));
-        }
+        offset += chunkSize;
+        onProgress(Math.min(100, Math.round((offset/total)*100)));
+        setTimeout(readNext, 0);
       };
-      reader.onerror = function(){ toast('Restore failed: read error'); };
-      reader.readAsText(file);
-    }, [toast]);
+      reader.onerror = function(){ reject(new Error('Read error')); };
+      reader.readAsText(slice);
+    }
+    readNext();
+  });
+}
 
-    var onPrint = useCallback(function(){
-      setView('report_dashboard');
-      setTimeout(function(){ window.print(); }, 250);
-    }, []);
+function scanLine(line, fileName, fileId){
+  var hits = [];
+  for (var i=0;i<PATTERNS.length;i++){
+    var p = PATTERNS[i];
+    var m = line.match(p.re);
+    if (m) {
+      hits.push({
+        patternId: p.id, label: p.label, category: p.cat, severity: p.sev,
+        match: String(m[0]).slice(0,200), fileName: fileName, fileId: fileId
+      });
+    }
+  }
+  return hits;
+}
 
-    function renderView(){
-      switch (view) {
-        case 'findings': return h(FindingsView, { db: db, setDB: setDB });
-        case 'sources': return h(SimpleTableView, {
-          title: 'Sources', rows: db.sources,
-          columns: [{key:'name',label:'Name'},{key:'type',label:'Type'},{key:'addedAt',label:'Added',mono:true}],
-          empty: 'No sources.'
-        });
-        case 'timeline': return h(SimpleTableView, {
-          title: 'Timeline', rows: db.timeline,
-          columns: [{key:'when',label:'When'},{key:'event',label:'Event'},{key:'notes',label:'Notes'}],
-          empty: 'No timeline events. Restore a JSON or extend via future form.'
-        });
-        case 'actors': return h(SimpleTableView, {
-          title: 'Actors', rows: db.actors,
-          columns: [{key:'name',label:'Name'},{key:'role',label:'Role'},{key:'firstSeen',label:'First Seen'},{key:'notes',label:'Notes'}],
-          empty: 'No actors yet.'
-        });
-        case 'iocs': return h(SimpleTableView, {
-          title: 'IOCs', rows: db.iocs,
-          columns: [
-            {key:'type',label:'Type'},
-            {key:'value',label:'Value',mono:true},
-            {key:'severity',label:'Sev',render:function(r){ return h(SeverityBadge,{s:r.severity}); }},
-            {key:'context',label:'Context',mono:true}
-          ],
-          empty: 'No IOCs yet.'
-        });
-        case 'files': return h(SimpleTableView, {
-          title: 'Files', rows: db.files,
-          columns: [
-            {key:'name',label:'Name'},{key:'size',label:'Bytes'},{key:'lines',label:'Lines'},
-            {key:'hits',label:'Hits'},{key:'ingestedAt',label:'Ingested',mono:true}
-          ],
-          empty: 'No files ingested.'
-        });
-        case 'new_finding': return h(NewFindingForm, { db: db, setDB: setDB, toast: toast });
-        case 'new_actor':   return h(NewActorForm,   { db: db, setDB: setDB, toast: toast });
-        case 'new_ioc':     return h(NewIOCForm,     { db: db, setDB: setDB, toast: toast });
-        case 'query_builder':  return h(QueryBuilder,  { db: db });
-        case 'critical_only':  return h(CriticalOnly,  { db: db });
-        case 'cross_patterns': return h(CrossPatterns, { db: db });
-        case 'report_dashboard': return h(ReportDashboard, { db: db });
-        case 'report_trends':    return h(ReportTrends,    { db: db });
-        case 'report_severity':  return h(ReportSeverity,  { db: db });
-        case 'report_combos':    return h(ReportCombos,    { db: db });
-        default: return h(ReportDashboard, { db: db });
+// ============================================================
+// ACTIONS
+// ============================================================
+function setView(v){
+  state.view = v;
+  if (window.innerWidth < 720) state.navCollapsed = true;
+  render();
+}
+function toggleNav(){ state.navCollapsed = !state.navCollapsed; render(); }
+
+function handleLoadFile(file){
+  if (!file) return;
+  state.busy = true; state.progress = 0; state.currentFile = file.name;
+  render();
+  var fileId = uid('file');
+  var collected = [];
+  var iocsCollected = [];
+
+  ingestFile(file,
+    function(p){ state.progress = p; updateTopbarProgress(); },
+    function(line, lineNo){
+      var hits = scanLine(line, file.name, fileId);
+      for (var i=0;i<hits.length;i++){
+        var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
+        collected.push(hit);
+        if (hit.category === 'IOC') {
+          iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
+        }
       }
     }
+  ).then(function(totalLines){
+    state.db.files.push({ id: fileId, name: file.name, size: file.size, lines: totalLines, ingestedAt: nowISO(), hits: collected.length });
+    state.db.findings = state.db.findings.concat(collected);
+    state.db.iocs = state.db.iocs.concat(iocsCollected);
+    state.db.sources.push({ id: uid('src'), name: file.name, type:'file', addedAt: nowISO(), fileId: fileId });
+    state.busy = false; state.progress = 0;
+    state.view = 'findings';
+    render();
+    toast('Ingested ' + file.name + ' — ' + collected.length + ' hits / ' + totalLines + ' lines');
+  }).catch(function(e){
+    state.busy = false; state.progress = 0;
+    render();
+    toast('Ingest error: ' + (e && e.message ? e.message : 'unknown'));
+  });
+}
 
-    return h('div', null,
-      h(Topbar, {
-        onLoad: onLoad, onSave: onSave, onRestore: onRestore, onPrint: onPrint,
-        onToggleNav: function(){ setNavCollapsed(function(c){ return !c; }); },
-        fileName: currentFile, busy: busy, progress: progress
-      }),
-      h('div', { className: 'container' },
-        h(Nav, {
-          view: view,
-          setView: function(v){ setView(v); if (window.innerWidth < 720) setNavCollapsed(true); },
-          collapsed: navCollapsed
-        }),
-        h('div', { className: 'main' }, renderView())
-      ),
-      toastMsg ? h('div', { className: 'toast' }, toastMsg) : null
-    );
-  }
+function handleSaveDB(){
+  var data = JSON.stringify(Object.assign({}, state.db, { exportedAt: nowISO() }), null, 2);
+  downloadBlob(data, 'truthfinder_' + new Date().toISOString().slice(0,10) + '.json');
+  toast('Database saved');
+}
 
-  try {
-    var root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(h(App));
-  } catch (err) {
-    document.getElementById('boot-error').textContent = 'Render error: ' + (err && err.message ? err.message : err);
+function handleRestore(file){
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    try {
+      var parsed = JSON.parse(reader.result);
+      if (!parsed || typeof parsed !== 'object') throw new Error('Invalid JSON');
+      state.db = {
+        meta: parsed.meta || initialDB().meta,
+        findings: parsed.findings || [],
+        sources: parsed.sources || [],
+        timeline: parsed.timeline || [],
+        actors: parsed.actors || [],
+        iocs: parsed.iocs || [],
+        files: parsed.files || []
+      };
+      render();
+      toast('Database restored');
+    } catch(e){
+      toast('Restore failed: ' + (e && e.message ? e.message : 'invalid file'));
+    }
+  };
+  reader.onerror = function(){ toast('Restore failed: read error'); };
+  reader.readAsText(file);
+}
+
+function handlePrint(){
+  state.view = 'report_dashboard';
+  render();
+  setTimeout(function(){ window.print(); }, 250);
+}
+
+function removeFinding(id){
+  state.db.findings = state.db.findings.filter(function(f){ return f.id !== id; });
+  render();
+}
+
+// ============================================================
+// COMPONENTS
+// ============================================================
+function sevBadge(s){ return el('span', { class: 'sev ' + s }, SEV_LABEL[s] || s); }
+
+function buildTable(columns, rows, emptyMsg) {
+  if (!rows.length) return el('div', { class: 'empty' }, emptyMsg || 'No records');
+  var head = el('tr', null, columns.map(function(c){ return el('th', null, c.label); }));
+  var body = rows.map(function(r, i){
+    return el('tr', { key: r.id || i }, columns.map(function(c){
+      var content = c.render ? c.render(r) : (r[c.key] != null ? String(r[c.key]) : '');
+      return el('td', { class: c.mono ? 'mono' : '' }, content);
+    }));
+  });
+  return el('div', { class: 'tablewrap' },
+    el('table', null, [
+      el('thead', null, head),
+      el('tbody', null, body)
+    ])
+  );
+}
+
+// ============================================================
+// VIEWS
+// ============================================================
+function viewFindings(){
+  var q = state.findingsQ.toLowerCase();
+  var sev = state.findingsSev;
+  var filtered = state.db.findings.filter(function(f){
+    if (sev !== 'all' && f.severity !== sev) return false;
+    if (q) {
+      if ((f.label||'').toLowerCase().indexOf(q) < 0 &&
+          (f.category||'').toLowerCase().indexOf(q) < 0 &&
+          (f.match||'').toLowerCase().indexOf(q) < 0 &&
+          (f.fileName||'').toLowerCase().indexOf(q) < 0) return false;
+    }
+    return true;
+  }).sort(function(a,b){ return (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
+
+  var qInput = el('input', { type:'text', placeholder:'Search findings…', value: state.findingsQ, oninput: function(e){ state.findingsQ = e.target.value; renderMain(); } });
+  var sevSel = el('select', { onchange: function(e){ state.findingsSev = e.target.value; renderMain(); } }, [
+    el('option', { value:'all' }, 'All severities'),
+    el('option', { value:'crit' }, 'Critical'),
+    el('option', { value:'high' }, 'High'),
+    el('option', { value:'med' }, 'Medium'),
+    el('option', { value:'low' }, 'Low')
+  ]);
+  sevSel.value = state.findingsSev;
+
+  return el('div', { class:'panel' }, [
+    el('h2', null, 'Findings (' + filtered.length + ' / ' + state.db.findings.length + ')'),
+    el('div', { class:'toolbar' }, [qInput, sevSel]),
+    buildTable([
+      { key:'severity', label:'Sev', render: function(r){ return sevBadge(r.severity); } },
+      { key:'label', label:'Finding' },
+      { key:'category', label:'Category' },
+      { key:'fileName', label:'Source', mono:true },
+      { key:'lineNo', label:'Line', render: function(r){ return r.lineNo != null ? String(r.lineNo) : '—'; } },
+      { key:'match', label:'Match', mono:true, render: function(r){ return (r.match||'').slice(0,80); } },
+      { key:'actions', label:'', render: function(r){ return el('button', { class:'btn danger', onclick: function(){ removeFinding(r.id); } }, '×'); } }
+    ], filtered, 'No findings yet. Load a file or add one manually.')
+  ]);
+}
+
+function simpleTableView(title, rows, columns, emptyMsg, key){
+  state.searches[key] = state.searches[key] || '';
+  var q = state.searches[key].toLowerCase();
+  var filtered = q ? rows.filter(function(r){
+    var keys = Object.keys(r);
+    for (var i=0;i<keys.length;i++) if (String(r[keys[i]]||'').toLowerCase().indexOf(q) >= 0) return true;
+    return false;
+  }) : rows;
+  var input = el('input', { type:'text', placeholder:'Search…', value: state.searches[key], oninput: function(e){ state.searches[key] = e.target.value; renderMain(); } });
+  return el('div', { class:'panel' }, [
+    el('h2', null, title + ' (' + filtered.length + ')'),
+    el('div', { class:'toolbar' }, input),
+    buildTable(columns, filtered, emptyMsg)
+  ]);
+}
+
+function viewSources(){ return simpleTableView('Sources', state.db.sources,
+  [{key:'name',label:'Name'},{key:'type',label:'Type'},{key:'addedAt',label:'Added',mono:true}],
+  'No sources.', 'sources'); }
+function viewTimeline(){ return simpleTableView('Timeline', state.db.timeline,
+  [{key:'when',label:'When'},{key:'event',label:'Event'},{key:'notes',label:'Notes'}],
+  'No timeline events. Restore a JSON to populate.', 'timeline'); }
+function viewActors(){ return simpleTableView('Actors', state.db.actors,
+  [{key:'name',label:'Name'},{key:'role',label:'Role'},{key:'firstSeen',label:'First Seen'},{key:'notes',label:'Notes'}],
+  'No actors yet.', 'actors'); }
+function viewIOCs(){ return simpleTableView('IOCs', state.db.iocs,
+  [{key:'type',label:'Type'},{key:'value',label:'Value',mono:true},
+   {key:'severity',label:'Sev',render:function(r){ return sevBadge(r.severity); }},
+   {key:'context',label:'Context',mono:true}],
+  'No IOCs yet.', 'iocs'); }
+function viewFiles(){ return simpleTableView('Files', state.db.files,
+  [{key:'name',label:'Name'},{key:'size',label:'Bytes'},{key:'lines',label:'Lines'},
+   {key:'hits',label:'Hits'},{key:'ingestedAt',label:'Ingested',mono:true}],
+  'No files ingested.', 'files'); }
+
+// FORMS
+function viewNewFinding(){
+  var f = state.formFinding = state.formFinding || { label:'', category:'Manual', severity:'med', match:'', fileName:'', lineNo:'', notes:'' };
+  function inp(key, type){
+    var n = el('input', { type: type || 'text', value: f[key], oninput: function(e){ f[key] = e.target.value; } });
+    return n;
   }
+  function ta(key){
+    var n = el('textarea', { oninput: function(e){ f[key] = e.target.value; } });
+    n.value = f[key]; return n;
+  }
+  var sevSel = el('select', { onchange: function(e){ f.severity = e.target.value; } }, [
+    el('option', { value:'crit' }, 'Critical'),
+    el('option', { value:'high' }, 'High'),
+    el('option', { value:'med' }, 'Medium'),
+    el('option', { value:'low' }, 'Low')
+  ]);
+  sevSel.value = f.severity;
+  return el('div', { class:'panel' }, [
+    el('h2', null, '+ New Finding'),
+    el('div', { class:'formgrid' }, [
+      el('div', { class:'formfield full' }, [el('label', null, 'Label'), inp('label')]),
+      el('div', { class:'formfield' }, [el('label', null, 'Category'), inp('category')]),
+      el('div', { class:'formfield' }, [el('label', null, 'Severity'), sevSel]),
+      el('div', { class:'formfield' }, [el('label', null, 'Source File'), inp('fileName')]),
+      el('div', { class:'formfield' }, [el('label', null, 'Line / Ref'), inp('lineNo')]),
+      el('div', { class:'formfield full' }, [el('label', null, 'Match / Excerpt'), ta('match')]),
+      el('div', { class:'formfield full' }, [el('label', null, 'Notes'), ta('notes')])
+    ]),
+    el('button', { class:'btn primary', onclick: function(){
+      if (!f.label.trim()) { toast('Label required'); return; }
+      state.db.findings.push(Object.assign({}, f, { id: uid('find'), createdAt: nowISO(), source:'manual' }));
+      state.formFinding = { label:'', category:'Manual', severity:'med', match:'', fileName:'', lineNo:'', notes:'' };
+      toast('Finding added'); renderMain();
+    } }, 'Save Finding')
+  ]);
+}
+
+function viewNewActor(){
+  var a = state.formActor = state.formActor || { name:'', role:'', notes:'', firstSeen:'' };
+  function inp(key, type){
+    return el('input', { type: type || 'text', value: a[key], oninput: function(e){ a[key] = e.target.value; } });
+  }
+  return el('div', { class:'panel' }, [
+    el('h2', null, '+ New Actor'),
+    el('div', { class:'formgrid' }, [
+      el('div', { class:'formfield' }, [el('label', null, 'Name'), inp('name')]),
+      el('div', { class:'formfield' }, [el('label', null, 'Role'), inp('role')]),
+      el('div', { class:'formfield' }, [el('label', null, 'First Seen'), inp('firstSeen','date')]),
+      el('div', { class:'formfield full' }, [el('label', null, 'Notes'),
+        (function(){ var t = el('textarea', { oninput: function(e){ a.notes = e.target.value; } }); t.value = a.notes; return t; })()
+      ])
+    ]),
+    el('button', { class:'btn primary', onclick: function(){
+      if (!a.name.trim()) { toast('Name required'); return; }
+      state.db.actors.push(Object.assign({}, a, { id: uid('actor'), createdAt: nowISO() }));
+      state.formActor = { name:'', role:'', notes:'', firstSeen:'' };
+      toast('Actor added'); renderMain();
+    } }, 'Save Actor')
+  ]);
+}
+
+function viewNewIOC(){
+  var i = state.formIOC = state.formIOC || { type:'ipv4', value:'', context:'', severity:'low' };
+  var typeSel = el('select', { onchange: function(e){ i.type = e.target.value; } },
+    ['ipv4','ipv6','domain','hash','mac','udid','other'].map(function(t){ return el('option',{value:t},t.toUpperCase()); })
+  );
+  typeSel.value = i.type;
+  var sevSel = el('select', { onchange: function(e){ i.severity = e.target.value; } }, [
+    el('option', { value:'crit' }, 'Critical'),
+    el('option', { value:'high' }, 'High'),
+    el('option', { value:'med' }, 'Medium'),
+    el('option', { value:'low' }, 'Low')
+  ]);
+  sevSel.value = i.severity;
+  return el('div', { class:'panel' }, [
+    el('h2', null, '+ New IOC'),
+    el('div', { class:'formgrid' }, [
+      el('div', { class:'formfield' }, [el('label', null, 'Type'), typeSel]),
+      el('div', { class:'formfield' }, [el('label', null, 'Severity'), sevSel]),
+      el('div', { class:'formfield full' }, [el('label', null, 'Value'),
+        el('input', { type:'text', value: i.value, oninput: function(e){ i.value = e.target.value; } })
+      ]),
+      el('div', { class:'formfield full' }, [el('label', null, 'Context'),
+        (function(){ var t = el('textarea', { oninput: function(e){ i.context = e.target.value; } }); t.value = i.context; return t; })()
+      ])
+    ]),
+    el('button', { class:'btn primary', onclick: function(){
+      if (!i.value.trim()) { toast('Value required'); return; }
+      state.db.iocs.push(Object.assign({}, i, { id: uid('ioc'), createdAt: nowISO() }));
+      state.formIOC = { type:'ipv4', value:'', context:'', severity:'low' };
+      toast('IOC added'); renderMain();
+    } }, 'Save IOC')
+  ]);
+}
+
+// QUERIES
+function viewQueryBuilder(){
+  state.qb = state.qb || { target:'findings', field:'label', op:'contains', val:'', results:[] };
+  var qb = state.qb;
+  var tSel = el('select', { onchange: function(e){ qb.target = e.target.value; } },
+    ['findings','sources','timeline','actors','iocs','files'].map(function(x){ return el('option',{value:x}, x.charAt(0).toUpperCase()+x.slice(1)); })
+  );
+  tSel.value = qb.target;
+  var opSel = el('select', { onchange: function(e){ qb.op = e.target.value; } }, [
+    el('option', { value:'contains' }, 'contains'),
+    el('option', { value:'equals' }, 'equals'),
+    el('option', { value:'starts' }, 'starts with'),
+    el('option', { value:'regex' }, 'regex')
+  ]);
+  opSel.value = qb.op;
+  return el('div', { class:'panel' }, [
+    el('h2', null, 'Query Builder'),
+    el('div', { class:'formgrid' }, [
+      el('div', { class:'formfield' }, [el('label', null, 'Table'), tSel]),
+      el('div', { class:'formfield' }, [el('label', null, 'Field'),
+        el('input', { type:'text', value: qb.field, oninput: function(e){ qb.field = e.target.value; }, placeholder:'label, category, severity…' })
+      ]),
+      el('div', { class:'formfield' }, [el('label', null, 'Operator'), opSel]),
+      el('div', { class:'formfield' }, [el('label', null, 'Value'),
+        el('input', { type:'text', value: qb.val, oninput: function(e){ qb.val = e.target.value; } })
+      ])
+    ]),
+    el('button', { class:'btn primary', onclick: function(){
+      var data = state.db[qb.target] || [];
+      var s = qb.val.toLowerCase();
+      qb.results = data.filter(function(row){
+        var rv = String(row[qb.field] != null ? row[qb.field] : '').toLowerCase();
+        if (qb.op === 'contains') return rv.indexOf(s) >= 0;
+        if (qb.op === 'equals') return rv === s;
+        if (qb.op === 'starts') return rv.indexOf(s) === 0;
+        if (qb.op === 'regex') { try { return new RegExp(qb.val, 'i').test(String(row[qb.field]||'')); } catch(e){ return false; } }
+        return false;
+      });
+      renderMain();
+    } }, 'Run Query'),
+    el('div', { class:'divider' }),
+    el('div', { class:'helptext' }, qb.results.length + ' result(s)'),
+    el('div', { class:'codebox' }, JSON.stringify(qb.results.slice(0,50), null, 2))
+  ]);
+}
+
+function viewCriticalOnly(){
+  var crit = state.db.findings.filter(function(f){ return f.severity === 'crit'; })
+    .sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); });
+  return el('div', { class:'panel' }, [
+    el('h2', null, 'Critical Only (' + crit.length + ')'),
+    buildTable([
+      { key:'label', label:'Finding' },
+      { key:'category', label:'Category' },
+      { key:'fileName', label:'Source', mono:true },
+      { key:'match', label:'Match', mono:true, render: function(r){ return (r.match||'').slice(0,100); } }
+    ], crit, 'No critical findings.')
+  ]);
+}
+
+function viewCrossPatterns(){
+  var pf = {};
+  state.db.findings.forEach(function(f){
+    if (!f.patternId) return;
+    if (!pf[f.patternId]) pf[f.patternId] = { label: f.label, severity: f.severity, files: {}, count: 0 };
+    pf[f.patternId].files[f.fileName || 'unknown'] = true;
+    pf[f.patternId].count++;
+  });
+  var cross = Object.keys(pf).map(function(k){
+    var v = pf[k]; var fk = Object.keys(v.files);
+    return { id:k, label:v.label, severity:v.severity, count:v.count, fileCount: fk.length, fileList: fk.join(', ') };
+  }).filter(function(r){ return r.fileCount > 1; })
+    .sort(function(a,b){ return b.fileCount - a.fileCount || (SEV_RANK[b.severity]||0) - (SEV_RANK[a.severity]||0); });
+  return el('div', { class:'panel' }, [
+    el('h2', null, 'Cross-File Patterns (' + cross.length + ')'),
+    el('div', { class:'helptext' }, 'Patterns matched in 2+ source files. Strong correlation candidates.'),
+    buildTable([
+      { key:'severity', label:'Sev', render: function(r){ return sevBadge(r.severity); } },
+      { key:'label', label:'Pattern' },
+      { key:'fileCount', label:'Files' },
+      { key:'count', label:'Hits' },
+      { key:'fileList', label:'Source files', mono:true }
+    ], cross, 'No cross-file patterns yet. Load 2+ files to detect.')
+  ]);
+}
+
+// REPORTS
+function viewDashboard(){
+  var counts = { crit:0, high:0, med:0, low:0 };
+  state.db.findings.forEach(function(f){ if (counts[f.severity] != null) counts[f.severity]++; });
+  var byCat = {};
+  state.db.findings.forEach(function(f){ var c = f.category || 'Uncat'; byCat[c] = (byCat[c]||0)+1; });
+  var cats = Object.keys(byCat).map(function(k){ return [k, byCat[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
+
+  function statBox(lbl, val, color){
+    var v = el('div', { class:'val' }, String(val));
+    if (color) v.style.color = color;
+    return el('div', { class:'stat' }, [el('div', { class:'lbl' }, lbl), v]);
+  }
+  return el('div', null, el('div', { class:'panel' }, [
+    el('h2', null, 'Dashboard'),
+    el('div', { class:'row' }, [
+      statBox('Critical', counts.crit, 'var(--crit)'),
+      statBox('High', counts.high, 'var(--high)'),
+      statBox('Medium', counts.med, 'var(--med)'),
+      statBox('Low', counts.low, 'var(--low)')
+    ]),
+    el('div', { class:'row' }, [
+      statBox('Findings', state.db.findings.length),
+      statBox('Files', state.db.files.length),
+      statBox('IOCs', state.db.iocs.length),
+      statBox('Actors', state.db.actors.length)
+    ]),
+    el('h3', null, 'By Category'),
+    buildTable(
+      [{key:'cat',label:'Category'},{key:'n',label:'Count'}],
+      cats.map(function(c){ return { cat:c[0], n:c[1], id:c[0] }; }),
+      'No findings yet.'
+    )
+  ]));
+}
+
+function viewTrends(){
+  var buckets = {};
+  state.db.findings.forEach(function(f){
+    var d = (f.createdAt || '').slice(0,10) || 'undated';
+    if (!buckets[d]) buckets[d] = { d:d, crit:0, high:0, med:0, low:0, total:0 };
+    if (buckets[d][f.severity] != null) buckets[d][f.severity]++;
+    buckets[d].total++;
+  });
+  var rows = Object.keys(buckets).map(function(k){ return buckets[k]; }).sort(function(a,b){ return a.d.localeCompare(b.d); });
+  var max = 1;
+  rows.forEach(function(r){ if (r.total > max) max = r.total; });
+  var contents = [el('h2', null, 'Time-Series Trends'),
+    el('div', { class:'helptext' }, 'Findings by ingestion date. Bar shows total per day.')];
+  if (!rows.length) contents.push(el('div', { class:'empty' }, 'No data yet.'));
+  else rows.forEach(function(r){
+    var bar = el('div', { class:'bar' }, [
+      (function(){ var d = el('div', null); d.style.width = (r.crit/max*100)+'%'; d.style.background = 'var(--crit)'; return d; })(),
+      (function(){ var d = el('div', null); d.style.width = (r.high/max*100)+'%'; d.style.background = 'var(--high)'; return d; })(),
+      (function(){ var d = el('div', null); d.style.width = (r.med/max*100)+'%'; d.style.background = 'var(--med)'; return d; })(),
+      (function(){ var d = el('div', null); d.style.width = (r.low/max*100)+'%'; d.style.background = 'var(--low)'; return d; })()
+    ]);
+    contents.push(el('div', { class:'trendrow' }, [
+      el('div', { class:'barlbl' }, [el('span', null, r.d), el('span', null, r.total + ' (' + r.crit + 'C / ' + r.high + 'H / ' + r.med + 'M / ' + r.low + 'L)')]),
+      bar
+    ]));
+  });
+  return el('div', { class:'panel' }, contents);
+}
+
+function viewSeverity(){
+  var groups = ['crit','high','med','low'];
+  var defs = el('div', { class:'panel' }, [
+    el('h2', null, 'Severity Report'),
+    el('h3', null, 'Severity Definitions (Plain & Simple)')
+  ].concat(groups.map(function(g){
+    return el('details', { open: true }, [
+      el('summary', null, [sevBadge(g), ' ', SEV_LABEL[g]]),
+      el('div', { style:{ padding:'6px 0 8px', fontSize:'12px' } }, [
+        el('div', { style:{ marginBottom:'6px' } }, [el('span', { class:'pill' }, 'PLAIN'), ' ' + SEV_EXPLAIN[g].plain]),
+        el('div', null, [el('span', { class:'pill' }, 'SIMPLE'), ' ' + SEV_EXPLAIN[g].simple])
+      ])
+    ]);
+  })));
+  var sections = groups.map(function(g){
+    var items = state.db.findings.filter(function(f){ return f.severity === g; });
+    return el('div', { class:'panel' }, [
+      el('h2', null, [sevBadge(g), ' ' + SEV_LABEL[g] + ' (' + items.length + ')']),
+      buildTable(
+        [{key:'label',label:'Finding'},{key:'category',label:'Category'},{key:'fileName',label:'Source',mono:true}],
+        items, 'No ' + SEV_LABEL[g].toLowerCase() + ' findings.'
+      )
+    ]);
+  });
+  return el('div', null, [defs].concat(sections));
+}
+
+function viewCombos(){
+  var fileMap = {};
+  state.db.findings.forEach(function(f){
+    var k = f.fileName || 'unknown';
+    if (!fileMap[k]) fileMap[k] = {};
+    if (f.patternId) fileMap[k][f.patternId] = true;
+  });
+  var combos = {};
+  Object.keys(fileMap).forEach(function(file){
+    var arr = Object.keys(fileMap[file]).sort();
+    for (var i=0;i<arr.length;i++) for (var j=i+1;j<arr.length;j++){
+      var k = arr[i] + ' + ' + arr[j];
+      if (!combos[k]) combos[k] = { combo:k, files:{} };
+      combos[k].files[file] = true;
+    }
+  });
+  var rows = Object.keys(combos).map(function(k){
+    var c = combos[k]; var fk = Object.keys(c.files);
+    return { combo:c.combo, fileCount:fk.length, files:fk.join(', ') };
+  }).filter(function(r){ return r.fileCount >= 2; })
+    .sort(function(a,b){ return b.fileCount - a.fileCount; })
+    .slice(0,50);
+  return el('div', { class:'panel' }, [
+    el('h2', null, 'Cross-File Combos (' + rows.length + ')'),
+    el('div', { class:'helptext' }, 'Pattern pairs that co-occur in 2+ files. Top 50 shown.'),
+    buildTable(
+      [{key:'combo',label:'Pattern Pair',mono:true},{key:'fileCount',label:'Files'},{key:'files',label:'In files',mono:true}],
+      rows, 'No multi-file combos yet.'
+    )
+  ]);
+}
+
+// ============================================================
+// TOPBAR (with hidden file inputs + custom buttons)
+// ============================================================
+function buildTopbar(){
+  var loadInput = el('input', {
+    type:'file', class:'hidden-file', id:'load-input',
+    onchange: function(e){
+      var f = e.target.files && e.target.files[0];
+      if (f) handleLoadFile(f);
+      e.target.value = '';
+    }
+  });
+  var restoreInput = el('input', {
+    type:'file', accept:'.json,application/json', class:'hidden-file', id:'restore-input',
+    onchange: function(e){
+      var f = e.target.files && e.target.files[0];
+      if (f) handleRestore(f);
+      e.target.value = '';
+    }
+  });
+
+  var loadBtn = el('button', {
+    class: 'btn primary',
+    disabled: state.busy ? true : null,
+    onclick: function(){ document.getElementById('load-input').click(); }
+  }, state.busy ? ('Loading ' + state.progress + '%') : 'Load File');
+
+  var saveBtn = el('button', { class:'btn', onclick: handleSaveDB }, 'Save DB');
+  var restoreBtn = el('button', { class:'btn', onclick: function(){ document.getElementById('restore-input').click(); } }, 'Restore');
+  var printBtn = el('button', { class:'btn', onclick: handlePrint }, 'Print PDF');
+  var navBtn = el('button', { class:'btn navtoggle ghost', onclick: toggleNav }, '☰');
+
+  var ribbon = el('div', { class:'ribbon' }, [
+    el('div', { class:'logo' }, [
+      el('span', null, '◆ Truth Finder '),
+      el('small', null, 'v7 · GOLD')
+    ]),
+    navBtn, loadBtn, saveBtn, restoreBtn, printBtn,
+    loadInput, restoreInput
+  ]);
+
+  var fileChildren = [
+    el('span', { class:'pill' }, 'FILE'),
+    el('span', { class:'fname' }, state.currentFile || '(no file loaded — tap Load File to ingest)')
+  ];
+  if (state.busy) {
+    var bar = el('div', null);
+    bar.style.width = state.progress + '%';
+    fileChildren.push(el('div', { class:'progress', id:'progress-bar' }, bar));
+  }
+  var filebar = el('div', { class:'filebar' }, fileChildren);
+  return el('div', { class:'topbar' }, [ribbon, filebar]);
+}
+
+function updateTopbarProgress(){
+  var btn = document.querySelector('.btn.primary');
+  if (btn && state.busy) btn.textContent = 'Loading ' + state.progress + '%';
+  var pb = document.getElementById('progress-bar');
+  if (pb && pb.firstChild) pb.firstChild.style.width = state.progress + '%';
+}
+
+// ============================================================
+// NAV
+// ============================================================
+function buildNav(){
+  var groups = [
+    { group:'Tables', items:[['findings','Findings'],['sources','Sources'],['timeline','Timeline'],['actors','Actors'],['iocs','IOCs'],['files','Files']] },
+    { group:'Forms', items:[['new_finding','+ New Finding'],['new_actor','+ New Actor'],['new_ioc','+ New IOC']] },
+    { group:'Queries', items:[['query_builder','Query Builder'],['critical_only','Critical Only'],['cross_patterns','Cross-File Patterns']] },
+    { group:'Reports', items:[['report_dashboard','Dashboard'],['report_trends','Time-Series Trends'],['report_severity','Severity Report'],['report_combos','Cross-File Combos']] }
+  ];
+  var nodes = [];
+  groups.forEach(function(g){
+    nodes.push(el('div', { class:'navgroup' }, g.group));
+    g.items.forEach(function(it){
+      nodes.push(el('div', {
+        class: 'navitem' + (state.view === it[0] ? ' active' : ''),
+        onclick: (function(k){ return function(){ setView(k); }; })(it[0])
+      }, it[1]));
+    });
+  });
+  var nav = document.getElementById('sidenav');
+  nav.className = 'sidenav' + (state.navCollapsed ? ' collapsed' : '');
+  return nodes;
+}
+
+// ============================================================
+// MAIN VIEW DISPATCH
+// ============================================================
+function buildMain(){
+  switch (state.view) {
+    case 'findings': return viewFindings();
+    case 'sources': return viewSources();
+    case 'timeline': return viewTimeline();
+    case 'actors': return viewActors();
+    case 'iocs': return viewIOCs();
+    case 'files': return viewFiles();
+    case 'new_finding': return viewNewFinding();
+    case 'new_actor': return viewNewActor();
+    case 'new_ioc': return viewNewIOC();
+    case 'query_builder': return viewQueryBuilder();
+    case 'critical_only': return viewCriticalOnly();
+    case 'cross_patterns': return viewCrossPatterns();
+    case 'report_dashboard': return viewDashboard();
+    case 'report_trends': return viewTrends();
+    case 'report_severity': return viewSeverity();
+    case 'report_combos': return viewCombos();
+    default: return viewDashboard();
+  }
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderMain(){
+  var main = document.getElementById('main');
+  clear(main);
+  main.appendChild(buildMain());
+}
+function render(){
+  var top = document.getElementById('topbar');
+  clear(top);
+  top.appendChild(buildTopbar());
+
+  var nav = document.getElementById('sidenav');
+  clear(nav);
+  buildNav().forEach(function(n){ nav.appendChild(n); });
+  nav.className = 'sidenav' + (state.navCollapsed ? ' collapsed' : '');
+
+  renderMain();
+}
+
+// Initial render
+try {
+  render();
+} catch (err) {
+  document.body.innerHTML = '<div style="padding:20px;color:#a83232;font-family:monospace;">Boot error: ' + (err && err.message ? err.message : err) + '</div>';
+}
+
 })();
 </script>
 
