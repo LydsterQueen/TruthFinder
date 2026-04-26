@@ -471,38 +471,34 @@ function decompressGzip(bytes) {
 }
 
 // ============================================================
-// FILE INGEST (Lockdown-safe: FileReader + slice chunks)
+// FILE INGEST (Lockdown-safe: uses Blob.text() / arrayBuffer()
+// instead of FileReader which Lockdown Mode may restrict)
 // Handles both line-delimited logs AND giant single-line JSON
 // AND .gz compressed files
 // ============================================================
 function ingestFile(file, onProgress, onChunk){
   return new Promise(function(resolve, reject){
     var chunkSize = 256 * 1024;
-    var maxBuffer = 64 * 1024; // force-flush if no newline found within 64KB
+    var maxBuffer = 64 * 1024;
     var offset = 0;
     var buffer = '';
     var lineNo = 0;
     var total = file.size || 1;
 
-    function flushBufferAsLine(){
-      if (buffer.length) {
-        lineNo++;
-        try { onChunk(buffer, lineNo); } catch(e){}
-        buffer = '';
-      }
-    }
-
     function readNext(){
       if (offset >= file.size) {
-        flushBufferAsLine();
+        if (buffer.length) {
+          lineNo++;
+          try { onChunk(buffer, lineNo); } catch(e){}
+          buffer = '';
+        }
         onProgress(100);
         resolve(lineNo);
         return;
       }
       var slice = file.slice(offset, offset + chunkSize);
-      var reader = new FileReader();
-      reader.onload = function(ev){
-        var text = String(ev.target.result || '');
+      // Use Blob.text() instead of FileReader.readAsText
+      slice.text().then(function(text){
         buffer += text;
         var nl;
         while ((nl = buffer.indexOf('\n')) >= 0) {
@@ -511,10 +507,7 @@ function ingestFile(file, onProgress, onChunk){
           lineNo++;
           try { onChunk(line, lineNo); } catch(e){}
         }
-        // Force-scan large buffers without newlines (giant JSON case)
         if (buffer.length > maxBuffer) {
-          // Scan current buffer as a synthetic line, then keep last 1KB
-          // as overlap so patterns spanning chunk boundaries still match
           var overlap = buffer.slice(-1024);
           var scanChunk = buffer.slice(0, -1024);
           lineNo++;
@@ -524,9 +517,9 @@ function ingestFile(file, onProgress, onChunk){
         offset += chunkSize;
         onProgress(Math.min(100, Math.round((offset/total)*100)));
         setTimeout(readNext, 0);
-      };
-      reader.onerror = function(){ reject(new Error('Read error')); };
-      reader.readAsText(slice);
+      }).catch(function(err){
+        reject(err);
+      });
     }
     readNext();
   });
@@ -582,29 +575,16 @@ function handleLoadFile(file){
   var iocsCollected = [];
   var allTimestamps = [];
 
-  ingestFile(file,
-    function(p){ state.progress = p; updateTopbarProgress(); },
-    function(line, lineNo){
-      var hits = scanLine(line, file.name, fileId);
-      for (var i=0;i<hits.length;i++){
-        var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
-        collected.push(hit);
-        if (hit.category === 'IOC') {
-          iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
-        }
-      }
-      // Extract timestamps for date-range tracking
-      var ts = extractTimestamps(line);
-      for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
-    }
-  ).then(function(totalLines){
+  // Check if .gz — read first 2 bytes as binary to confirm magic number
+  var isGz = /\.gz$/i.test(file.name);
+
+  function processText(textContent, totalLines){
     // Compute timestamp range and detect reporting gaps
     var earliest = null, latest = null, gapFindings = [];
     if (allTimestamps.length) {
       allTimestamps.sort(function(a,b){ return a - b; });
       earliest = allTimestamps[0];
       latest = allTimestamps[allTimestamps.length - 1];
-      // Detect gaps > 24h between consecutive timestamps
       for (var k=1;k<allTimestamps.length;k++){
         var gapMs = allTimestamps[k] - allTimestamps[k-1];
         var gapHours = gapMs / (1000*60*60);
@@ -614,7 +594,7 @@ function handleLoadFile(file){
             patternId: 'reporting_gap',
             label: 'Reporting gap detected: ' + Math.round(gapHours) + 'h silence',
             category: 'Apple Intelligence',
-            severity: gapHours > 168 ? 'crit' : 'high', // >1 week = critical
+            severity: gapHours > 168 ? 'crit' : 'high',
             match: allTimestamps[k-1].toISOString() + ' → ' + allTimestamps[k].toISOString() + ' (' + Math.round(gapHours) + 'h)',
             fileName: file.name,
             fileId: fileId,
@@ -632,25 +612,144 @@ function handleLoadFile(file){
       timestampCount: allTimestamps.length,
       dataEarliest: earliest ? earliest.toISOString() : null,
       dataLatest: latest ? latest.toISOString() : null,
-      gaps: gapFindings.length
+      gaps: gapFindings.length,
+      compressed: isGz
     });
     state.db.findings = state.db.findings.concat(collected).concat(gapFindings);
     state.db.iocs = state.db.iocs.concat(iocsCollected);
-    state.db.sources.push({ id: uid('src'), name: file.name, type:'file', addedAt: nowISO(), fileId: fileId });
+    state.db.sources.push({ id: uid('src'), name: file.name, type: isGz ? 'file (gzip)' : 'file', addedAt: nowISO(), fileId: fileId });
     state.busy = false; state.progress = 0;
     state.view = 'findings';
     render();
     var msg = 'Ingested ' + file.name + ' — ' + collected.length + ' hits';
-    if (allTimestamps.length) {
-      msg += ' · data: ' + earliest.toISOString().slice(0,10) + ' → ' + latest.toISOString().slice(0,10);
-    }
+    if (allTimestamps.length) msg += ' · data: ' + earliest.toISOString().slice(0,10) + ' → ' + latest.toISOString().slice(0,10);
     if (gapFindings.length) msg += ' · ' + gapFindings.length + ' gap(s)';
+    if (isGz) msg += ' · gz';
     toast(msg);
-  }).catch(function(e){
-    state.busy = false; state.progress = 0;
-    render();
-    toast('Ingest error: ' + (e && e.message ? e.message : 'unknown'));
-  });
+  }
+
+  function scanText(text){
+    // Process text in 64KB chunks with newline awareness
+    var chunkLen = 64 * 1024;
+    var totalLines = 0;
+    var pos = 0;
+    var lineNo = 0;
+    var buffer = '';
+
+    function processChunk(){
+      if (pos >= text.length) {
+        if (buffer.length) {
+          lineNo++;
+          var hits = scanLine(buffer, file.name, fileId);
+          for (var i=0;i<hits.length;i++){
+            var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
+            collected.push(hit);
+            if (hit.category === 'IOC') iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
+          }
+          var ts = extractTimestamps(buffer);
+          for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
+        }
+        state.progress = 100;
+        updateTopbarProgress();
+        processText(text, lineNo);
+        return;
+      }
+      var end = Math.min(pos + chunkLen, text.length);
+      buffer += text.slice(pos, end);
+      pos = end;
+      var nl;
+      while ((nl = buffer.indexOf('\n')) >= 0) {
+        var line = buffer.slice(0, nl);
+        buffer = buffer.slice(nl + 1);
+        lineNo++;
+        var hits = scanLine(line, file.name, fileId);
+        for (var i=0;i<hits.length;i++){
+          var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
+          collected.push(hit);
+          if (hit.category === 'IOC') iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
+        }
+        var ts = extractTimestamps(line);
+        for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
+      }
+      // Force-flush oversized buffer (giant JSON case)
+      if (buffer.length > 64 * 1024) {
+        var overlap = buffer.slice(-1024);
+        var scanChunk = buffer.slice(0, -1024);
+        lineNo++;
+        var hits = scanLine(scanChunk, file.name, fileId);
+        for (var i=0;i<hits.length;i++){
+          var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
+          collected.push(hit);
+          if (hit.category === 'IOC') iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
+        }
+        var ts = extractTimestamps(scanChunk);
+        for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
+        buffer = overlap;
+      }
+      state.progress = Math.min(99, Math.round((pos/text.length)*100));
+      updateTopbarProgress();
+      setTimeout(processChunk, 0);
+    }
+    processChunk();
+  }
+
+  if (isGz) {
+    // Read entire .gz file as binary, decompress, then scan as text
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try {
+        state.progress = 30; updateTopbarProgress();
+        var bytes = new Uint8Array(ev.target.result);
+        if (!isGzip(bytes)) {
+          state.busy = false; render();
+          toast('File has .gz extension but is not gzip-compressed');
+          return;
+        }
+        var decompressed = decompressGzip(bytes);
+        state.progress = 60; updateTopbarProgress();
+        var text;
+        if (typeof TextDecoder !== 'undefined') {
+          text = new TextDecoder('utf-8').decode(decompressed);
+        } else {
+          // Fallback: build string from byte values
+          var s = '';
+          for (var i=0;i<decompressed.length;i++) s += String.fromCharCode(decompressed[i]);
+          text = decodeURIComponent(escape(s));
+        }
+        state.progress = 70; updateTopbarProgress();
+        scanText(text);
+      } catch (e) {
+        state.busy = false; render();
+        toast('Gzip decompression failed: ' + (e && e.message ? e.message : 'unknown'));
+      }
+    };
+    reader.onerror = function(){
+      state.busy = false; render();
+      toast('Read error on .gz file');
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    // Standard text streaming
+    ingestFile(file,
+      function(p){ state.progress = p; updateTopbarProgress(); },
+      function(line, lineNo){
+        var hits = scanLine(line, file.name, fileId);
+        for (var i=0;i<hits.length;i++){
+          var hit = Object.assign({}, hits[i], { id: uid('find'), lineNo: lineNo, createdAt: nowISO(), source: 'auto' });
+          collected.push(hit);
+          if (hit.category === 'IOC') iocsCollected.push({ id: uid('ioc'), type: hit.patternId, value: hit.match, context: file.name+':'+lineNo, severity: 'low', createdAt: nowISO() });
+        }
+        var ts = extractTimestamps(line);
+        for (var j=0;j<ts.length;j++) allTimestamps.push(ts[j]);
+      }
+    ).then(function(totalLines){
+      processText(null, totalLines);
+    }).catch(function(e){
+      state.busy = false; state.progress = 0;
+      render();
+      toast('Ingest error: ' + (e && e.message ? e.message : 'unknown'));
+    });
+  }
 }
 
 function handleSaveDB(){
